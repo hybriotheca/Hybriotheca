@@ -1,3 +1,6 @@
+using Hybriotheca.Web.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace Hybriotheca.Web
 {
     public class Program
@@ -7,9 +10,25 @@ namespace Hybriotheca.Web
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            var connectionString = builder.Configuration.GetConnectionString("LocalDb");
+            builder.Services.AddDbContext<DataContext>(
+                cfg => cfg.UseSqlServer(connectionString));
+
+            builder.Services.AddTransient<SeedDb>();
+
             builder.Services.AddControllersWithViews();
 
+
             var app = builder.Build();
+
+            var scopedFactory = app.Services.GetService<IServiceProvider>();
+
+            using (var scope = scopedFactory?.CreateScope())
+            {
+                var seeder = scope?.ServiceProvider.GetService<SeedDb>();
+                seeder?.Seed();
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
