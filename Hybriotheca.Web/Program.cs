@@ -1,11 +1,15 @@
 using Hybriotheca.Web.Data;
+using Hybriotheca.Web.Data.Authentication;
+using Hybriotheca.Web.Helpers;
+using Hybriotheca.Web.Helpers.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -15,19 +19,39 @@ namespace Hybriotheca.Web
             builder.Services.AddDbContext<DataContext>(
                 cfg => cfg.UseSqlServer(connectionString));
 
+            builder.Services.AddIdentity<AppUser, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+                cfg.Password.RequireDigit = true;
+                cfg.Password.RequireLowercase = true;
+                cfg.Password.RequireNonAlphanumeric = true;
+                cfg.Password.RequireUppercase = true;
+                cfg.Password.RequiredLength = 8;
+                cfg.SignIn.RequireConfirmedEmail = true;
+            })
+                .AddEntityFrameworkStores<DataContext>()
+                .AddDefaultTokenProviders();
+
             builder.Services.AddTransient<SeedDb>();
+
+            builder.Services.AddScoped<IMailHelper, MailHelper>();
+            builder.Services.AddScoped<IUserHelper, UserHelper>();
 
             builder.Services.AddControllersWithViews();
 
 
             var app = builder.Build();
 
-            var scopedFactory = app.Services.GetService<IServiceProvider>();
+            await SeedDatabase(app);
 
-            using (var scope = scopedFactory?.CreateScope())
+            static async Task SeedDatabase(IHost host)
             {
+                var scopedFactory = host.Services.GetService<IServiceScopeFactory>();
+
+                using var scope = scopedFactory?.CreateScope();
+
                 var seeder = scope?.ServiceProvider.GetService<SeedDb>();
-                seeder?.Seed();
+                await seeder?.SeedAsync();
             }
 
             // Configure the HTTP request pipeline.
@@ -43,6 +67,7 @@ namespace Hybriotheca.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
