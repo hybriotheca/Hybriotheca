@@ -1,4 +1,4 @@
-﻿using Hybriotheca.Web.Data.Authentication;
+﻿using Hybriotheca.Web.Data.Entities;
 
 namespace Hybriotheca.Web.Helpers.Interfaces
 {

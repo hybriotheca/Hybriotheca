@@ -1,7 +1,9 @@
 using Hybriotheca.Web.Data;
-using Hybriotheca.Web.Data.Authentication;
+using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers;
 using Hybriotheca.Web.Helpers.Interfaces;
+using Hybriotheca.Web.Repositories.Interfaces;
+using Hybriotheca.Web.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +35,26 @@ namespace Hybriotheca.Web
                 .AddDefaultTokenProviders();
 
             builder.Services.AddTransient<SeedDb>();
+
+            builder.Services.AddScoped<IEditionRepository, EditionRepository>();
+
+            builder.Services.AddScoped<IBookStockRepository, BookStockRepository>();
+
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+            builder.Services.AddScoped<IWorkRepository, WorkRepository>();
+
+            builder.Services.AddScoped<IFineRepository, FineRepository>();
+
+            builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
+
+            builder.Services.AddScoped<ILoanRepository, LoanRepository>();
+
+            builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+
+            builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
             builder.Services.AddScoped<IMailHelper, MailHelper>();
             builder.Services.AddScoped<IUserHelper, UserHelper>();

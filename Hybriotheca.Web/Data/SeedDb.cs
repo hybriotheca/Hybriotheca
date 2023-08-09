@@ -65,7 +65,7 @@ namespace Hybriotheca.Web.Data
                 var user = await _userHelper.GetUserByEmailAsync(email);
                 if (user == null)
                 {
-                    user = new Authentication.AppUser
+                    user = new Entities.AppUser
                     {
                         UserName = email,
                         Email = email,

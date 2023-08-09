@@ -1,4 +1,4 @@
-﻿using Hybriotheca.Web.Data.Authentication;
+﻿using Hybriotheca.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Hybriotheca.Web.Helpers.Interfaces

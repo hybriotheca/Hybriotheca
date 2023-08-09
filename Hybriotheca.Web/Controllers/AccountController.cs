@@ -1,4 +1,4 @@
-﻿using Hybriotheca.Web.Data.Authentication;
+﻿using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models.Account;
 using Microsoft.AspNetCore.Authorization;
