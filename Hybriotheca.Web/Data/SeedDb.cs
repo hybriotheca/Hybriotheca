@@ -32,6 +32,8 @@ namespace Hybriotheca.Web.Data
             await SeedRoles();
             await SeedUsers();
 
+            await SeedSubscriptions();
+
             await _context.SaveChangesAsync();
         }
 
@@ -45,6 +47,25 @@ namespace Hybriotheca.Web.Data
                 if (!await _roleManager.RoleExistsAsync(role))
                 {
                     await _roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+        }
+
+        private async Task SeedSubscriptions()
+        {
+            string[] subscriptionsNames = _configuration["SeedDb:Subscriptions:Names"].Split(',');
+
+            foreach (string subscriptionName in subscriptionsNames)
+            {
+                // Check Subscription exists.
+                if (!await _context.Subscriptions.AnyAsync(s => s.Name == subscriptionName))
+                {
+                    // If Subscription doesn't exist, create it.
+                    await _context.Subscriptions.AddAsync(new Entities.Subscription
+                    {
+                        Name = subscriptionName,
+                        Details = _configuration[$"SeedDb:Subscriptions:{subscriptionName}"],
+                    });
                 }
             }
         }
