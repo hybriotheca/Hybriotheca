@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace Hybriotheca.Web.Repositories.Entities;
+namespace Hybriotheca.Web.Data.Entities;
 
 //[PrimaryKey(nameof(BookID), nameof(LibraryID))]
 [Index(nameof(EditionID), nameof(LibraryID), IsUnique = true, Name = "IX_EditionID_LibraryID")]

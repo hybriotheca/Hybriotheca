@@ -1,5 +1,4 @@
-﻿using Hybriotheca.Web.Repositories.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace Hybriotheca.Web.Data.Entities;

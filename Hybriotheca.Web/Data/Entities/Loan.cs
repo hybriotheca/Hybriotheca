@@ -1,7 +1,7 @@
 ﻿using Hybriotheca.Web.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Hybriotheca.Web.Repositories.Entities;
+namespace Hybriotheca.Web.Data.Entities;
 
 public class Loan : IEntity
 {
@@ -28,10 +28,10 @@ public class Loan : IEntity
     public DateTime EndDate { get; set; }
 
     [Display(Name = "Past Due Date?")]
-    public bool isPastDueDate { get; set; }
+    public bool IsPastDueDate { get; set; }
 
     [Display(Name = "Returned?")]
-    public bool isReturned { get; set; }
+    public bool IsReturned { get; set; }
 
     public int? ReservationID { get; set; }
 

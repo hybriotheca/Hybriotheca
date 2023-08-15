@@ -1,7 +1,7 @@
 ﻿using Hybriotheca.Web.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Hybriotheca.Web.Repositories.Entities;
+namespace Hybriotheca.Web.Data.Entities;
 
 public class Rating : IEntity
 {

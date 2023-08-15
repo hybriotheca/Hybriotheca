@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Hybriotheca.Web.Repositories.Entities
+namespace Hybriotheca.Web.Data.Entities;
+
+public class Category : IEntity
 {
-    public class Category : IEntity
-    {
-        public int ID { get; set; }
+    public int ID { get; set; }
 
-        [MaxLength(50, ErrorMessage = "The {0} value cannot exceed {1} characters.")]
-        public string Name { get; set; } = string.Empty;
+    [MaxLength(50, ErrorMessage = "The {0} value cannot exceed {1} characters.")]
+    public string Name { get; set; } = string.Empty;
 
-        public IEnumerable<Edition>? Editions { get; set; }
-    }
+    public IEnumerable<Edition>? Editions { get; set; }
 }
