@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace Hybriotheca.Web.Repositories.Entities;
+namespace Hybriotheca.Web.Data.Entities;
 
 public class Fine : IEntity
 {
@@ -12,7 +12,7 @@ public class Fine : IEntity
     public Loan Loan { get; set; } = null!;
 
     [Display(Name = "Has fine been paid?")]
-    public bool isPaid { get; set; }
+    public bool IsPaid { get; set; }
 
     [Display(Name = "Fine Amount")]
     [Precision(18, 2)]

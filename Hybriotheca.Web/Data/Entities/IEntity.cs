@@ -1,4 +1,4 @@
-﻿namespace Hybriotheca.Web.Repositories.Entities;
+﻿namespace Hybriotheca.Web.Data.Entities;
 
 public interface IEntity
 {

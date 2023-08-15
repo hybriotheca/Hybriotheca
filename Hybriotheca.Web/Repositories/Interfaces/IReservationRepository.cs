@@ -1,4 +1,4 @@
-﻿using Hybriotheca.Web.Repositories.Entities;
+﻿using Hybriotheca.Web.Data.Entities;
 
 namespace Hybriotheca.Web.Repositories.Interfaces;
 

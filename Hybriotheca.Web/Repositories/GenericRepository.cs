@@ -1,5 +1,5 @@
 ﻿using Hybriotheca.Web.Data;
-using Hybriotheca.Web.Repositories.Entities;
+using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
