@@ -1,3 +1,4 @@
+﻿using Hybriotheca.Web.Data.Entities;
 ﻿using Hybriotheca.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,11 +33,30 @@ namespace Hybriotheca.Web.Data
             await SeedRoles();
             await SeedUsers();
 
+            await SeedLibrariesAsync();
             await SeedSubscriptions();
 
             await _context.SaveChangesAsync();
         }
 
+
+        private async Task SeedLibrariesAsync()
+        {
+            string[] libraries = _configuration["SeedDb:Libraries:Names"].Split(',');
+
+            foreach (string library in libraries)
+            {
+                if (!await _context.Libraries.AnyAsync(l => l.Name == library))
+                {
+                    await _context.Libraries.AddAsync(new Library
+                    {
+                        Name = library,
+                        Location = _configuration[$"SeedDb:Libraries:{library}:Location"],
+                        Contact = _configuration[$"SeedDb:Libraries:{library}:Contact"],
+                    });
+                }
+            }
+        }
 
         private async Task SeedRoles()
         {
@@ -61,7 +81,7 @@ namespace Hybriotheca.Web.Data
                 if (!await _context.Subscriptions.AnyAsync(s => s.Name == subscriptionName))
                 {
                     // If Subscription doesn't exist, create it.
-                    await _context.Subscriptions.AddAsync(new Entities.Subscription
+                    await _context.Subscriptions.AddAsync(new Subscription
                     {
                         Name = subscriptionName,
                         Details = _configuration[$"SeedDb:Subscriptions:{subscriptionName}"],
@@ -86,7 +106,7 @@ namespace Hybriotheca.Web.Data
                 var user = await _userHelper.GetUserByEmailAsync(email);
                 if (user == null)
                 {
-                    user = new Entities.AppUser
+                    user = new AppUser
                     {
                         UserName = email,
                         Email = email,

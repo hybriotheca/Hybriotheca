@@ -6,17 +6,18 @@ public class Library : IEntity
 {
     public int ID { get; set; }
 
-    [MaxLength(100, ErrorMessage = "The {0} value cannot exceed {1} characters.")]
-    public string Name { get; set; } = string.Empty;
+    [Required]
+    public string Name { get; set; }
 
-    [MaxLength(150, ErrorMessage = "The {0} value cannot exceed {1} characters.")]
-    public string Location { get; set; } = string.Empty;
+    [Required]
+    public string Location { get; set; }
 
-    [MaxLength(9, ErrorMessage = "The {0} value cannot exceed {1} characters.")]
+    [Required]
     [RegularExpression(@"^(9\d|2\d)[\d]{7}$", ErrorMessage = "Please insert a valid Portuguese phone number")]
     public string Contact { get; set; } = string.Empty;
 
-    public IEnumerable<BookStock> BooksInStock { get; set; } = null!;
+
+    public IEnumerable<BookStock>? BooksInStock { get; set; }
 
     public IEnumerable<Loan>? Loans { get; set; }
 
