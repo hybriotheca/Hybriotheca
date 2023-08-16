@@ -33,12 +33,26 @@ namespace Hybriotheca.Web.Data
             await SeedRoles();
             await SeedUsers();
 
+            await SeedCategories();
             await SeedLibrariesAsync();
             await SeedSubscriptions();
 
             await _context.SaveChangesAsync();
         }
 
+
+        private async Task SeedCategories()
+        {
+            string[] categories = _configuration["SeedDb:Categories"].Split(',');
+
+            foreach (string category in categories)
+            {
+                if (!await _context.Categories.AnyAsync(c => c.Name == category))
+                {
+                    await _context.Categories.AddAsync(new Category { Name = category });
+                }
+            }
+        }
 
         private async Task SeedLibrariesAsync()
         {
