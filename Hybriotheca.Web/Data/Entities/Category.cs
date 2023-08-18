@@ -9,5 +9,7 @@ public class Category : IEntity
     [Required]
     public string Name { get; set; }
 
-    public IEnumerable<Edition>? Editions { get; set; }
+
+    public IEnumerable<BookEdition>? BookEditions { get; set; }
+
 }

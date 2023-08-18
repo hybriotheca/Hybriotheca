@@ -41,7 +41,7 @@ namespace Hybriotheca.Web.Repositories
             return _dataContext.Set<T>().AsNoTracking();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             return await _dataContext.Set<T>().AsNoTracking()
                 .FirstOrDefaultAsync(x => x.ID == id);

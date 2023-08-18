@@ -4,7 +4,7 @@ public interface IGenericRepository<T> where T : class
 {
     IQueryable<T> GetAll();
 
-    Task<T> GetByIdAsync(int id);
+    Task<T?> GetByIdAsync(int id);
 
     Task CreateAsync(T entity);
 

@@ -2,7 +2,7 @@
 
 namespace Hybriotheca.Web.Repositories.Interfaces;
 
-public interface IWorkRepository : IGenericRepository<Work>
+public interface IBookEditionRepository : IGenericRepository<BookEdition>
 {
 
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Hybriotheca.Web.Repositories.Interfaces;
 
-public interface ICategoryRepository : IGenericRepository<Category>
+public interface IBookRepository : IGenericRepository<Book>
 {
-    IEnumerable<SelectListItem> GetComboCategories();
+    IEnumerable<SelectListItem> GetComboBooks();
 }

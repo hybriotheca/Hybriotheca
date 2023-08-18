@@ -32,12 +32,26 @@ namespace Hybriotheca.Web.Migrations
                 nullable: true);
 
             migrationBuilder.CreateTable(
+                name: "Books",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OriginalTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Author = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Books", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,9 +64,9 @@ namespace Hybriotheca.Web.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Contact = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Contact = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -65,8 +79,8 @@ namespace Hybriotheca.Web.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Details = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Details = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,54 +88,40 @@ namespace Hybriotheca.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Work",
+                name: "BookEditions",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OriginalTitle = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Author = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Work", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Editions",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BookID = table.Column<int>(type: "int", nullable: false),
                     CategoryID = table.Column<int>(type: "int", nullable: false),
-                    WorkID = table.Column<int>(type: "int", nullable: false),
-                    EditionTitle = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ISBN = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: true),
-                    TranslationAuthor = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    BookFormat = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Publisher = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Language = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ISBN = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EditionTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Synopsis = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Publisher = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PublishDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Awards = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
-                    EbookID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CoverImageID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Sinopse = table.Column<string>(type: "nvarchar(2500)", maxLength: 2500, nullable: true),
+                    Language = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TranslationAuthor = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Awards = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BookFormat = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NrPages = table.Column<int>(type: "int", nullable: false),
-                    IsAvailableOnline = table.Column<bool>(type: "bit", nullable: false)
+                    IsAvailableOnline = table.Column<bool>(type: "bit", nullable: false),
+                    EbookID = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CoverImageID = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Editions", x => x.ID);
+                    table.PrimaryKey("PK_BookEditions", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Editions_Categories_CategoryID",
-                        column: x => x.CategoryID,
-                        principalTable: "Categories",
+                        name: "FK_BookEditions_Books_BookID",
+                        column: x => x.BookID,
+                        principalTable: "Books",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Editions_Work_WorkID",
-                        column: x => x.WorkID,
-                        principalTable: "Work",
+                        name: "FK_BookEditions_Categories_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categories",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -132,17 +132,17 @@ namespace Hybriotheca.Web.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EditionID = table.Column<int>(type: "int", nullable: false),
+                    BookEditionID = table.Column<int>(type: "int", nullable: false),
                     LibraryID = table.Column<int>(type: "int", nullable: false),
-                    QtyInStock = table.Column<int>(type: "int", nullable: false)
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BooksInStock", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_BooksInStock_Editions_EditionID",
-                        column: x => x.EditionID,
-                        principalTable: "Editions",
+                        name: "FK_BooksInStock_BookEditions_BookEditionID",
+                        column: x => x.BookEditionID,
+                        principalTable: "BookEditions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -159,25 +159,25 @@ namespace Hybriotheca.Web.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EditionID = table.Column<int>(type: "int", nullable: false),
-                    AppUserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BookEditionID = table.Column<int>(type: "int", nullable: false),
                     BookRating = table.Column<int>(type: "int", nullable: false),
-                    RatingTitle = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    RatingBody = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false)
+                    RatingTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RatingBody = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ratings", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Ratings_AspNetUsers_AppUserID",
-                        column: x => x.AppUserID,
+                        name: "FK_Ratings_AspNetUsers_UserID",
+                        column: x => x.UserID,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Ratings_Editions_EditionID",
-                        column: x => x.EditionID,
-                        principalTable: "Editions",
+                        name: "FK_Ratings_BookEditions_BookEditionID",
+                        column: x => x.BookEditionID,
+                        principalTable: "BookEditions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -188,25 +188,25 @@ namespace Hybriotheca.Web.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EditionID = table.Column<int>(type: "int", nullable: false),
-                    AppUserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LibraryID = table.Column<int>(type: "int", nullable: false),
+                    BookEditionID = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    ReservationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reservations", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Reservations_AspNetUsers_AppUserID",
-                        column: x => x.AppUserID,
+                        name: "FK_Reservations_AspNetUsers_UserID",
+                        column: x => x.UserID,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Reservations_Editions_EditionID",
-                        column: x => x.EditionID,
-                        principalTable: "Editions",
+                        name: "FK_Reservations_BookEditions_BookEditionID",
+                        column: x => x.BookEditionID,
+                        principalTable: "BookEditions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -223,28 +223,28 @@ namespace Hybriotheca.Web.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EditionID = table.Column<int>(type: "int", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LibraryID = table.Column<int>(type: "int", nullable: false),
-                    AppUserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BookEditionID = table.Column<int>(type: "int", nullable: false),
+                    ReservationID = table.Column<int>(type: "int", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    isPastDueDate = table.Column<bool>(type: "bit", nullable: false),
-                    isReturned = table.Column<bool>(type: "bit", nullable: false),
-                    ReservationID = table.Column<int>(type: "int", nullable: true)
+                    IsPastDueDate = table.Column<bool>(type: "bit", nullable: false),
+                    IsReturned = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Loans", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Loans_AspNetUsers_AppUserID",
-                        column: x => x.AppUserID,
+                        name: "FK_Loans_AspNetUsers_UserID",
+                        column: x => x.UserID,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Loans_Editions_EditionID",
-                        column: x => x.EditionID,
-                        principalTable: "Editions",
+                        name: "FK_Loans_BookEditions_BookEditionID",
+                        column: x => x.BookEditionID,
+                        principalTable: "BookEditions",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -268,7 +268,7 @@ namespace Hybriotheca.Web.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LoanID = table.Column<int>(type: "int", nullable: false),
-                    isPaid = table.Column<bool>(type: "bit", nullable: false),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     FineValue = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
                 },
                 constraints: table =>
@@ -288,25 +288,25 @@ namespace Hybriotheca.Web.Migrations
                 column: "SubscriptionID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BooksInStock_LibraryID",
-                table: "BooksInStock",
-                column: "LibraryID");
+                name: "IX_BookEditions_BookID",
+                table: "BookEditions",
+                column: "BookID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EditionID_LibraryID",
-                table: "BooksInStock",
-                columns: new[] { "EditionID", "LibraryID" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Editions_CategoryID",
-                table: "Editions",
+                name: "IX_BookEditions_CategoryID",
+                table: "BookEditions",
                 column: "CategoryID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Editions_WorkID",
-                table: "Editions",
-                column: "WorkID");
+                name: "IX_BookEdition_Library",
+                table: "BooksInStock",
+                columns: new[] { "BookEditionID", "LibraryID" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BooksInStock_LibraryID",
+                table: "BooksInStock",
+                column: "LibraryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Fines_LoanID",
@@ -315,14 +315,9 @@ namespace Hybriotheca.Web.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Loans_AppUserID",
+                name: "IX_Loans_BookEditionID",
                 table: "Loans",
-                column: "AppUserID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Loans_EditionID",
-                table: "Loans",
-                column: "EditionID");
+                column: "BookEditionID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Loans_LibraryID",
@@ -337,29 +332,34 @@ namespace Hybriotheca.Web.Migrations
                 filter: "[ReservationID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ratings_AppUserID",
+                name: "IX_Loans_UserID",
+                table: "Loans",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ratings_BookEditionID",
                 table: "Ratings",
-                column: "AppUserID");
+                column: "BookEditionID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ratings_EditionID",
+                name: "IX_Ratings_UserID",
                 table: "Ratings",
-                column: "EditionID");
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservations_AppUserID",
+                name: "IX_Reservations_BookEditionID",
                 table: "Reservations",
-                column: "AppUserID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reservations_EditionID",
-                table: "Reservations",
-                column: "EditionID");
+                column: "BookEditionID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_LibraryID",
                 table: "Reservations",
                 column: "LibraryID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reservations_UserID",
+                table: "Reservations",
+                column: "UserID");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AspNetUsers_Subscriptions_SubscriptionID",
@@ -396,16 +396,16 @@ namespace Hybriotheca.Web.Migrations
                 name: "Reservations");
 
             migrationBuilder.DropTable(
-                name: "Editions");
+                name: "BookEditions");
 
             migrationBuilder.DropTable(
                 name: "Libraries");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Books");
 
             migrationBuilder.DropTable(
-                name: "Work");
+                name: "Categories");
 
             migrationBuilder.DropIndex(
                 name: "IX_AspNetUsers_SubscriptionID",

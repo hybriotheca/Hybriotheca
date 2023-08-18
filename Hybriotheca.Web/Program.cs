@@ -17,9 +17,10 @@ namespace Hybriotheca.Web
 
             // Add services to the container.
 
-            var connectionString = builder.Configuration.GetConnectionString("LocalDb");
-            builder.Services.AddDbContext<DataContext>(
-                cfg => cfg.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<DataContext>(cfg =>
+            {
+                cfg.UseSqlServer(builder.Configuration.GetConnectionString("LocalDb"));
+            });
 
             builder.Services.AddIdentity<AppUser, IdentityRole>(cfg =>
             {
@@ -36,24 +37,15 @@ namespace Hybriotheca.Web
 
             builder.Services.AddTransient<SeedDb>();
 
-            builder.Services.AddScoped<IEditionRepository, EditionRepository>();
-
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
+            builder.Services.AddScoped<IBookEditionRepository, BookEditionRepository>();
             builder.Services.AddScoped<IBookStockRepository, BookStockRepository>();
-
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-
-            builder.Services.AddScoped<IWorkRepository, WorkRepository>();
-
             builder.Services.AddScoped<IFineRepository, FineRepository>();
-
             builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
-
             builder.Services.AddScoped<ILoanRepository, LoanRepository>();
-
             builder.Services.AddScoped<IRatingRepository, RatingRepository>();
-
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
-
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
             builder.Services.AddScoped<IBlobHelper, BlobHelper>();

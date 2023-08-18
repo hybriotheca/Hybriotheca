@@ -5,21 +5,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Hybriotheca.Web.Repositories;
 
-public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
+public class BookRepository : GenericRepository<Book>, IBookRepository
 {
     private readonly DataContext _dataContext;
 
-    public CategoryRepository(DataContext dataContext) : base(dataContext)
+    public BookRepository(DataContext dataContext) : base(dataContext)
     {
         _dataContext = dataContext;
     }
 
 
-    public IEnumerable<SelectListItem> GetComboCategories()
+    public IEnumerable<SelectListItem> GetComboBooks()
     {
-        return _dataContext.Categories.Select(c => new SelectListItem
+        return _dataContext.Books.Select(c => new SelectListItem
         {
-            Text = c.Name,
+            Text = c.OriginalTitle,
             Value = c.ID.ToString()
         });
     }

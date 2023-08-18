@@ -4,11 +4,11 @@ using Hybriotheca.Web.Repositories.Interfaces;
 
 namespace Hybriotheca.Web.Repositories;
 
-public class WorkRepository : GenericRepository<Work>, IWorkRepository
+public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditionRepository
 {
     private readonly DataContext _dataContext;
 
-    public WorkRepository(DataContext dataContext) : base(dataContext)
+    public BookEditionRepository(DataContext dataContext) : base(dataContext)
     {
         _dataContext = dataContext;
     }

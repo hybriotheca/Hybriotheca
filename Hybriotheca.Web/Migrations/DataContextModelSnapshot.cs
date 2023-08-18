@@ -100,7 +100,7 @@ namespace Hybriotheca.Web.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.BookStock", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Book", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -108,44 +108,20 @@ namespace Hybriotheca.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("EditionID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LibraryID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QtyInStock")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("LibraryID");
-
-                    b.HasIndex(new[] { "EditionID", "LibraryID" }, "IX_EditionID_LibraryID")
-                        .IsUnique();
-
-                    b.ToTable("BooksInStock");
-                });
-
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Category", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Author")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginalTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Edition", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.BookEdition", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -154,13 +130,14 @@ namespace Hybriotheca.Web.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Awards")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BookFormat")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BookID")
+                        .HasColumnType("int");
 
                     b.Property<int>("CategoryID")
                         .HasColumnType("int");
@@ -173,20 +150,17 @@ namespace Hybriotheca.Web.Migrations
 
                     b.Property<string>("EditionTitle")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ISBN")
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailableOnline")
                         .HasColumnType("bit");
 
                     b.Property<string>("Language")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NrPages")
                         .HasColumnType("int");
@@ -196,30 +170,69 @@ namespace Hybriotheca.Web.Migrations
 
                     b.Property<string>("Publisher")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Sinopse")
-                        .HasMaxLength(2500)
-                        .HasColumnType("nvarchar(2500)");
+                    b.Property<string>("Synopsis")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TranslationAuthor")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("WorkID")
+                    b.HasKey("ID");
+
+                    b.HasIndex("BookID");
+
+                    b.HasIndex("CategoryID");
+
+                    b.ToTable("BookEditions");
+                });
+
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.BookStock", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("BookEditionID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LibraryID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("CategoryID");
+                    b.HasIndex("LibraryID");
 
-                    b.HasIndex("WorkID");
+                    b.HasIndex(new[] { "BookEditionID", "LibraryID" }, "IX_BookEdition_Library")
+                        .IsUnique();
 
-                    b.ToTable("Editions");
+                    b.ToTable("BooksInStock");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Fine", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Category", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Fine", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -231,11 +244,11 @@ namespace Hybriotheca.Web.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
                     b.Property<int>("LoanID")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isPaid")
-                        .HasColumnType("bit");
 
                     b.HasKey("ID");
 
@@ -245,7 +258,7 @@ namespace Hybriotheca.Web.Migrations
                     b.ToTable("Fines");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Library", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Library", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -255,25 +268,22 @@ namespace Hybriotheca.Web.Migrations
 
                     b.Property<string>("Contact")
                         .IsRequired()
-                        .HasMaxLength(9)
-                        .HasColumnType("nvarchar(9)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.ToTable("Libraries");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Loan", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Loan", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -281,15 +291,17 @@ namespace Hybriotheca.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("AppUserID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EditionID")
+                    b.Property<int>("BookEditionID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPastDueDate")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReturned")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LibraryID")
                         .HasColumnType("int");
@@ -300,17 +312,13 @@ namespace Hybriotheca.Web.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("isPastDueDate")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("isReturned")
-                        .HasColumnType("bit");
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("AppUserID");
-
-                    b.HasIndex("EditionID");
+                    b.HasIndex("BookEditionID");
 
                     b.HasIndex("LibraryID");
 
@@ -318,10 +326,12 @@ namespace Hybriotheca.Web.Migrations
                         .IsUnique()
                         .HasFilter("[ReservationID] IS NOT NULL");
 
+                    b.HasIndex("UserID");
+
                     b.ToTable("Loans");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Rating", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Rating", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -329,36 +339,34 @@ namespace Hybriotheca.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("AppUserID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("BookEditionID")
+                        .HasColumnType("int");
 
                     b.Property<int>("BookRating")
                         .HasColumnType("int");
 
-                    b.Property<int>("EditionID")
-                        .HasColumnType("int");
-
                     b.Property<string>("RatingBody")
                         .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RatingTitle")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("AppUserID");
+                    b.HasIndex("BookEditionID");
 
-                    b.HasIndex("EditionID");
+                    b.HasIndex("UserID");
 
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Reservation", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Reservation", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -366,12 +374,11 @@ namespace Hybriotheca.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("AppUserID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EditionID")
+                    b.Property<int>("BookEditionID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -379,21 +386,22 @@ namespace Hybriotheca.Web.Migrations
                     b.Property<int>("LibraryID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ReservationDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("AppUserID");
-
-                    b.HasIndex("EditionID");
+                    b.HasIndex("BookEditionID");
 
                     b.HasIndex("LibraryID");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Reservations");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Subscription", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Subscription", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -402,40 +410,16 @@ namespace Hybriotheca.Web.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Details")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.ToTable("Subscriptions");
-                });
-
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Work", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
-
-                    b.Property<string>("Author")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("OriginalTitle")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Work");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -573,89 +557,89 @@ namespace Hybriotheca.Web.Migrations
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.AppUser", b =>
                 {
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Subscription", "Subscription")
-                        .WithMany("AppUsers")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.Subscription", "Subscription")
+                        .WithMany("Users")
                         .HasForeignKey("SubscriptionID")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Subscription");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.BookStock", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.BookEdition", b =>
                 {
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Edition", "Edition")
-                        .WithMany("BooksInStock")
-                        .HasForeignKey("EditionID")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.Book", "Book")
+                        .WithMany("Editions")
+                        .HasForeignKey("BookID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Library", "Library")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.Category", "Category")
+                        .WithMany("BookEditions")
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.BookStock", b =>
+                {
+                    b.HasOne("Hybriotheca.Web.Data.Entities.BookEdition", "BookEdition")
+                        .WithMany("BooksInStock")
+                        .HasForeignKey("BookEditionID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Hybriotheca.Web.Data.Entities.Library", "Library")
                         .WithMany("BooksInStock")
                         .HasForeignKey("LibraryID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Edition");
+                    b.Navigation("BookEdition");
 
                     b.Navigation("Library");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Edition", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Fine", b =>
                 {
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Category", "Category")
-                        .WithMany("Editions")
-                        .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Work", "Work")
-                        .WithMany("Editions")
-                        .HasForeignKey("WorkID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Work");
-                });
-
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Fine", b =>
-                {
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Loan", "Loan")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.Loan", "Loan")
                         .WithOne("Fine")
-                        .HasForeignKey("Hybriotheca.Web.Repositories.Entities.Fine", "LoanID")
+                        .HasForeignKey("Hybriotheca.Web.Data.Entities.Fine", "LoanID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Loan");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Loan", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Loan", b =>
                 {
-                    b.HasOne("Hybriotheca.Web.Data.Entities.AppUser", "User")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.BookEdition", "BookEdition")
                         .WithMany("Loans")
-                        .HasForeignKey("AppUserID")
+                        .HasForeignKey("BookEditionID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Edition", "Edition")
-                        .WithMany("Loans")
-                        .HasForeignKey("EditionID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Library", "Library")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.Library", "Library")
                         .WithMany("Loans")
                         .HasForeignKey("LibraryID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Reservation", "Reservation")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.Reservation", "Reservation")
                         .WithOne("Loan")
-                        .HasForeignKey("Hybriotheca.Web.Repositories.Entities.Loan", "ReservationID")
+                        .HasForeignKey("Hybriotheca.Web.Data.Entities.Loan", "ReservationID")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Edition");
+                    b.HasOne("Hybriotheca.Web.Data.Entities.AppUser", "User")
+                        .WithMany("Loans")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BookEdition");
 
                     b.Navigation("Library");
 
@@ -664,46 +648,46 @@ namespace Hybriotheca.Web.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Rating", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Rating", b =>
                 {
+                    b.HasOne("Hybriotheca.Web.Data.Entities.BookEdition", "BookEdition")
+                        .WithMany("Ratings")
+                        .HasForeignKey("BookEditionID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Hybriotheca.Web.Data.Entities.AppUser", "User")
                         .WithMany("Ratings")
-                        .HasForeignKey("AppUserID")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Edition", "Edition")
-                        .WithMany("Ratings")
-                        .HasForeignKey("EditionID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Edition");
+                    b.Navigation("BookEdition");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Reservation", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Reservation", b =>
                 {
-                    b.HasOne("Hybriotheca.Web.Data.Entities.AppUser", "User")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.BookEdition", "BookEdition")
                         .WithMany("Reservations")
-                        .HasForeignKey("AppUserID")
+                        .HasForeignKey("BookEditionID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Edition", "Edition")
-                        .WithMany("Reservations")
-                        .HasForeignKey("EditionID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Hybriotheca.Web.Repositories.Entities.Library", "Library")
+                    b.HasOne("Hybriotheca.Web.Data.Entities.Library", "Library")
                         .WithMany("Reservations")
                         .HasForeignKey("LibraryID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Edition");
+                    b.HasOne("Hybriotheca.Web.Data.Entities.AppUser", "User")
+                        .WithMany("Reservations")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BookEdition");
 
                     b.Navigation("Library");
 
@@ -770,12 +754,12 @@ namespace Hybriotheca.Web.Migrations
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Category", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Book", b =>
                 {
                     b.Navigation("Editions");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Edition", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.BookEdition", b =>
                 {
                     b.Navigation("BooksInStock");
 
@@ -786,7 +770,12 @@ namespace Hybriotheca.Web.Migrations
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Library", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Category", b =>
+                {
+                    b.Navigation("BookEditions");
+                });
+
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Library", b =>
                 {
                     b.Navigation("BooksInStock");
 
@@ -795,24 +784,19 @@ namespace Hybriotheca.Web.Migrations
                     b.Navigation("Reservations");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Loan", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Loan", b =>
                 {
                     b.Navigation("Fine");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Reservation", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Reservation", b =>
                 {
                     b.Navigation("Loan");
                 });
 
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Subscription", b =>
+            modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Subscription", b =>
                 {
-                    b.Navigation("AppUsers");
-                });
-
-            modelBuilder.Entity("Hybriotheca.Web.Repositories.Entities.Work", b =>
-                {
-                    b.Navigation("Editions");
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

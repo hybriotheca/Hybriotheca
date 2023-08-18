@@ -6,13 +6,13 @@ namespace Hybriotheca.Web.Data;
 
 public class DataContext : IdentityDbContext<AppUser>
 {
-    public DbSet<Edition> Editions { get; set; }
+    public DbSet<Book> Books { get; set; }
+
+    public DbSet<BookEdition> BookEditions { get; set; }
 
     public DbSet<BookStock> BooksInStock { get; set; }
 
     public DbSet<Category> Categories { get; set; }
-
-    public DbSet<Work> Work { get; set; }
 
     public DbSet<Fine> Fines { get; set; }
 

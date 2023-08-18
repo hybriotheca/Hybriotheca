@@ -22,4 +22,5 @@ public class Library : IEntity
     public IEnumerable<Loan>? Loans { get; set; }
 
     public IEnumerable<Reservation>? Reservations { get; set; }
+
 }
