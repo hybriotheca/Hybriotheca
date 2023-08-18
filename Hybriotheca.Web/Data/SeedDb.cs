@@ -33,6 +33,7 @@ namespace Hybriotheca.Web.Data
             await SeedRoles();
             await SeedUsers();
 
+            await SeedBooksAsync();
             await SeedCategories();
             await SeedLibrariesAsync();
             await SeedSubscriptions();
@@ -40,6 +41,23 @@ namespace Hybriotheca.Web.Data
             await _context.SaveChangesAsync();
         }
 
+
+        private async Task SeedBooksAsync()
+        {
+            string[] books = _configuration["SeedDb:Books:Names"].Split(',');
+
+            foreach (string book in books)
+            {
+                if (!await _context.Books.AnyAsync(b => b.OriginalTitle == book))
+                {
+                    await _context.Books.AddAsync(new Book
+                    {
+                        OriginalTitle = book,
+                        Author = _configuration[$"SeedDb:Books:{book}:Author"],
+                    });
+                }
+            }
+        }
 
         private async Task SeedCategories()
         {
