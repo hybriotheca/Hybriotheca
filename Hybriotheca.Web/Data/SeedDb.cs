@@ -1,5 +1,6 @@
 ﻿using Hybriotheca.Web.Data.Entities;
 ﻿using Hybriotheca.Web.Helpers.Interfaces;
+using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,17 +13,20 @@ namespace Hybriotheca.Web.Data
         private readonly IConfiguration _configuration;
         private readonly IUserHelper _userHelper;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ISubscriptionRepository _subscriptionRepository;
 
         public SeedDb(
             DataContext context,
             IConfiguration configuration,
             IUserHelper userHelper,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            ISubscriptionRepository subscriptionRepository)
         {
             _context = context;
             _configuration = configuration;
             _userHelper = userHelper;
             _roleManager = roleManager;
+            _subscriptionRepository = subscriptionRepository;
         }
 
 
@@ -31,12 +35,17 @@ namespace Hybriotheca.Web.Data
             await _context.Database.MigrateAsync();
 
             await SeedRoles();
+            await SeedSubscriptions();
+
+            await _context.SaveChangesAsync();
+
+
             await SeedUsers();
 
             await SeedBooksAsync();
             await SeedCategories();
             await SeedLibrariesAsync();
-            await SeedSubscriptions();
+            
 
             await _context.SaveChangesAsync();
         }
@@ -138,11 +147,19 @@ namespace Hybriotheca.Web.Data
                 var user = await _userHelper.GetUserByEmailAsync(email);
                 if (user == null)
                 {
+
+                    string[] subscriptionsNames = _configuration["SeedDb:Subscriptions:Names"].Split(',');
+
+                    var subscription = await _subscriptionRepository.GetByNameAsync(subscriptionsNames[1]);
+
                     user = new AppUser
                     {
+                        FirstName = "Admin",
+                        LastName = name,
                         UserName = email,
                         Email = email,
                         EmailConfirmed = true,
+                        SubscriptionID = subscription.ID,
                     };
 
                     var password = _configuration[$"SeedDb:Users:{name}:Password"];

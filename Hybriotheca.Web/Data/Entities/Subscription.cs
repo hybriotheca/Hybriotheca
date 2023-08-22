@@ -12,7 +12,6 @@ public class Subscription : IEntity
     [Required]
     public string Details { get; set; }
 
-
     public IEnumerable<AppUser>? Users { get; set; }
 
 }

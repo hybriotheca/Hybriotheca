@@ -1,6 +1,7 @@
 ﻿using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models.Account;
+using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +11,19 @@ namespace Hybriotheca.Web.Controllers
     {
         private readonly IMailHelper _mailHelper;
         private readonly IUserHelper _userHelper;
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IMailHelper mailHelper, IUserHelper userHelper)
+        public AccountController(
+            IMailHelper mailHelper, 
+            IUserHelper userHelper, 
+            ISubscriptionRepository subscriptionRepository,
+            IConfiguration configuration)
         {
             _mailHelper = mailHelper;
             _userHelper = userHelper;
+            _subscriptionRepository = subscriptionRepository;
+            _configuration = configuration;
         }
 
 
@@ -207,10 +216,17 @@ namespace Hybriotheca.Web.Controllers
                     return View(model);
                 }
 
+                string[] subscriptionsNames = _configuration["SeedDb:Subscriptions:Names"].Split(',');
+
+                var subscription = await _subscriptionRepository.GetByNameAsync(subscriptionsNames[1]);
+
                 user = new AppUser
                 {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
                     Email = model.Email,
                     UserName = model.Email,
+                    SubscriptionID = subscription.ID,
                 };
 
                 var registerUser = await _userHelper.AddUserAsync(user, model.Password);

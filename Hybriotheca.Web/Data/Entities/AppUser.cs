@@ -10,9 +10,9 @@ public class AppUser : IdentityUser
 
     public string FullName => $"{FirstName} {LastName}";
 
-    public int? SubscriptionID { get; set; }
+    public int SubscriptionID { get; set; }
 
-    public Subscription? Subscription { get; set; }
+    public Subscription Subscription { get; set; }
 
 
     public IEnumerable<Rating>? Ratings { get; set; }

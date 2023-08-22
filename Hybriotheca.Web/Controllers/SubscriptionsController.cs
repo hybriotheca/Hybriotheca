@@ -108,11 +108,17 @@ namespace Hybriotheca.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var subscription = await _subscriptionRepository.GetByIdAsync(id.Value);
+            var subscription = await _subscriptionRepository.GetByIdWithUsers(id.Value);
+
             if (subscription == null) return NotFound();
 
-            // Success.
-            return View(subscription);
+            if (subscription.Users == null || !subscription.Users.Any())
+            {
+                // Success.
+                return PartialView("_modalCanDelete");
+            }
+
+            return PartialView("_modalCantDelete");
         }
 
         // POST: Subscriptions/Delete/5
