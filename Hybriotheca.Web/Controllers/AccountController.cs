@@ -136,6 +136,8 @@ namespace Hybriotheca.Web.Controllers
             {
                 var model = new UpdateUserViewModel
                 {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
                     PhoneNumber = user.PhoneNumber,
                 };
 
@@ -314,13 +316,16 @@ namespace Hybriotheca.Web.Controllers
                 if (user != null)
                 {
                     // Update user.
+
+                    user.FirstName = model.FirstName;
+                    user.LastName = model.LastName;
                     user.PhoneNumber = model.PhoneNumber;
 
                     var updateUser = await _userHelper.UpdateUserAsync(user);
                     if (updateUser.Succeeded)
                     {
-                        ViewBag.UserMessage = "The account details were updated.";
-                        return View(nameof(Index));
+                        TempData["Message"]= "The account details were updated.";
+                        return RedirectToAction(nameof(Index));
                     }
                 }
             }
