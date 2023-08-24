@@ -49,6 +49,7 @@ namespace Hybriotheca.Web
             builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
             builder.Services.AddScoped<IBlobHelper, BlobHelper>();
+            builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
             builder.Services.AddScoped<IMailHelper, MailHelper>();
             builder.Services.AddScoped<IUserHelper, UserHelper>();
 

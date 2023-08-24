@@ -1,0 +1,17 @@
+﻿@model Hybriotheca.Web.Data.Entities.BookEdition
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <h4>Book Edition</h4>
+    <hr />
+    <partial name="_Display" />
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

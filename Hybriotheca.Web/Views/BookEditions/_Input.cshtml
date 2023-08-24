@@ -1,0 +1,101 @@
+﻿@model Hybriotheca.Web.Models.Entities.BookEditionViewModel
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="mb-3">
+                <label asp-for="ISBN" class="form-label"></label>
+                <input asp-for="ISBN" class="form-control" />
+                <span asp-validation-for="ISBN" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="BookID" class="form-label"></label>
+                <select asp-for="BookID" class="form-control" asp-items="ViewBag.Books"></select>
+                <span asp-validation-for="BookID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CategoryID" class="form-label"></label>
+                <select asp-for="CategoryID" class="form-control" asp-items="ViewBag.Categories"></select>
+                <span asp-validation-for="CategoryID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Publisher" class="form-label"></label>
+                <input asp-for="Publisher" class="form-control" />
+                <span asp-validation-for="Publisher" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PublishDate" class="form-label"></label>
+                <input asp-for="PublishDate" class="form-control" />
+                <span asp-validation-for="PublishDate" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Language" class="form-label"></label>
+                <input asp-for="Language" class="form-control" />
+                <span asp-validation-for="Language" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="TranslationAuthor" class="form-label"></label>
+                <input asp-for="TranslationAuthor" class="form-control" />
+                <span asp-validation-for="TranslationAuthor" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Awards" class="form-label"></label>
+                <input asp-for="Awards" class="form-control" />
+                <span asp-validation-for="Awards" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="BookFormat" class="form-label"></label>
+                <input asp-for="BookFormat" class="form-control" />
+                <span asp-validation-for="BookFormat" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="NrPages" class="form-label"></label>
+                <input asp-for="NrPages" class="form-control" />
+                <span asp-validation-for="NrPages" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EbookID" class="form-label"></label>
+                <input asp-for="EbookID" class="form-control" />
+                <span asp-validation-for="EbookID" class="text-danger"></span>
+            </div>
+            <div class="mb-3 form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsAvailableOnline" /> @Html.DisplayNameFor(model => model.IsAvailableOnline)
+                </label>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CoverImageFile" class="form-label"></label>
+                <input type="file" asp-for="CoverImageFile" class="form-control" onchange="showPreview(event)" />
+                
+                <img src="@Model.CoverImageFullPath" alt="Image preview" id="CoverImage" style="max-width: 128px; max-height: 128px; margin: 16px 8px 0;" />
+                <script>
+                    const showPreview = event => {
+                        document.getElementById('CoverImage').src = URL.createObjectURL(event.target.files[0]);
+                    }
+                </script>
+
+                <span asp-validation-for="CoverImageFile" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Synopsis" class="form-label"></label>
+                <input asp-for="Synopsis" class="form-control" />
+                <span asp-validation-for="Synopsis" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

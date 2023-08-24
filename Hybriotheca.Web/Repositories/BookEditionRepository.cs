@@ -12,4 +12,12 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
     {
         _dataContext = dataContext;
     }
+
+
+    public async Task UpdateKeepCoverImageAsync(BookEdition bookEdition)
+    {
+        _dataContext.Set<BookEdition>().Update(bookEdition);
+        _dataContext.Entry(bookEdition).Property(b => b.CoverImageID).IsModified = false;
+        await _dataContext.SaveChangesAsync();
+    }
 }

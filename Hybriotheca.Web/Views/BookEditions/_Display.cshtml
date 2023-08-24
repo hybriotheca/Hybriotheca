@@ -1,0 +1,100 @@
+﻿@model Hybriotheca.Web.Data.Entities.BookEdition
+
+<dl class="row">
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.ISBN)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.ISBN)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Book.OriginalTitle)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Book.OriginalTitle)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Book.Author)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Book.Author)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Category.Name)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Category.Name)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.EditionTitle)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.EditionTitle)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Publisher)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Publisher)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.PublishDate)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.PublishDate)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Language)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Language)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.TranslationAuthor)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.TranslationAuthor)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Awards)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Awards)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.BookFormat)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.BookFormat)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.EbookID)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.EbookID)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.NrPages)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.NrPages)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.IsAvailableOnline)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.IsAvailableOnline)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.CoverImageFullPath)
+    </dt>
+    <dd class="col-sm-6">
+        <img src="@Model.CoverImageFullPath" style="max-width: 128px; max-height: 128px;" />
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Synopsis)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Synopsis)
+    </dd>
+</dl>

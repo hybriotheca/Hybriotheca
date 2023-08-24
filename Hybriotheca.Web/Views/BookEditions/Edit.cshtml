@@ -1,0 +1,15 @@
+﻿@model Hybriotheca.Web.Models.Entities.BookEditionViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Book Edition</h4>
+<hr />
+<partial name="_Input" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
