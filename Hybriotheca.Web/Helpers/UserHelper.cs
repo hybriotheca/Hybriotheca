@@ -1,20 +1,33 @@
-﻿using Hybriotheca.Web.Data.Entities;
+﻿using System.Data;
+using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Helpers
 {
     public class UserHelper : IUserHelper
     {
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
 
-        public UserHelper(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public UserHelper(
+            RoleManager<IdentityRole> roleManager,
+            SignInManager<AppUser> signInManager,
+            UserManager<AppUser> userManager)
         {
+            _roleManager = roleManager;
             _signInManager = signInManager;
             _userManager = userManager;
         }
 
+
+        public async Task<IdentityResult> AddUserAsync(AppUser user)
+        {
+            return await _userManager.CreateAsync(user);
+        }
 
         public async Task<IdentityResult> AddUserAsync(AppUser user, string password)
         {
@@ -44,6 +57,11 @@ namespace Hybriotheca.Web.Helpers
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
+        public async Task DeleteUserAsync(AppUser user)
+        {
+            await _userManager.DeleteAsync(user);
+        }
+
         public async Task<string> GenerateEmailConfirmationTokenAsync(AppUser user)
         {
             return await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -54,6 +72,20 @@ namespace Hybriotheca.Web.Helpers
             return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
+        public async Task<IEnumerable<AppUser>> GetAllUsersAsync()
+        {
+            return await _userManager.Users.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetComboRolesAsync()
+        {
+            return await _roleManager.Roles.Select(r => new SelectListItem
+            {
+                Text = r.Name,
+                Value = r.Name,
+            }).ToListAsync();
+        }
+
         public async Task<AppUser?> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
@@ -62,6 +94,16 @@ namespace Hybriotheca.Web.Helpers
         public async Task<AppUser?> GetUserByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task<string> GetUserRoleAsync(AppUser user)
+        {
+            return (await _userManager.GetRolesAsync(user))[0];
+        }
+
+        public async Task<IEnumerable<AppUser>> GetUsersInRoleAsync(string roleName)
+        {
+            return await _userManager.GetUsersInRoleAsync(roleName);
         }
 
         public async Task<bool> IsUserInRoleAsync(AppUser user, string role)
@@ -84,14 +126,22 @@ namespace Hybriotheca.Web.Helpers
             return await _userManager.ResetPasswordAsync(user, token, password);
         }
 
-        public async Task RollbackRegisteredUserAsync(AppUser user)
+        public async Task SetUserRoleAsync(AppUser user, string newRole)
         {
-            await _userManager.DeleteAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, userRoles);
+
+            await _userManager.AddToRoleAsync(user, newRole);
         }
 
         public async Task<IdentityResult> UpdateUserAsync(AppUser user)
         {
             return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<bool> UserExistsAsync(string id)
+        {
+            return await _userManager.Users.AsNoTracking().AnyAsync(user => user.Id == id);
         }
     }
 }

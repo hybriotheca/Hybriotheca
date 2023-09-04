@@ -71,8 +71,6 @@ namespace Hybriotheca.Web.Controllers
             var confirmEmail = await _userHelper.ConfirmEmailAsync(user, token);
             if (confirmEmail.Succeeded)
             {
-                await _userHelper.AddUserToRoleAsync(user, "Standard");
-
                 return View("EmailConfirmed");
             }
 
@@ -234,6 +232,8 @@ namespace Hybriotheca.Web.Controllers
                 var registerUser = await _userHelper.AddUserAsync(user, model.Password);
                 if (registerUser.Succeeded)
                 {
+                    await _userHelper.AddUserToRoleAsync(user, "Customer");
+
                     string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
 
                     string? tokenUrl = Url.Action(
@@ -262,7 +262,7 @@ namespace Hybriotheca.Web.Controllers
                     }
 
                     // If it gets here, rollback user creation.
-                    await _userHelper.RollbackRegisteredUserAsync(user);
+                    await _userHelper.DeleteUserAsync(user);
                 }
             }
 

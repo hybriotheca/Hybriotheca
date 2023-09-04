@@ -1,6 +1,7 @@
 ﻿using Hybriotheca.Web.Data;
 using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Repositories;
@@ -14,6 +15,7 @@ public class SubscriptionRepository : GenericRepository<Subscription>, ISubscrip
         _dataContext = dataContext;
     }
 
+
     public async Task<Subscription> GetByNameAsync(string name)
     {
         return await _dataContext.Subscriptions.AsNoTracking().FirstAsync(x => x.Name == name);
@@ -25,4 +27,20 @@ public class SubscriptionRepository : GenericRepository<Subscription>, ISubscrip
         return await _dataContext.Subscriptions.Where(s => s.ID == id).Include(x => x.Users).FirstOrDefaultAsync();
     }
 
+    public async Task<IEnumerable<SelectListItem>> GetComboSubscriptions()
+    {
+        return await _dataContext.Subscriptions.Select(s => new SelectListItem
+        {
+            Text = s.Name,
+            Value = s.ID.ToString(),
+        }).ToListAsync();
+    }
+
+    public async Task<string?> GetSubscriptionNameAsync(int subscriptionId)
+    {
+        return await _dataContext.Subscriptions
+            .Where(s => s.ID == subscriptionId)
+            .Select(s => s.Name)
+            .FirstOrDefaultAsync();
+    }
 }

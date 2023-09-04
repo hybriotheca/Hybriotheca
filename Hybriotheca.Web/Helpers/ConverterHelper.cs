@@ -29,6 +29,21 @@ namespace Hybriotheca.Web.Helpers
             };
         }
 
+        public UserViewModel UserToViewModel(AppUser user)
+        {
+            return new UserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                EmailConfirmed = user.EmailConfirmed,
+                PhoneNumber = user.PhoneNumber,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                SubscriptionID = user.SubscriptionID,
+            };
+        }
+
+
         public BookEdition ViewModelToBookEdition(BookEditionViewModel model)
         {
             return new BookEdition
@@ -50,6 +65,35 @@ namespace Hybriotheca.Web.Helpers
                 EbookID = model.EbookID,
                 IsAvailableOnline = model.IsAvailableOnline,
             };
+        }
+
+        public AppUser ViewModelToUser(UserViewModel model)
+        {
+            return new AppUser
+            {
+                Id = model.Id ?? Guid.NewGuid().ToString(),
+                UserName = model.Email,
+                Email = model.Email,
+                EmailConfirmed = model.EmailConfirmed,
+                PhoneNumber = model.PhoneNumber,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                SubscriptionID = model.SubscriptionID,
+            };
+        }
+
+        public AppUser ViewModelToUser(UserViewModel model, AppUser user)
+        {
+            user.Id = model.Id;
+            user.UserName = model.Email;
+            user.Email = model.Email;
+            user.EmailConfirmed = model.EmailConfirmed;
+            user.PhoneNumber = model.PhoneNumber;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.SubscriptionID = model.SubscriptionID;
+
+            return user;
         }
     }
 }

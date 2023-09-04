@@ -6,6 +6,9 @@ namespace Hybriotheca.Web.Helpers.Interfaces
     public interface IConverterHelper
     {
         BookEditionViewModel BookEditionToViewModel(BookEdition bookEdition);
+        UserViewModel UserToViewModel(AppUser user);
         BookEdition ViewModelToBookEdition(BookEditionViewModel model);
+        AppUser ViewModelToUser(UserViewModel model);
+        AppUser ViewModelToUser(UserViewModel model, AppUser user);
     }
 }
