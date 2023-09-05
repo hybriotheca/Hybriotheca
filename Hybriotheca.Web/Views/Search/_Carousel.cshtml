@@ -1,0 +1,25 @@
+﻿@model List<Hybriotheca.Web.Data.Entities.BookEdition>
+
+@foreach (var edition in Model)
+{
+    if (Model.IndexOf(edition) == Model.Count() - 1)
+    {
+        <div class="mx-3 card" hx-get hx-action="CarouselScroll" hx-route-category="@edition.Category.Name" hx-route-id="@Model.Last().ID" hx-trigger="intersect once" hx-swap="innerHTML" hx-target="#temp">
+            <img src=@edition.CoverImageFullPath class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">@edition.EditionTitle</h5>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="mx-3 card">
+            <img src=@edition.CoverImageFullPath class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">@edition.EditionTitle</h5>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    }
+}

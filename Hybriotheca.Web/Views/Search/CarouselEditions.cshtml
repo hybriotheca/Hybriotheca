@@ -1,0 +1,157 @@
+﻿@model Hybriotheca.Web.Models.Search.CarouselEditions;
+
+
+
+
+<div class="text-center mb-5">
+    <h1>Editions Carousel</h1>
+</div>
+
+<div id="temp" hidden>
+</div>
+
+<div class="mb-3">
+    <h3 class="mb-3">Adventure</h3>
+
+    <div class="adventure text-center">
+
+        @await Html.PartialAsync("_Carousel", Model.Adventure)
+        
+    </div>
+</div>
+
+<div class="mb-3">
+
+    <h3 class="mb-3">Fantasy</h3>
+
+    <div class="fantasy text-center">
+
+        @await Html.PartialAsync("_Carousel", Model.Fantasy)
+
+    </div>
+</div>
+
+<div class="mb-3">
+    <h3 class="mb-3">Romance</h3>
+
+    <div class="romance text-center">
+
+        @await Html.PartialAsync("_Carousel", Model.Romance)
+
+    </div>
+</div>
+
+<div class="mb-3">
+    <h3 class="mb-3">Science</h3>
+
+    <div class="science text-center">
+        
+        @await Html.PartialAsync("_Carousel", Model.Science)
+
+    </div>
+</div>
+
+<div class="mb-3">
+    <h3 class="mb-3">Sci-fi</h3>
+
+    <div class="sci-fi text-center">
+
+        @await Html.PartialAsync("_Carousel", Model.Scifi)
+
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            LoadCarousel();
+        });
+
+        htmx.on('htmx:afterSettle', function (evt) {
+
+            const tempContainer = document.getElementById("temp");
+            let elements = tempContainer.querySelectorAll(".card");
+
+            let elt = evt.target.lastElementChild;
+
+            let atb = elt.getAttribute("hx-get").toLowerCase();
+
+            elements.forEach(element => {
+
+                switch (true) {
+
+                    case atb.includes("adventure"):
+                        $('.adventure').slick('slickAdd', element);
+                        break;
+                    case atb.includes("fantasy"):
+                        $('.fantasy').slick('slickAdd', element);
+                        break;
+                    case atb.includes("romance"):
+                        $('.romance').slick('slickAdd', element);
+                        break;
+                    case atb.includes("science"):
+                        $('.science').slick('slickAdd', element);
+                        break;
+                    case atb.includes("sci-fi"):
+                        $('.sci-fi').slick('slickAdd', element);
+                        break;
+                }
+
+            });
+
+        });
+
+        function LoadCarousel() {
+
+            $('.adventure').slick({
+                infinite: false,
+                dots: true,
+                slidesToShow: 2,
+                slidesToScroll: 2
+            });
+
+            $('.fantasy').slick({
+                infinite: false,
+                dots: true,
+                slidesToShow: 2,
+                slidesToScroll: 2
+            });
+
+            $('.romance').slick({
+                infinite: false,
+                dots: true,
+                slidesToShow: 2,
+                slidesToScroll: 2
+            });
+
+            $('.science').slick({
+                infinite: false,
+                dots: true,
+                slidesToShow: 2,
+                slidesToScroll: 2
+            });
+
+            $('.sci-fi').slick({
+                infinite: false,
+                dots: true,
+                slidesToShow: 2,
+                slidesToScroll: 2
+            });
+
+        }
+
+
+    </script>
+
+}
+
+<style>
+    .slick-prev:before,
+    .slick-next:before {
+        color: black !important;
+    }
+
+</style>
