@@ -6,11 +6,13 @@ namespace Hybriotheca.Web.Helpers
     public class BlobHelper : IBlobHelper
     {
         readonly BlobServiceClient _blobClient;
+		private readonly IConfiguration _configuration;
 
-        public BlobHelper(IConfiguration configuration)
+		public BlobHelper(IConfiguration configuration)
         {
             _blobClient = new BlobServiceClient(configuration["ConnectionStrings:Blob"]);
-        }
+			_configuration = configuration;
+		}
 
 
         public async Task DeleteBlobAsync(string blobName, string containerName)
@@ -55,6 +57,8 @@ namespace Hybriotheca.Web.Helpers
             var container = await GetContainerAsync(containerName);
 
             await container.UploadBlobAsync(guid.ToString(), stream);
+
+            stream.Close();
 
             return guid;
         }
