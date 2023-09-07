@@ -25,6 +25,15 @@ namespace Hybriotheca.Web.Models.Entities
         public string FullName => $"{FirstName} {LastName}";
 
 
+        public IFormFile? PhotoFile { get; set; }
+
+        public bool HasPhoto { get; set; }
+
+        public string? PhotoFullPath { get; set; }
+
+        public bool DeletePhoto { get; set; }
+
+
         public int SubscriptionID { get; set; }
 
         public string? SubscriptionName { get; set; }

@@ -13,5 +13,15 @@ namespace Hybriotheca.Web.Models.Account
 
         [Display(Name = "Phone number")]
         public string? PhoneNumber { get; set; }
+
+
+        [Display(Name = "Upload photo")]
+        public IFormFile? PhotoFile { get; set; }
+
+        public bool HasPhoto { get; set; }
+
+        public string? PhotoFullPath { get; set; }
+
+        public bool DeletePhoto { get; set; }
     }
 }
