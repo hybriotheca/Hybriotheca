@@ -112,7 +112,7 @@ namespace Hybriotheca.Web.Controllers
             if (category == null) return NotFound();
 
             // Success.
-            return View(category);
+            return PartialView("_ModalDelete", category);
         }
 
         // POST: Categories/Delete/5

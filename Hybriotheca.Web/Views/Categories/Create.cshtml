@@ -2,30 +2,42 @@
 
 @{
     ViewData["Title"] = "Create";
+    Layout = "_LayoutAdminPanel";
 }
 
-<h1>Create</h1>
+<div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <h1 class="mb-4 text-xl font-semibold dark:text-white">
+        New Category
+    </h1>
+
+    <form asp-action="Create">
+        <div class="space-y-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            @* <!-- CATEGORY --> *@
+            <div class="mb-3">
+                <label asp-for="Name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+                <input asp-for="Name" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type category name" required="" />
+                <span asp-validation-for="Name" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
+            </div>
+
+            @* <!-- BUTTONS --> *@
+            <div class="bottom-0 left-0 flex justify-center w-full pb-4 space-x-4 md:px-4">
+
+                <button type="submit" class="text-white w-full justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                    Add Category
+                </button>
+
+                <a asp-action="Index" class="inline-flex w-full justify-center text-gray-500 items-center bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                    <svg aria-hidden="true" class="w-5 h-5 -ml-1 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    Cancel
+                </a>
+
+            </div>
+
+        </div>
+    </form>
 </div>
 
 @section Scripts {

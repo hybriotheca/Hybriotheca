@@ -1,4 +1,5 @@
 ﻿using Hybriotheca.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -14,6 +15,12 @@ namespace Hybriotheca.Web.Controllers
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminPanel()
         {
             return View();
         }

@@ -10,6 +10,20 @@ public class AppUser : IdentityUser
 
     public string FullName => $"{FirstName} {LastName}";
 
+    public string NameAbbr
+    {
+        get
+        {
+            var firstLetters = FullName.Split(' ')
+                .Where(word => !string.IsNullOrEmpty(word))
+                .ToArray();
+
+            string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[firstLetters.Length - 1][0]);
+
+            return nameAbbr;
+        }
+    }
+
     public int SubscriptionID { get; set; }
 
     public Subscription Subscription { get; set; }
@@ -20,5 +34,12 @@ public class AppUser : IdentityUser
     public IEnumerable<Loan>? Loans { get; set; }
 
     public IEnumerable<Reservation>? Reservations { get; set; }
+
+
+    public Guid ProfilePictureId { get; set; }
+
+    public string ProfilePictureFullPath => ProfilePictureId == Guid.Empty ?
+        "https://hybriotheca.blob.core.windows.net/userphotos/nophoto" :
+        "https://hybriotheca.blob.core.windows.net/userphotos/" + ProfilePictureId;
 
 }

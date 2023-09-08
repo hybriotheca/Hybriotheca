@@ -189,7 +189,7 @@ namespace Hybriotheca.Web.Controllers
             if (bookEdition == null) return NotFound();
 
             // Success.
-            return View(bookEdition);
+            return PartialView("_ModalDelete", bookEdition);
         }
 
         // POST: BookEditions/Delete/5

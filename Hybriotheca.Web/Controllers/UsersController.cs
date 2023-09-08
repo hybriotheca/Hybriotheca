@@ -257,7 +257,7 @@ namespace Hybriotheca.Web.Controllers
                 ?? "not found";
 
             // Success.
-            return View(model);
+            return PartialView("_ModalDelete", model);
         }
 
         // POST: Users/Delete/5

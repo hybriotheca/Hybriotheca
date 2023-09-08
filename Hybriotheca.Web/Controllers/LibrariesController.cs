@@ -112,7 +112,7 @@ namespace Hybriotheca.Web.Controllers
             if (library == null) return NotFound();
 
             // Success.
-            return View(library);
+            return PartialView("_ModalDelete", library);
         }
 
         // POST: Libraries/Delete/5

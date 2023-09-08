@@ -40,6 +40,7 @@ namespace Hybriotheca.Web.Helpers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 SubscriptionID = user.SubscriptionID,
+                ProfilePictureId = user.ProfilePictureId
             };
         }
 

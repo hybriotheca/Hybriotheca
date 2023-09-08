@@ -1,54 +1,106 @@
 ﻿@model Hybriotheca.Web.Models.Account.LoginViewModel
 @{
-    ViewData["Title"] = "Login";
+    Layout = null;
 }
 
-<h2>@ViewData["Title"]</h2>
 
-<div class="row">
-    <div class="col-md-4 offset-md-4">
-        <form method="POST">
-            
-            <div asp-validation-summary="ModelOnly"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hybriotheca - Login</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Hybriotheca.Web.styles.css" asp-append-version="true" />
+    <!-- TAILWIND CSS -->
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
 
-            <p class="text-success">@TempData["Message"]</p>
+</head>
+<body class="bg-white dark:bg-gray-800">
 
-            <!-- Email -->
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+    <section class="bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
 
-            <!-- Password -->
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+            <!-- LOGO -->
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                <img class="w-8 h-8 mr-2" src="~/images/logo.svg" alt="Hybriotheca logo">
+                Hybriotheca
+            </a>
 
-            <div class="mb-3">
-                
-                <!-- Remember Me? -->
-                <div class="form-check">
-                    <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
-                    <label asp-for="RememberMe" class="form-check-label"></label>
+            <!-- CARD -->
+            <div class="w-full bg-white rounded-lg shadow-lg dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                        Sign in to your account
+                    </h1>
+
+                    <form method="POST" class="space-y-4 md:space-y-6">
+
+                        <!-- VALIDATION -->
+                        <div asp-validation-summary="ModelOnly" class="flex items-center p-4 mb-4 font-medium text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                            <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                            </svg>
+                            <span class="sr-only">Info</span>
+                            <div>
+                                <span class="font-medium"></span>
+                            </div>
+                        </div>
+
+                        <!-- EMAIL -->
+                        <div>
+                            <label asp-for="Email" for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                            <input asp-for="Email" type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <!-- PASSWORD -->
+                        <div>
+                            <label asp-for="Password" for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+                            <input asp-for="Password" type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+
+                            <!-- REMEMBER ME -->
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input asp-for="RememberMe" id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-sky-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-sky-600 dark:ring-offset-gray-800" />
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <label asp-for="RememberMe" for="remember" class="text-gray-500 dark:text-gray-300">Remember me</label>
+                                </div>
+                            </div>
+
+                            <!-- FORGOT PASSWORD -->
+                            <a asp-action="ForgotPassword" class="text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">Forgot password?</a>
+                        </div>
+
+                        <!-- LOGIN BUTTON -->
+                        <button type="submit" class="w-full text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">Sign in</button>
+
+                        <!-- REGISTER LINK -->
+                        <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                            Don’t have an account yet? <a asp-action="Register" asp-route-ReturnUrl="@Context.Request.Query["ReturnUrl"]" class="font-medium text-sky-600 hover:underline dark:text-sky-500">Sign up</a>
+                        </p>
+                    </form>
+
+
                 </div>
-                
-                <!-- Forgot password? -->
-                <a asp-action="ForgotPassword" class="">Forgot password?</a>
-
             </div>
+        </div>
+    </section>
 
-            <!-- Submit __ Sign up -->
-            <div class="mb-3">
-                <input type="submit" value="Login" class="btn btn-primary" />
-                <a asp-action="Register" asp-route-ReturnUrl="@Context.Request.Query["ReturnUrl"]" class="btn btn-success">Sign up</a>
-            </div>
+    <!-- JQUERY -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!-- FLOWBITE -->
+    <script src="~/lib/flowbite/dist/flowbite.min.js"></script>
+    <!-- CUSTOM JS -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
-        </form>
-    </div>
-</div>
+</body>
+</html>
 
 @section Scripts{
     @{

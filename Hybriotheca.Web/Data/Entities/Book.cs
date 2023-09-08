@@ -6,6 +6,7 @@ public class Book : IEntity
 {
     public int ID { get; set; }
 
+    [Display(Name ="Original Title")]
     [Required]
     public string OriginalTitle { get; set; }
 
