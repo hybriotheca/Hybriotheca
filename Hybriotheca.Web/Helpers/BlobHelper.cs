@@ -15,6 +15,13 @@ namespace Hybriotheca.Web.Helpers
 		}
 
 
+        public async Task DeleteBlobAsync(string blobName, string containerName)
+        {
+            var container = await GetContainerAsync(containerName);
+
+            await container.DeleteBlobAsync(blobName);
+        }
+
         public async Task<Guid> UploadBlobAsync(IFormFile file, string containerName)
         {
             Stream stream = file.OpenReadStream();
@@ -34,13 +41,20 @@ namespace Hybriotheca.Web.Helpers
         }
 
 
+        async Task<BlobContainerClient> GetContainerAsync(string containerName)
+        {
+            var container = _blobClient.GetBlobContainerClient(containerName);
+
+            await container.CreateIfNotExistsAsync();
+
+            return container;
+        }
+
         async Task<Guid> UploadStreamAsync(Stream stream, string containerName)
         {
             var guid = Guid.NewGuid();
 
-            var container = _blobClient.GetBlobContainerClient(containerName);
-
-            await container.CreateIfNotExistsAsync();
+            var container = await GetContainerAsync(containerName);
 
             await container.UploadBlobAsync(guid.ToString(), stream);
 

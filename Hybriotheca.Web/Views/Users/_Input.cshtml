@@ -44,4 +44,52 @@
         <span asp-validation-for="SubscriptionID" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
     </div>
 
+    @* <!-- PROFILE PICTURE -->
+    <div class="mb-3">
+        <label asp-for="PhotoFile" class="form-label"></label>
+        <a href="#PhotoFile" onclick="resetPhoto()" id="resetPhoto" style="display: none;">(Reset photo)</a>
+        @if (Model?.HasPhoto ?? false)
+        {
+            <a href="#PhotoFile" onclick="deletePhoto()" id="deletePhoto" style="color: red;">(delete)</a>
+            <input type="hidden" asp-for="DeletePhoto" />
+        }
+
+        <input type="file" asp-for="PhotoFile" class="form-control" onchange="uploadPhoto(event)" />
+
+        <img src="@Model?.PhotoFullPath" alt="Image preview" id="Photo" style="max-width: 128px; max-height: 128px; margin: 16px 8px 0;" />
+
+        <script>
+            var anchorDeletePhoto = document.getElementById('deletePhoto');
+            var inputDeletePhoto = document.getElementById('DeletePhoto');
+
+            const uploadPhoto = event => {
+                document.getElementById('Photo').src = URL.createObjectURL(event.target.files[0]);
+                if (inputDeletePhoto != null) inputDeletePhoto.value = 'False';
+
+                document.getElementById('resetPhoto').style.display = 'inline';
+                if (anchorDeletePhoto != null) anchorDeletePhoto.style.display = 'inline';
+            }
+
+            const resetPhoto = () => {
+                document.getElementById('PhotoFile').value = null;
+                document.getElementById('Photo').src = '@Model?.PhotoFullPath';
+                if (inputDeletePhoto != null) inputDeletePhoto.value = 'False';
+
+                document.getElementById('resetPhoto').style.display = 'none';
+                if (anchorDeletePhoto != null) anchorDeletePhoto.style.display = 'inline';
+            }
+
+            const deletePhoto = () => {
+                document.getElementById('PhotoFile').value = null;
+                document.getElementById('Photo').src = 'https://hybriotheca.blob.core.windows.net/userphotos/nophoto';
+                if (inputDeletePhoto != null) inputDeletePhoto.value = 'True';
+
+                document.getElementById('resetPhoto').style.display = 'inline';
+                if (anchorDeletePhoto != null) anchorDeletePhoto.style.display = 'none';
+            }
+        </script>
+
+        <span asp-validation-for="PhotoFile" class="text-danger"></span>
+    </div>
+
 </div>

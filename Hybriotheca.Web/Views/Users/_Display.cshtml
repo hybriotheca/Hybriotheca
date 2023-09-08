@@ -43,4 +43,10 @@
     <dd class="col-sm-10">
         @Html.DisplayFor(model => model.SubscriptionName)
     </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.PhotoFullPath)
+    </dt>
+    <dd class="col-sm-10">
+        <img src="@Model.PhotoFullPath" style="max-width: 128px; max-height: 128px;" />
+    </dd>
 </dl>

@@ -9,21 +9,30 @@ namespace Hybriotheca.Web.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IMailHelper _mailHelper;
-        private readonly IUserHelper _userHelper;
-        private readonly ISubscriptionRepository _subscriptionRepository;
+        // App Settings
         private readonly IConfiguration _configuration;
 
+        // Helpers
+        private readonly IBlobHelper _blobHelper;
+        private readonly IMailHelper _mailHelper;
+        private readonly IUserHelper _userHelper;
+
+        // Repository
+        private readonly ISubscriptionRepository _subscriptionRepository;
+
         public AccountController(
-            IMailHelper mailHelper, 
-            IUserHelper userHelper, 
-            ISubscriptionRepository subscriptionRepository,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IBlobHelper blobHelper,
+            IMailHelper mailHelper,
+            IUserHelper userHelper,
+            ISubscriptionRepository subscriptionRepository
+            )
         {
+            _configuration = configuration;
+            _blobHelper = blobHelper;
             _mailHelper = mailHelper;
             _userHelper = userHelper;
             _subscriptionRepository = subscriptionRepository;
-            _configuration = configuration;
         }
 
 
@@ -130,19 +139,18 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userHelper.GetUserByEmailAsync(GetCurrentUserName());
-            if (user != null)
+            if (user == null) return NotFound();
+
+            var model = new UpdateUserViewModel
             {
-                var model = new UpdateUserViewModel
-                {
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    PhoneNumber = user.PhoneNumber,
-                };
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                HasPhoto = user.PhotoId != Guid.Empty,
+                PhotoFullPath = user.PhotoFullPath,
+            };
 
-                return View(model);
-            }
-
-            return View();
+            return View(model);
         }
 
 
@@ -321,17 +329,27 @@ namespace Hybriotheca.Web.Controllers
                     user.LastName = model.LastName;
                     user.PhoneNumber = model.PhoneNumber;
 
+                    if (model.PhotoFile != null)
+                    {
+                        user.PhotoId = await _blobHelper.UploadBlobAsync(model.PhotoFile, "userphotos");
+                    }
+                    else if (model.DeletePhoto)
+                    {
+                        await _blobHelper.DeleteBlobAsync(user.PhotoId.ToString(), "userphotos");
+                        user.PhotoId = Guid.Empty;
+                    }
+
                     var updateUser = await _userHelper.UpdateUserAsync(user);
                     if (updateUser.Succeeded)
                     {
-                        TempData["Message"]= "The account details were updated.";
+                        TempData["Message"] = "The account details were updated.";
                         return RedirectToAction(nameof(Index));
                     }
                 }
             }
 
             ModelState.AddModelError(string.Empty, "Could not update account details.");
-            return View(nameof(Index));
+            return View(nameof(Index), model);
         }
 
 

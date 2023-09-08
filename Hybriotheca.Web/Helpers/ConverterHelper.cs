@@ -39,6 +39,8 @@ namespace Hybriotheca.Web.Helpers
                 PhoneNumber = user.PhoneNumber,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                HasPhoto = user.PhotoId != Guid.Empty,
+                PhotoFullPath = user.PhotoFullPath,
                 SubscriptionID = user.SubscriptionID,
                 ProfilePictureId = user.ProfilePictureId
             };

@@ -11,17 +11,23 @@ namespace Hybriotheca.Web.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
+        // Helpers
+        private readonly IBlobHelper _blobHelper;
         private readonly IConverterHelper _converterHelper;
         private readonly IMailHelper _mailHelper;
         private readonly IUserHelper _userHelper;
+
+        // Repository
         private readonly ISubscriptionRepository _subscriptionRepository;
 
         public UsersController(
+            IBlobHelper blobHelper,
             IConverterHelper converterHelper,
             IMailHelper mailHelper,
             IUserHelper userHelper,
             ISubscriptionRepository subscriptionRepository)
         {
+            _blobHelper = blobHelper;
             _converterHelper = converterHelper;
             _mailHelper = mailHelper;
             _userHelper = userHelper;
@@ -89,6 +95,11 @@ namespace Hybriotheca.Web.Controllers
             if (ModelState.IsValid)
             {
                 var user = _converterHelper.ViewModelToUser(model);
+
+                if (model.PhotoFile != null)
+                {
+                    user.PhotoId = await _blobHelper.UploadBlobAsync(model.PhotoFile, "userphotos");
+                }
 
                 var addUser = await _userHelper.AddUserAsync(user);
                 if (addUser.Succeeded)
@@ -170,6 +181,16 @@ namespace Hybriotheca.Web.Controllers
                     }
 
                     user = _converterHelper.ViewModelToUser(model, user);
+
+                    if (model.PhotoFile != null)
+                    {
+                        user.PhotoId = await _blobHelper.UploadBlobAsync(model.PhotoFile, "userphotos");
+                    }
+                    else if (model.DeletePhoto)
+                    {
+                        await _blobHelper.DeleteBlobAsync(user.PhotoId.ToString(), "userphotos");
+                        user.PhotoId = Guid.Empty;
+                    }
 
                     var updateUser = await _userHelper.UpdateUserAsync(user);
                     if (updateUser.Succeeded)
@@ -269,6 +290,8 @@ namespace Hybriotheca.Web.Controllers
             if (user != null)
             {
                 await _userHelper.DeleteUserAsync(user);
+
+                await _blobHelper.DeleteBlobAsync(user.PhotoId.ToString(), "userphotos");
             }
 
             return RedirectToAction(nameof(Index));

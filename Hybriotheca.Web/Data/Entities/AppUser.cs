@@ -24,6 +24,14 @@ public class AppUser : IdentityUser
         }
     }
 
+
+    public Guid PhotoId { get; set; }
+
+    public string PhotoFullPath => PhotoId == Guid.Empty ?
+        "https://hybriotheca.blob.core.windows.net/userphotos/nophoto" :
+        "https://hybriotheca.blob.core.windows.net/userphotos/" + PhotoId;
+
+
     public int SubscriptionID { get; set; }
 
     public Subscription Subscription { get; set; }
@@ -34,12 +42,5 @@ public class AppUser : IdentityUser
     public IEnumerable<Loan>? Loans { get; set; }
 
     public IEnumerable<Reservation>? Reservations { get; set; }
-
-
-    public Guid ProfilePictureId { get; set; }
-
-    public string ProfilePictureFullPath => ProfilePictureId == Guid.Empty ?
-        "https://hybriotheca.blob.core.windows.net/userphotos/nophoto" :
-        "https://hybriotheca.blob.core.windows.net/userphotos/" + ProfilePictureId;
 
 }
