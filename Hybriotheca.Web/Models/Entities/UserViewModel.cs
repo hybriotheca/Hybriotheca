@@ -6,6 +6,7 @@ namespace Hybriotheca.Web.Models.Entities
     {
         public string? Id { get; set; }
 
+        [Display(Name = "User Role")]
         public string Role { get; set; }
 
 
@@ -35,9 +36,12 @@ namespace Hybriotheca.Web.Models.Entities
                     .Where(word => !string.IsNullOrEmpty(word))
                     .ToArray();
 
-                string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[firstLetters.Length - 1][0]);
-
-                return nameAbbr;
+                if (firstLetters.Length > 0)
+                {
+                    string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[firstLetters.Length - 1][0]);
+                    return nameAbbr;
+                }
+                return string.Empty;
             }
         }
 
@@ -51,15 +55,9 @@ namespace Hybriotheca.Web.Models.Entities
         public bool DeletePhoto { get; set; }
 
 
-        [Display(Name = "Subscription")]
+        [Display(Name = "Subscription Tier")]
         public int SubscriptionID { get; set; }
 
         public string? SubscriptionName { get; set; }
-
-        public Guid ProfilePictureId { get; set; }
-
-        public string ProfilePictureFullPath => ProfilePictureId == Guid.Empty ?
-            "https://hybriotheca.blob.core.windows.net/userphotos/nophoto" :
-            "https://hybriotheca.blob.core.windows.net/userphotos/" + ProfilePictureId;
     }
 }

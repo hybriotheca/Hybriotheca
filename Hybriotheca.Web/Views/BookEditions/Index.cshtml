@@ -87,19 +87,16 @@
                                 @Html.DisplayNameFor(model => model.ISBN)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.CoverImageFullPath)
+                                Book
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.EditionTitle)
+                                @Html.DisplayNameFor(model => model.Publisher)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.BookFormat)
+                                @Html.DisplayNameFor(model => model.PublishDate)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 @Html.DisplayNameFor(model => model.Language)
-                            </th>
-                            <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.NrPages)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 @Html.DisplayNameFor(model => model.IsAvailableOnline)
@@ -126,25 +123,37 @@
                                 <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     @Html.DisplayFor(modelItem => book.ISBN)
                                 </td>
-                                <!-- COVER -->
-                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <img src="@Html.DisplayFor(modelItem => book.CoverImageFullPath)" />
+                                <!-- BOOK -->
+                                <td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
+                                    <!-- COVER IMAGE -->
+                                    <img src="@Html.DisplayFor(modelItem => book.CoverImageFullPath)" alt="@book.EditionTitle Cover" class="w-20 h-auto" />
+
+                                    <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        <!-- BOOK TITLE -->
+                                        <div class="text-base font-semibold text-gray-900 dark:text-white">
+                                            @Html.DisplayFor(modelItem => book.EditionTitle)
+                                        </div>
+                                        <!-- BOOK FORMAT -->
+                                        <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                            @Html.DisplayFor(modelItem => book.BookFormat)
+                                        </div>
+                                        <!-- Nº PAGES -->
+                                        <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                            @Html.DisplayFor(modelItem => book.NrPages) pages
+                                        </div>
+                                    </div>
                                 </td>
-                                <!-- BOOK TITLE -->
+                                <!-- PUBLISHER -->
                                 <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => book.EditionTitle)
+                                    @Html.DisplayFor(modelItem => book.Publisher)
                                 </td>
-                                <!-- FORMAT -->
-                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => book.BookFormat)
+                                <!-- PUBLISH DATE -->
+                                <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
+                                    @book.PublishDate.ToShortDateString()
                                 </td>
                                 <!-- LANGUAGE -->
                                 <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     @Html.DisplayFor(modelItem => book.Language)
-                                </td>
-                                <!-- Nº OF PAGES -->
-                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => book.NrPages) pages
                                 </td>
                                 <!-- IS AVAILABLE -->
                                 <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">

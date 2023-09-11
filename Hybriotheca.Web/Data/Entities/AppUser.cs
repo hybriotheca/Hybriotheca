@@ -28,7 +28,7 @@ public class AppUser : IdentityUser
     public Guid PhotoId { get; set; }
 
     public string PhotoFullPath => PhotoId == Guid.Empty ?
-        "https://hybriotheca.blob.core.windows.net/userphotos/nophoto" :
+        "#" :
         "https://hybriotheca.blob.core.windows.net/userphotos/" + PhotoId;
 
 

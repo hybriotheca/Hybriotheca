@@ -9,6 +9,15 @@
     {
         loggedUser = await _userManager.FindByEmailAsync(this.User.Identity.Name);
     }
+
+    string HasPhoto()
+    {
+        if(loggedUser.PhotoId == Guid.Empty)
+        {
+            return "bg-gradient-to-r from-cyan-500 to-blue-500";
+        }
+        return string.Empty;
+    }
 }
 
 <!DOCTYPE html>
@@ -90,17 +99,22 @@
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
                         <!-- PROFILE PICTURE -->
-                        <button type="button" class="flex justify-center items-center w-8 h-8 mr-3 text-sm bg-sky-600 rounded-full md:mr-0 hover:ring-4 hover:ring-gray-300 dark:hover:ring-gray-600 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                        <button type="button"
+                                id="user-menu-button" 
+                                aria-expanded="false" 
+                                data-dropdown-toggle="user-dropdown" 
+                                data-dropdown-placement="bottom"
+                                class="flex justify-center items-center overflow-hidden w-8 h-8 mr-3 text-sm @HasPhoto() rounded-full md:mr-0 hover:ring-4 hover:ring-gray-300 dark:hover:ring-gray-600 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
                             <span class="sr-only">Open user menu</span>
-                            @if (!(loggedUser.ProfilePictureId == Guid.Empty))
+                            @if (loggedUser.PhotoId != Guid.Empty)
                             {
-                                <img class="w-8 h-8 rounded-full"
-                                     src="@loggedUser.ProfilePictureFullPath"
+                                <img class="w-full h-auto rounded-full"
+                                     src="@loggedUser.PhotoFullPath"
                                      alt="@loggedUser.FullName profile picture" />
                             }
                             else
                             {
-                                <span class="text-sm font-bold text-white ">
+                                <span class="text-sm font-bold text-white select-none">
                                     @loggedUser.NameAbbr
                                 </span>
                             }

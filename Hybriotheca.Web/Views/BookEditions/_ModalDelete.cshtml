@@ -22,28 +22,25 @@
                 </h3>
                 <!-- BOOK INFO -->
                 <div class="mb-7 text-lg font-normal text-gray-500 dark:text-gray-400 relative overflow-x-auto">
-                    <table class="w-full table-fixed text-sm text-center text-gray-500 dark:text-gray-400">
-                        <thead class="uppercase text-gray-400 dark:text-gray-200">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">
-                                    Book
-                                </th>
-                                <th scope="col" class="px-6 py-3">
-                                    
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="py-4 text-lg dark:text-gray-400">
-                                <th scope="row" class="font-medium">
-                                    @Model.EditionTitle
-                                </th>
-                                <td>
-                                    <img src="@Model.CoverImageFullPath" alt="@Model.EditionTitle Cover" class="w-20 h-auto" />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="flex justify-center items-center p-4 space-x-6 whitespace-normal">
+                        <!-- COVER IMAGE -->
+                        <img src="@Model.CoverImageFullPath" alt="@Model.EditionTitle Cover" class="w-20 h-auto" />
+
+                        <div class="text-lg font-normal text-gray-500 dark:text-gray-400">
+                            <!-- BOOK TITLE -->
+                            <div class="text-lg font-semibold dark:text-gray-200 whitespace-normal">
+                                @Model.EditionTitle
+                            </div>
+                            <!-- BOOK FORMAT -->
+                            <div class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                @Model.BookFormat
+                            </div>
+                            <!-- Nº PAGES -->
+                            <div class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                @Model.NrPages pages
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 

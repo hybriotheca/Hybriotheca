@@ -421,25 +421,27 @@
 
                     @* <!-- User --> *@
                     <button type="button"
-                            class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                            class="flex mx-3 text-sm rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                             id="user-menu-button"
                             aria-expanded="false"
                             data-dropdown-toggle="dropdown">
                         <span class="sr-only">Open user menu</span>
-                        <div class="flex justify-center items-center w-8 h-8 rounded-full bg-sky-600">
-                            @if (!(loggedUser.ProfilePictureId == Guid.Empty))
-                            {
-                                <img class="w-8 h-8 rounded-full"
-                                     src="@loggedUser.ProfilePictureFullPath"
+                        @if (loggedUser.PhotoId != Guid.Empty)
+                        {
+                            <div class="flex justify-center items-center overflow-hidden max-w-xs max-h-xs w-8 h-8 rounded-full">
+                                <img class="w-full h-auto rounded-full"
+                                     src="@loggedUser.PhotoFullPath"
                                      alt="@loggedUser.FullName profile picture" />
-                            }
-                            else
-                            {
-                                <span class="font-bold text-white ">
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="flex justify-center items-center overflow-hidden max-w-xs max-h-xs w-8 h-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500">
+                                <span class="font-bold text-white select-none">
                                     @loggedUser.NameAbbr
                                 </span>
-                            }
-                        </div>
+                            </div>
+                        }
                     </button>
                     @* <!-- Dropdown menu --> *@
                     <div class="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl"
@@ -886,6 +888,14 @@
     <script src="~/lib/flowbite/dist/flowbite.min.js"></script>
     @* <!-- CUSTOM JS --> *@
     <script src="~/js/site.js" asp-append-version="true" defer></script>
+
+
+
+
+    <script src="https://unpkg.com/cropperjs@next"></script>
+
+
+
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

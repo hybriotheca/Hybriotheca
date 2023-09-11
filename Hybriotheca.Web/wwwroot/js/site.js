@@ -1,4 +1,85 @@
-﻿// #region COLOR THEME TOGGLE
+﻿// #region PROFILE PICTURE EDIT METHODS
+//UPLOAD PICTURE
+const uploadPhoto = event => {
+
+    hide(fileTypeValidation);
+
+    if (fileExtensionAllowed(photoFile)) {
+        profilePicture.src = URL.createObjectURL(event.target.files[0]);
+
+        if (deleteInput != null)
+            deleteInput.value = 'False';
+
+        show(deleteButton);
+        show(resetButton);
+        show(profilePicture);
+
+        hide(profilePictureInput);
+    } else {
+        photoFile.value = '';
+        show(fileTypeValidation);
+    }
+}
+
+//RESET PICTURE
+const resetPhoto = (photoPath) => {
+    photoFile.value = null;
+    profilePicture.src = photoPath;
+
+    if (deleteInput != null)
+        deleteInput.value = 'False';
+
+    show(deleteButton);
+    show(profilePicture);
+
+    hide(profilePictureInput);
+    hide(resetButton);
+}
+
+//DELETE PICTURE
+const deletePhoto = () => {
+    photoFile.value = null;
+
+    if (deleteInput != null)
+        deleteInput.value = 'True';
+
+    show(profilePictureInput);
+    show(resetButton);
+
+    hide(deleteButton);
+    hide(profilePicture);
+}
+// #endregion
+
+// #region AUXILIARY FUNCTIONS
+function fileExtensionAllowed(file) {
+    var fileExtension = file.value.match(/\.(.+)$/)[1];
+
+    switch (fileExtension) {
+        case 'jpg':
+        case 'jpeg':
+        case 'bmp':
+        case 'png':
+        case 'tif':
+            return true;
+
+        default:
+            return false;
+    }
+}
+
+function hide(element) {
+    if (element != null)
+        element.classList.add('hidden');
+}
+
+function show(element) {
+    if (element != null)
+        element.classList.remove('hidden');
+}
+// #endregion
+
+// #region COLOR THEME TOGGLE
 if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.classList.add('dark');
 } else {
@@ -34,7 +115,7 @@ themeToggleBtn.addEventListener('click', function () {
             localStorage.setItem('color-theme', 'light');
         }
 
-    // if NOT set via local storage previously
+        // if NOT set via local storage previously
     } else {
         if (document.documentElement.classList.contains('dark')) {
             document.documentElement.classList.remove('dark');

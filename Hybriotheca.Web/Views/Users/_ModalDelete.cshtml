@@ -24,23 +24,16 @@
                 <!-- PROFILE PICTURE -->
                 <div class="flex justify-center items-center p-4 mb-7 space-x-6 whitespace-nowrap text-lg font-normal text-gray-500 dark:text-gray-400">
                     <div class="flex justify-center items-center w-14 h-14 rounded-full bg-sky-600">
-                        @if (!(Model.ProfilePictureId == Guid.Empty))
+                        @if (Model.HasPhoto)
                         {
-                            <img class="w-8 h-8 rounded-full"
-                                 src="@Model.ProfilePictureFullPath"
+                            <img class="w-full h-full object-cover rounded-full"
+                                 src="@Model.PhotoFullPath"
                                  alt="@Model.FullName profile picture" />
                         }
                         else
                         {
                             <span class="font-bold text-white ">
-                                @{
-                                    var firstLetters = Model.FullName.Split(' ')
-                                    .Where(word => !string.IsNullOrEmpty(word))
-                                    .Select(word => word[0]);
-
-                                    string result = new string(firstLetters.ToArray());
-                                }
-                                @result
+                                @Model.NameAbbr
                             </span>
                         }
                     </div>
