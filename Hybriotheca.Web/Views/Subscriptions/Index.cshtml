@@ -107,11 +107,12 @@
                                     @Html.DisplayFor(modelItem => subscription.Name)
                                 </td>
                                 <!-- DETAILS -->
-                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <td class="p-4 text-base text-gray-900 whitespace-nowrap dark:text-white">
                                     @Html.DisplayFor(modelItem => subscription.Details)
                                 </td>
                                 <!-- ACTIONS -->
                                 <td class="p-4 space-x-2 whitespace-nowrap">
+
                                     <a asp-action="Edit"
                                        asp-route-id="@subscription.ID"
                                        data-tooltip-target="tooltip-edit"
@@ -128,7 +129,7 @@
                                     <a hx-get
                                        hx-action="Delete"
                                        hx-route-id="@subscription.ID"
-                                       hx-target="#modal-delete"
+                                       hx-target="#popup-modal"
                                        data-tooltip-target="tooltip-delete"
                                        class="cursor-pointer inline-flex items-center px-3 py-3 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
@@ -139,6 +140,7 @@
                                         Delete
                                         <div class="tooltip-arrow" data-popper-arrow></div>
                                     </div>
+
                                 </td>
                             </tr>
                         }
@@ -149,19 +151,19 @@
     </div>
 </div>
 
-<!-- MODAL DELETE-->
-<div id="modal-delete" class="hidden absolute h-full w-full inset-0 z-[100]"></div>
+<!-- POPUP MODAL -->
+<div id="popup-modal" class="hidden absolute h-full w-full inset-0 z-[100]"></div>
 
 
 @section Scripts{
     <script type="text/javascript">
-        const targetEl = document.getElementById('modal-delete');
+        const modalContainer = document.getElementById('popup-modal');
         const options = {
             backdrop: 'dynamic',
             backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-50',
             closable: true
         }
-        var modal = new Modal(targetEl, options);
+        var modal = new Modal(modalContainer, options);
 
         htmx.on('htmx:afterSwap', () => {
 

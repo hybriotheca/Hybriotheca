@@ -114,11 +114,15 @@ namespace Hybriotheca.Web.Controllers
 
             if (subscription.Users == null || !subscription.Users.Any())
             {
+                ViewBag.DeletePossible = true;
+
                 // Success.
                 return PartialView("_ModalDelete", subscription);
             }
 
-            return PartialView("_ModalDeleteNotPossible", subscription);
+            ViewBag.DeletePossible = false;
+
+            return PartialView("_ModalDelete", subscription);
         }
 
         // POST: Subscriptions/Delete/5

@@ -12,7 +12,7 @@
 
     string HasPhoto()
     {
-        if(loggedUser.PhotoId == Guid.Empty)
+        if (loggedUser.PhotoId == Guid.Empty)
         {
             return "bg-gradient-to-r from-cyan-500 to-blue-500";
         }
@@ -31,8 +31,18 @@
     <link rel="stylesheet" href="~/lib/flowbite/dist/flowbite.min.css" asp-append-version="true" />
     @* <!-- TAILWIND CSS --> *@
     <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+
+
+    <link rel="stylesheet" type="text/css" href="~/lib/slick/slick.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/slick/slick-theme.css" />
+
+
+
+
+
+
     @* <!-- TINY SLIDER --> *@
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+    @* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css"> *@
     <!--[if (lt IE 9)]><script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.helper.ie8.js"></script><![endif]-->
 
 
@@ -78,13 +88,6 @@
                         </svg>
                         <span class="sr-only">Search</span>
                     </button>
-                    @* <!-- HAMBURGUER BUTTON - MOBILE --> *@
-                    <button data-collapse-toggle="navbar-search" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-search" aria-expanded="false">
-                        <span class="sr-only">Open main menu</span>
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
-                        </svg>
-                    </button>
                 </div>
 
                 <div class="flex items-center md:order-3">
@@ -100,9 +103,9 @@
                     {
                         <!-- PROFILE PICTURE -->
                         <button type="button"
-                                id="user-menu-button" 
-                                aria-expanded="false" 
-                                data-dropdown-toggle="user-dropdown" 
+                                id="user-menu-button"
+                                aria-expanded="false"
+                                data-dropdown-toggle="user-dropdown"
                                 data-dropdown-placement="bottom"
                                 class="flex justify-center items-center overflow-hidden w-8 h-8 mr-3 text-sm @HasPhoto() rounded-full md:mr-0 hover:ring-4 hover:ring-gray-300 dark:hover:ring-gray-600 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
                             <span class="sr-only">Open user menu</span>
@@ -189,16 +192,8 @@
         </nav>
     </header>
 
-
-
     @* <!-- MAIN CONTENT --> *@
-    <div class="p-4 grow">
-        <main role="main" class="max-w-screen-xl justify-between mx-auto dark:text-white">
-            @RenderBody()
-        </main>
-    </div>
-
-
+    @RenderBody()
 
     @* <!-- FOOTER --> *@
     <footer class="p-4 bg-gray-100 md:p-8 lg:p-10 dark:bg-gray-800">
@@ -244,12 +239,35 @@
     <script src="~/lib/flowbite/dist/flowbite.min.js"></script>
     @* <!-- CUSTOM JS --> *@
     <script src="~/js/site.js" asp-append-version="true" defer></script>
+
+    
+
+
+    @* <script type="text/javascript">
+        $(document).ready(function () {
+            $('.slider-new-releases').slick({
+                infinite: false,
+                dots: true,
+                slidesToShow: 2,
+                slidesToScroll: 2
+            });
+
+            $('.slider-2').slick({
+                infinite: false,
+                dots: true,
+                slidesToShow: 2,
+                slidesToScroll: 2
+            });
+        });
+    </script> *@
+
+
     @* <!-- TINY SLIDER --> *@
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
     <!-- NOTE: prior to v2.2.1 tiny-slider.js need to be in <body> -->
 
     <script type="text/javascript">
-        // import { tns } from './lib/tiny-slider-2.9.3/src/tiny-slider.js';
+        import { tns } from './lib/tiny-slider-2.9.3/src/tiny-slider.js';
 
         var slider1 = tns({
             container: '.slider-new-releases',
@@ -270,7 +288,7 @@
             gutter: 20,
             edgePadding: 0
         });
-    </script>
+    </script> *@
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -53,12 +53,12 @@
                 </div>
             </div>
             <!-- ADD NEW BUTTON -->
-            <button type="button" hx-get hx-action="Create" hx-target="#popup-modal" class="inline-flex items-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+            <a asp-action="Create" class="inline-flex items-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                 <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
                 </svg>
                 Add User
-            </button>
+            </a>
         </div>
     </div>
 </div>
@@ -79,10 +79,10 @@
                                 </div>
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.Role)
+                                User
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                User
+                                @Html.DisplayNameFor(model => model.Role)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 @Html.DisplayNameFor(model => model.PhoneNumber)
@@ -110,12 +110,7 @@
                                         <input id="checkbox-@counter" aria-describedby="checkbox-1" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="checkbox-@counter" class="sr-only">checkbox</label>
                                     </div>
-                                </td>
-
-                                <!-- ROLE -->
-                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => user.Role)
-                                </td>
+                                </td>                                
 
                                 <!-- USER -->
                                 <td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
@@ -150,24 +145,53 @@
                                     </div>
                                 </td>
 
+                                <!-- ROLE -->
+                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    @if (user.Role == "Admin")
+                                    {
+                                        <span class="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                            <svg class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                                                <path d="M16 1h-3.278A1.992 1.992 0 0 0 11 0H7a1.993 1.993 0 0 0-1.722 1H2a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2Zm-3 14H5a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-4H5a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-5H5a1 1 0 0 1 0-2h2V2h4v2h2a1 1 0 1 1 0 2Z" />
+                                            </svg>
+                                            @Html.DisplayFor(modelItem => user.Role)
+                                        </span>
+                                    }
+                                    @if (user.Role == "Librarian")
+                                    {
+                                        <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                                            <svg class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                                <path d="M9 1.334C7.06.594 1.646-.84.293.653a1.158 1.158 0 0 0-.293.77v13.973c0 .193.046.383.134.55.088.167.214.306.366.403a.932.932 0 0 0 .5.147c.176 0 .348-.05.5-.147 1.059-.32 6.265.851 7.5 1.65V1.334ZM19.707.653C18.353-.84 12.94.593 11 1.333V18c1.234-.799 6.436-1.968 7.5-1.65a.931.931 0 0 0 .5.147.931.931 0 0 0 .5-.148c.152-.096.279-.235.366-.403.088-.167.134-.357.134-.55V1.423a1.158 1.158 0 0 0-.293-.77Z" />
+                                            </svg>
+                                            @Html.DisplayFor(modelItem => user.Role)
+                                        </span>
+                                    }
+                                    @if (user.Role == "Customer")
+                                    {
+                                        <span class="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                                            <svg class="w-2.5 h-2.5 mr-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 18">
+                                                <path d="M7 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm2 1H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                                            </svg>
+                                            @Html.DisplayFor(modelItem => user.Role)
+                                        </span>
+                                    }
+                                </td>
+
                                 <!-- PHONE NUMBER -->
                                 <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     @Html.DisplayFor(modelItem => user.PhoneNumber)
                                 </td>
 
                                 <!-- EMAIL CONFIRMED -->
-                                <td class="flex justify-center items-center p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <div>
+                                <td class="p-4">
+                                    <div class="flex justify-center">
                                         @if (user.EmailConfirmed)
                                         {
-
                                             <svg class="w-3 h-3 text-green-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
                                             </svg>
                                         }
                                         else
                                         {
-
                                             <svg class="w-3 h-3 text-red-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                                             </svg>
@@ -178,10 +202,8 @@
                                 <!-- ACTIONS -->
                                 <td class="p-4 space-x-2 whitespace-nowrap">
                                     <!-- EDIT -->
-                                    <a hx-get
-                                       hx-action="Edit"
-                                       hx-route-id="@user.Id"
-                                       hx-target="#popup-modal"
+                                    <a asp-action="Edit"
+                                       asp-route-id="@user.Id"
                                        data-tooltip-target="tooltip-edit"
                                        class="cursor-pointer inline-flex items-center px-3 py-3 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
@@ -218,20 +240,19 @@
     </div>
 </div>
 
-<!-- MODAL DELETE-->
+<!-- POPUP MODAL -->
 <div id="popup-modal" class="hidden absolute h-full w-full inset-0 z-[100]"></div>
-
 
 @section Scripts{
     <script type="text/javascript">
 
-        const targetEl = document.getElementById('popup-modal');
+        const modalContainer = document.getElementById('popup-modal');
         const options = {
             backdrop: 'dynamic',
             backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-50',
             closable: true
         }
-        var modal = new Modal(targetEl, options);
+        var modal = new Modal(modalContainer, options);
 
         htmx.on('htmx:afterSwap', () => {
 

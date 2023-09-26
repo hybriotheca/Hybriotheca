@@ -84,7 +84,7 @@ namespace Hybriotheca.Web.Controllers
             ViewBag.Roles = await _userHelper.GetComboRolesAsync();
             ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
 
-            return PartialView("_ModalCreate");
+            return View();
         }
 
         // POST: Users/Create
@@ -138,18 +138,7 @@ namespace Hybriotheca.Web.Controllers
             ViewBag.Roles = await _userHelper.GetComboRolesAsync();
             ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
 
-            return Content("" +
-                "<div class=\"flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800\">\r\n" +
-                "" + "<svg class=\"flex-shrink-0 inline w-4 h-4 mr-3\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 20 20\">\r\n" +
-                "" + "" + "<path d=\"M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z\" />\r\n" +
-                "" + "</svg>\r\n" +
-                "" + "<span class=\"sr-only\">Info</span>\r\n" +
-                "" + "<div>\r\n" +
-                "" + "" + "<span class=\"font-medium\">Error!</span>\r\n" +
-                "" + "" + "<span> User could not be created</span>\r\n" +
-                "" + "</div>\r\n" +
-                "</div>", 
-                "text/html");
+            return View(model);
         }
 
 
@@ -167,7 +156,7 @@ namespace Hybriotheca.Web.Controllers
             ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
 
             // Success.
-            return PartialView("_ModalEdit", model);
+            return View(model);
         }
 
         // POST: Users/Edit/5
@@ -271,18 +260,7 @@ namespace Hybriotheca.Web.Controllers
             ViewBag.Roles = await _userHelper.GetComboRolesAsync();
             ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
 
-            return Content("" +
-                "<div class=\"flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800\">\r\n" +
-                "" + "<svg class=\"flex-shrink-0 inline w-4 h-4 mr-3\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 20 20\">\r\n" +
-                "" + "" + "<path d=\"M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z\" />\r\n" +
-                "" + "</svg>\r\n" +
-                "" + "<span class=\"sr-only\">Info</span>\r\n" +
-                "" + "<div>\r\n" +
-                "" + "" + "<span class=\"font-medium\">Error!</span>\r\n" +
-                "" + "" + "<span> User could not be updated</span>\r\n" +
-                "" + "</div>\r\n" +
-                "</div>",
-                "text/html");
+            return View(model);
         }
 
 
