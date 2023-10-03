@@ -9,9 +9,6 @@ namespace Hybriotheca.Web.Controllers
 {
     public class AccountController : Controller
     {
-        // App Settings
-        private readonly IConfiguration _configuration;
-
         // Helpers
         private readonly IBlobHelper _blobHelper;
         private readonly IMailHelper _mailHelper;
@@ -21,14 +18,12 @@ namespace Hybriotheca.Web.Controllers
         private readonly ISubscriptionRepository _subscriptionRepository;
 
         public AccountController(
-            IConfiguration configuration,
             IBlobHelper blobHelper,
             IMailHelper mailHelper,
             IUserHelper userHelper,
             ISubscriptionRepository subscriptionRepository
             )
         {
-            _configuration = configuration;
             _blobHelper = blobHelper;
             _mailHelper = mailHelper;
             _userHelper = userHelper;
@@ -216,7 +211,7 @@ namespace Hybriotheca.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                // Check User already exists
+                // Check user already exists.
                 var user = await _userHelper.GetUserByEmailAsync(model.Email);
                 if (user != null)
                 {
@@ -224,9 +219,9 @@ namespace Hybriotheca.Web.Controllers
                     return View(model);
                 }
 
-                string[] subscriptionsNames = _configuration["SeedDb:Subscriptions:Names"].Split(',');
-
-                var subscription = await _subscriptionRepository.GetByNameAsync(subscriptionsNames[1]);
+                // Get default subscription for registered user.
+                var defaultSubscriptionId =
+                    await _subscriptionRepository.GetDefaultSubscriptionIdForNewUserAsync();
 
                 user = new AppUser
                 {
@@ -234,7 +229,7 @@ namespace Hybriotheca.Web.Controllers
                     LastName = model.LastName,
                     Email = model.Email,
                     UserName = model.Email,
-                    SubscriptionID = subscription.ID,
+                    SubscriptionID = defaultSubscriptionId,
                 };
 
                 var registerUser = await _userHelper.AddUserAsync(user, model.Password);
