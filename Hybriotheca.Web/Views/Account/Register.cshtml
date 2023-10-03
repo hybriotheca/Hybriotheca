@@ -24,6 +24,20 @@
                             <span asp-validation-for="Email" class="text-red-500"></span>
                         </div>
 
+                        <!-- FIRSTNAME -->
+                        <div>
+                            <label asp-for="FirstName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your First Name</label>
+                            <input asp-for="FirstName" type="text" name="firstName" id="firstName" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required="">
+                            <span asp-validation-for="FirstName" class="text-red-500"></span>
+                        </div>
+
+                        <!-- LASTNAME -->
+                        <div>
+                            <label asp-for="LastName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your Last Name</label>
+                            <input asp-for="LastName" type="text" name="lastName" id="lastName" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-sky-600 focus:border-sky-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Doe" required="">
+                            <span asp-validation-for="LastName" class="text-red-500"></span>
+                        </div>
+
                         <!-- PASSWORD -->
                         <div>
                             <label asp-for="Password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>

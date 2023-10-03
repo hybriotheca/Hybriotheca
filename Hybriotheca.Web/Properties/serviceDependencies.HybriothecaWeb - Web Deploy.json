@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/HybriothecaWeb/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsAzureDb_C284A2ED30",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/hybriothecawebdbserver/databases/Hybriotheca.Web_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:AzureDb"
+    }
+  }
+}

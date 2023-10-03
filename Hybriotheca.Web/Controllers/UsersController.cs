@@ -291,7 +291,10 @@ namespace Hybriotheca.Web.Controllers
             {
                 await _userHelper.DeleteUserAsync(user);
 
-                await _blobHelper.DeleteBlobAsync(user.PhotoId.ToString(), "userphotos");
+                if (user.PhotoId != Guid.Empty)
+                {
+                    await _blobHelper.DeleteBlobAsync(user.PhotoId.ToString(), "userphotos");
+                }
             }
 
             return RedirectToAction(nameof(Index));

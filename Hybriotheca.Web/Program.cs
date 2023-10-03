@@ -19,7 +19,7 @@ namespace Hybriotheca.Web
 
             builder.Services.AddDbContext<DataContext>(cfg =>
             {
-                cfg.UseSqlServer(builder.Configuration.GetConnectionString("LocalDb"));
+                cfg.UseSqlServer(builder.Configuration.GetConnectionString("AzureDb"));
             });
 
             builder.Services.AddIdentity<AppUser, IdentityRole>(cfg =>
