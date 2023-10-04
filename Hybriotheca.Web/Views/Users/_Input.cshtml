@@ -122,5 +122,15 @@
         </div>
     </div>
 
+    <div class="mb-3">
+        
+        <label class="form-control">Main Library</label>
+        <select asp-for="MainLibraryID" asp-items="ViewBag.Libraries" id="selLibraries">
+            <option value="0">No Library</option>
+            @* Further options come from asp-items="ViewBag.Libraries". *@
+        </select>
+        <span asp-validation-for="MainLibraryID" class="text-danger"></span>
+
+    </div>
 
 </div>

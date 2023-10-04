@@ -15,18 +15,21 @@ namespace Hybriotheca.Web.Controllers
         private readonly IUserHelper _userHelper;
 
         // Repository
+        private readonly ILibraryRepository _libraryRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
 
         public AccountController(
             IBlobHelper blobHelper,
             IMailHelper mailHelper,
             IUserHelper userHelper,
+            ILibraryRepository libraryRepository,
             ISubscriptionRepository subscriptionRepository
             )
         {
             _blobHelper = blobHelper;
             _mailHelper = mailHelper;
             _userHelper = userHelper;
+            _libraryRepository = libraryRepository;
             _subscriptionRepository = subscriptionRepository;
         }
 
@@ -143,7 +146,10 @@ namespace Hybriotheca.Web.Controllers
                 PhoneNumber = user.PhoneNumber,
                 HasPhoto = user.PhotoId != Guid.Empty,
                 PhotoFullPath = user.PhotoFullPath,
+                MainLibraryID = user.MainLibraryID ?? 0,
             };
+
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
 
             return View(model);
         }
@@ -323,6 +329,7 @@ namespace Hybriotheca.Web.Controllers
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
                     user.PhoneNumber = model.PhoneNumber;
+                    user.MainLibraryID = model.MainLibraryID > 0 ? model.MainLibraryID : null;
 
                     if (model.PhotoFile != null)
                     {
@@ -344,6 +351,7 @@ namespace Hybriotheca.Web.Controllers
             }
 
             ModelState.AddModelError(string.Empty, "Could not update account details.");
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             return View(nameof(Index), model);
         }
 

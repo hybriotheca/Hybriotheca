@@ -18,6 +18,7 @@ namespace Hybriotheca.Web.Controllers
         private readonly IUserHelper _userHelper;
 
         // Repository
+        private readonly ILibraryRepository _libraryRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
 
         public UsersController(
@@ -25,12 +26,14 @@ namespace Hybriotheca.Web.Controllers
             IConverterHelper converterHelper,
             IMailHelper mailHelper,
             IUserHelper userHelper,
+            ILibraryRepository libraryRepository,
             ISubscriptionRepository subscriptionRepository)
         {
             _blobHelper = blobHelper;
             _converterHelper = converterHelper;
             _mailHelper = mailHelper;
             _userHelper = userHelper;
+            _libraryRepository = libraryRepository;
             _subscriptionRepository = subscriptionRepository;
         }
 
@@ -81,6 +84,7 @@ namespace Hybriotheca.Web.Controllers
         // GET: Users/Create
         public async Task<IActionResult> Create()
         {
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             ViewBag.Roles = await _userHelper.GetComboRolesAsync();
             ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
 
@@ -92,6 +96,10 @@ namespace Hybriotheca.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserViewModel model)
         {
+            // The option to delete photo is not relevant when creating user
+            // and could make ModelState invalid.
+            ModelState.Remove(nameof(model.DeletePhoto));
+
             if (ModelState.IsValid)
             {
                 var user = _converterHelper.ViewModelToUser(model);
@@ -135,6 +143,7 @@ namespace Hybriotheca.Web.Controllers
 
             AddModelError($"Could not create User.");
 
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             ViewBag.Roles = await _userHelper.GetComboRolesAsync();
             ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
 
@@ -152,6 +161,7 @@ namespace Hybriotheca.Web.Controllers
 
             var model = await GetUserViewModelForViewAsync(user);
 
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             ViewBag.Roles = await _userHelper.GetComboRolesAsync();
             ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
 
@@ -257,6 +267,7 @@ namespace Hybriotheca.Web.Controllers
 
             AddModelError($"Could not update User.");
 
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             ViewBag.Roles = await _userHelper.GetComboRolesAsync();
             ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
 

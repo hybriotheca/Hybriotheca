@@ -37,6 +37,11 @@ public class AppUser : IdentityUser
     public Subscription Subscription { get; set; }
 
 
+    public int? MainLibraryID { get; set; }
+
+    public Library? MainLibrary { get; set; }
+
+
     public IEnumerable<Rating>? Ratings { get; set; }
 
     public IEnumerable<Loan>? Loans { get; set; }

@@ -59,5 +59,8 @@ namespace Hybriotheca.Web.Models.Entities
         public int SubscriptionID { get; set; }
 
         public string? SubscriptionName { get; set; }
+
+
+        public int MainLibraryID { get; set; }
     }
 }

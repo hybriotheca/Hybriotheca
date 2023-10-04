@@ -41,7 +41,8 @@ namespace Hybriotheca.Web.Helpers
                 LastName = user.LastName,
                 HasPhoto = user.PhotoId != Guid.Empty,
                 PhotoFullPath = user.PhotoFullPath,
-                SubscriptionID = user.SubscriptionID
+                SubscriptionID = user.SubscriptionID,
+                MainLibraryID = user.MainLibraryID ?? 0,
             };
         }
 
@@ -81,6 +82,7 @@ namespace Hybriotheca.Web.Helpers
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 SubscriptionID = model.SubscriptionID,
+                MainLibraryID = model.MainLibraryID > 0 ? model.MainLibraryID : null,
             };
         }
 
@@ -94,6 +96,7 @@ namespace Hybriotheca.Web.Helpers
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.SubscriptionID = model.SubscriptionID;
+            user.MainLibraryID = model.MainLibraryID > 0 ? model.MainLibraryID : null;
 
             return user;
         }
