@@ -2,6 +2,7 @@
 using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Models.Search;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Repositories;
@@ -15,6 +16,16 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
         _dataContext = dataContext;
     }
 
+
+    public async Task<IEnumerable<SelectListItem>> GetComboBookEditionsAsync()
+    {
+        return await _dataContext.BookEditions
+            .Select(bookEdition => new SelectListItem
+            {
+                Text = bookEdition.EditionTitle,
+                Value = bookEdition.ID.ToString(),
+            }).ToListAsync();
+    }
 
     public async Task UpdateKeepCoverImageAsync(BookEdition bookEdition)
     {

@@ -1,0 +1,24 @@
+﻿@model Hybriotheca.Web.Data.Entities.BookStock
+
+<div class="mb-3">
+    <label asp-for="LibraryID" class="form-label"></label>
+    <select asp-for="LibraryID" class="form-control" asp-items="ViewBag.Libraries">
+        <option value="">Select library</option>
+    </select>
+    <span asp-validation-for="LibraryID" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="BookEditionID" class="form-label"></label>
+    <select asp-for="BookEditionID" class="form-control" asp-items="ViewBag.BookEditions">
+        <option value="">Select book</option>
+    </select>
+    <span asp-validation-for="BookEditionID" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Quantity" class="form-label"></label>
+    <input asp-for="Quantity" class="form-control" />
+    <span asp-validation-for="Quantity" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <input type="submit" value="Save" class="btn btn-primary" />
+</div>

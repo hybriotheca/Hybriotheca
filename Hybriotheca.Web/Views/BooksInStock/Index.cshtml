@@ -1,0 +1,19 @@
+﻿@model Hybriotheca.Web.Models.Entities.BookStockIndexViewModel
+
+@{
+    ViewData["Title"] = "Book Stocks";
+    Layout = "_Layout-BACKUP";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<partial name="_SearchForm" for="SearchModel" />
+
+@if (Model.BookStocks != null)
+{
+    <partial name="_IndexTable" for="BookStocks" />
+}
