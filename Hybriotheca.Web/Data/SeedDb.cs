@@ -147,19 +147,17 @@ namespace Hybriotheca.Web.Data
                 var user = await _userHelper.GetUserByEmailAsync(email);
                 if (user == null)
                 {
-
-                    string[] subscriptionsNames = _configuration["SeedDb:Subscriptions:Names"].Split(',');
-
-                    var subscription = await _subscriptionRepository.GetByNameAsync(subscriptionsNames[1]);
+                    int subscriptionId = await _subscriptionRepository
+                        .GetDefaultSubscriptionIdForNewUserAsync();
 
                     user = new AppUser
                     {
-                        FirstName = "Admin",
-                        LastName = name,
                         UserName = email,
                         Email = email,
                         EmailConfirmed = true,
-                        SubscriptionID = subscription.ID,
+                        FirstName = _configuration[$"SeedDb:Users:{name}:FirstName"],
+                        LastName = _configuration[$"SeedDb:Users:{name}:LastName"],
+                        SubscriptionID = subscriptionId,
                     };
 
                     var password = _configuration[$"SeedDb:Users:{name}:Password"];
@@ -167,9 +165,11 @@ namespace Hybriotheca.Web.Data
                     await _userHelper.AddUserAsync(user, password);
                 }
 
-                if (!await _userHelper.IsUserInRoleAsync(user, "Admin"))
+                var roleName = _configuration[$"SeedDb:Users:{name}:Role"];
+
+                if (!await _userHelper.IsUserInRoleAsync(user, roleName))
                 {
-                    await _userHelper.AddUserToRoleAsync(user, "Admin");
+                    await _userHelper.AddUserToRoleAsync(user, roleName);
                 }
             }
         }
