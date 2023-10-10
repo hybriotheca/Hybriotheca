@@ -39,6 +39,16 @@ public class BookStockRepository : GenericRepository<BookStock>, IBookStockRepos
             .SingleOrDefaultAsync();
     }
 
+    public async Task<bool> IsBookAvailableInLibraryAsync(int libraryId, int bookEditionId)
+    {
+        return await _dataContext.BooksInStock
+            .Where(bookStock =>
+                bookStock.LibraryID == libraryId
+                && bookStock.BookEditionID == bookEditionId)
+            .Select(bookStock => bookStock.AvailableStock > 0)
+            .SingleOrDefaultAsync();
+    }
+
     public async Task<IEnumerable<BookStockViewModel>>
         SelectByLibraryAndBookEditionAsListViewModelAsync(int libraryId, int bookEditionId)
     {

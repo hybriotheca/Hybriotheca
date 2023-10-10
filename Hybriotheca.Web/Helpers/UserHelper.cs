@@ -48,7 +48,7 @@ namespace Hybriotheca.Web.Helpers
         public async Task ConfirmEmailAsync(AppUser user)
         {
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            
+
             await _userManager.ConfirmEmailAsync(user, token);
         }
 
@@ -77,6 +77,17 @@ namespace Hybriotheca.Web.Helpers
             return await _userManager.Users.AsNoTracking().ToListAsync();
         }
 
+        public async Task<IEnumerable<SelectListItem>> GetComboCustomersAsync()
+        {
+            var customers = await _userManager.GetUsersInRoleAsync("Customer");
+
+            return customers.Select(customer => new SelectListItem
+            {
+                Text = customer.UserName,
+                Value = customer.Id,
+            });
+        }
+
         public async Task<IEnumerable<SelectListItem>> GetComboRolesAsync()
         {
             return await _roleManager.Roles.Select(r => new SelectListItem
@@ -84,6 +95,14 @@ namespace Hybriotheca.Web.Helpers
                 Text = r.Name,
                 Value = r.Name,
             }).ToListAsync();
+        }
+
+        public async Task<int?> GetMainLibraryIdOfUserAsync(string userEmail)
+        {
+            return await _userManager.Users
+                .Where(user => user.Email == userEmail)
+                .Select(user => user.MainLibraryID)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<AppUser?> GetUserByEmailAsync(string email)
@@ -98,6 +117,14 @@ namespace Hybriotheca.Web.Helpers
 
         public async Task<string> GetUserRoleAsync(AppUser user)
         {
+            return (await _userManager.GetRolesAsync(user))[0];
+        }
+
+        public async Task<string?> GetUserRoleAsync(string userEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null) return null;
+
             return (await _userManager.GetRolesAsync(user))[0];
         }
 

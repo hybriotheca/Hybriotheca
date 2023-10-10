@@ -12,15 +12,18 @@ namespace Hybriotheca.Web.Controllers
         private readonly IBookEditionRepository _bookEditionRepository;
         private readonly IBookStockRepository _bookStockRepository;
         private readonly ILibraryRepository _libraryRepository;
+        private readonly ILoanRepository _loanRepository;
 
         public BooksInStockController(
             IBookEditionRepository bookEditionRepository,
             IBookStockRepository bookStockRepository,
-            ILibraryRepository libraryRepository)
+            ILibraryRepository libraryRepository,
+            ILoanRepository loanRepository)
         {
             _bookEditionRepository = bookEditionRepository;
             _bookStockRepository = bookStockRepository;
             _libraryRepository = libraryRepository;
+            _loanRepository = loanRepository;
         }
 
         // GET: BooksInStock
@@ -39,7 +42,7 @@ namespace Hybriotheca.Web.Controllers
                         searchModel.LibraryID, searchModel.BookEditionID);
             }
             else
-                {
+            {
                 model.BookStocks = await _bookStockRepository.SelectTop25AsListViewModelAsync();
             }
 
@@ -80,13 +83,21 @@ namespace Hybriotheca.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                // In case a Book Stock was (somehow) deleted,
+                // when re-creating it count for loaned books.
+                
+                var loanedBooks = await _loanRepository
+                    .CountBookEditionLoanedFromLibraryAsync(bookStock.LibraryID, bookStock.BookEditionID);
+
+                bookStock.AvailableStock = bookStock.TotalStock - loanedBooks;
+
                 try
                 {
-                await _bookStockRepository.CreateAsync(bookStock);
+                    await _bookStockRepository.CreateAsync(bookStock);
 
-                // Success.
-                return RedirectToAction(nameof(Index));
-            }
+                    // Success.
+                    return RedirectToAction(nameof(Index));
+                }
                 catch (DbUpdateException ex)
                 {
                     if (ex.InnerException is SqlException innerEx)
@@ -128,6 +139,21 @@ namespace Hybriotheca.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                // Update available stock.
+                int stockLoaned = await _loanRepository
+                    .CountBookEditionLoanedFromLibraryAsync(bookStock.LibraryID, bookStock.BookEditionID);
+
+                bookStock.AvailableStock = bookStock.TotalStock - stockLoaned;
+
+                if (bookStock.AvailableStock < 0)
+                {
+                    AddModelError(
+                        "Could not accept the value given for Total Stock." +
+                        " The number of loaned books exceeds the given Stock.");
+
+                    return await ViewEditAsync(bookStock);
+                }
+
                 try
                 {
                     await _bookStockRepository.UpdateAsync(bookStock);
@@ -157,7 +183,7 @@ namespace Hybriotheca.Web.Controllers
                                 " to persist the intended changes.");
                             return await ViewEditAsync(bookStock);
                         }
-            }
+                    }
                 }
                 catch { }
             }
@@ -204,6 +230,12 @@ namespace Hybriotheca.Web.Controllers
             return Json(await _bookStockRepository.ExistsAsync(libraryId, bookEditionId));
         }
 
+        public async Task<IActionResult> CheckIsBookAvailable(int libraryId, int bookEditionId)
+        {
+            return Json(
+                await _bookStockRepository.IsBookAvailableInLibraryAsync(libraryId, bookEditionId));
+        }
+
         public async Task<IActionResult> Decrement(int bookStockId)
         {
             var bookStock = await _bookStockRepository.GetByIdAsync(bookStockId);
@@ -220,8 +252,8 @@ namespace Hybriotheca.Web.Controllers
             bookStock.AvailableStock--;
 
             try
-                {
-                    await _bookStockRepository.UpdateAsync(bookStock);
+            {
+                await _bookStockRepository.UpdateAsync(bookStock);
 
                 // Return the current values.
                 return Json(new { Succeded = true, bookStock.TotalStock, bookStock.AvailableStock });
@@ -230,7 +262,7 @@ namespace Hybriotheca.Web.Controllers
             {
                 return Json("error");
             }
-            }
+        }
 
         public async Task<IActionResult> GetMinBookStock(int libraryId, int bookEditionId)
         {
@@ -246,11 +278,11 @@ namespace Hybriotheca.Web.Controllers
 
             bookStock.TotalStock++;
             bookStock.AvailableStock++;
-                await _bookStockRepository.UpdateAsync(bookStock);
+            await _bookStockRepository.UpdateAsync(bookStock);
 
             // Return the current values.
             return Json(new { Succeded = true, bookStock.TotalStock, bookStock.AvailableStock });
-            }
+        }
 
 
         private void AddModelError(string errorMessage)
@@ -267,7 +299,7 @@ namespace Hybriotheca.Web.Controllers
         }
 
         private async Task<ViewResult> ViewEditAsync(BookStock bookStock)
-                {
+        {
             ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
 

@@ -1,0 +1,95 @@
+﻿@model Hybriotheca.Web.Models.Entities.CreateLoanViewModel
+
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="mb-3">
+            <label class="form-label">Select library</label>
+            <select asp-for="LibraryId" class="form-control" asp-items="ViewBag.Libraries" oninput="checkIsBookAvailable()">
+                <option disabled selected>Select library</option>
+            </select>
+            <span asp-validation-for="LibraryId" class="text-danger"></span>
+        </div>
+    }
+
+    <div class="mb-3">
+        <label class="form-label">Select book</label>
+        <select asp-for="BookEditionId" class="form-control" asp-items="ViewBag.BookEditions" oninput="checkIsBookAvailable()">
+            <option disabled selected>Select book</option>
+        </select>
+        <span asp-validation-for="BookEditionId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Select user</label>
+        <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users">
+            <option disabled selected>Select user</option>
+        </select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+
+    <!-- p elements with feedback messages from ajax request checkIsBookAvailable -->
+    <p id="CheckingIsBookAvailable" class="text-secondary" style="display: none">Checking availabilty...</p>
+    <p id="BookIsAvailable" class="text-success" style="display: none">This book is available at this Library.</p>
+    <p id="BookIsntAvailable" class="text-danger" style="display: none">This book is not available at this Library.</p>
+    <p id="ErrorCheckingAvailability" class="text-warning" style="display: none">Error while checking availabilty...</p>
+
+    <div class="mb-3">
+        <input type="submit" value="Save" id="btnSave" class="btn btn-primary" disabled="true" />
+    </div>
+
+    <script type="text/javascript">
+        const checkIsBookAvailable = () => {
+            
+            $('#btnSave').attr('disabled', true);
+
+            $('#BookIsAvailable').hide();
+            $('#BookIsntAvailable').hide();
+            $('#ErrorCheckingAvailability').hide();
+
+            var libraryId = $('#LibraryId').val();
+            var bookEditionId = $('#BookEditionId').val();
+
+            if (libraryId < 1 || bookEditionId < 1) {
+                $('#CheckingIsBookAvailable').hide();
+                return;
+            }
+            else {
+                $('#CheckingIsBookAvailable').show();
+            }
+
+            $.ajax({
+                url: '@Url.Action("CheckIsBookAvailable", "BooksInStock")',
+                type: 'POST',
+                dataType: 'JSON',
+                data: { libraryId: libraryId, bookEditionId: bookEditionId },
+                success: function (response) {
+                    if (response) {
+                        $('#btnSave').attr('disabled', false);
+                        
+                        $('#CheckingIsBookAvailable').hide();
+                        $('#BookIsAvailable').show();
+                        $('#BookIsntAvailable').hide();
+                        $('#ErrorCheckingAvailability').hide();
+                    }
+                    else {
+                        $('#CheckingIsBookAvailable').hide();
+                        $('#BookIsAvailable').hide();
+                        $('#BookIsntAvailable').show();
+                        $('#ErrorCheckingAvailability').hide();
+                    }
+                },
+                error: function () {
+                    $('#CheckingIsBookAvailable').hide();
+                    $('#BookIsAvailable').hide();
+                    $('#BookIsntAvailable').hide();
+                    $('#ErrorCheckingAvailability').show();
+                }
+            })
+            
+        }
+    </script>
+
+</form>

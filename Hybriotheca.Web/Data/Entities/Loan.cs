@@ -24,8 +24,6 @@ public class Loan : IEntity
 
     public DateTime EndDate { get; set; }
 
-    public bool IsPastDueDate { get; set; }
-
     public bool IsReturned { get; set; }
 
 }
