@@ -1,0 +1,35 @@
+﻿<script type="text/javascript">
+    const checkBookStock = () => {
+
+        $('#btnSave').attr('disabled', true);
+
+        $('#BookStockExists').hide();
+
+        var libraryId = $('#LibraryID').val();
+        var bookEditionId = $('#BookEditionID').val();
+
+        if (libraryId < 1 || bookEditionId < 1) {
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("CheckBookStockExists", "BooksInStock")',
+            type: 'POST',
+            dataType: 'JSON',
+            data: { libraryId: libraryId, bookEditionId: bookEditionId },
+            success: function (response) {
+                if (response) {
+                    $('#BookStockExists').show();
+                    $('#btnSave').hide();
+                }
+                else {
+                    $('#btnSave').attr('disabled', false);
+                    $('#btnSave').show();
+                }
+            },
+            error: function () {
+                alert("Something went wrong.");
+            }
+        });
+    }
+</script>

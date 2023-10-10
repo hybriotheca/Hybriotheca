@@ -6,6 +6,7 @@
             <th>Library</th>
             <th>Book edition</th>
             <th>Quantity</th>
+            <th>Available</th>
             <th></th>
         </tr>
     </thead>
@@ -21,48 +22,65 @@
                 </td>
                 <td>
                     <a title="decrement" class="btn btn-warning" onclick="crement('dec', @item.Id)">-</a>
-                    <span id="span@(item.Id)">@Html.DisplayFor(modelItem => item.Quantity)</span>
+                    <span id="quantity-@(item.Id)">@Html.DisplayFor(modelItem => item.TotalStock)</span>
                     <a title="increment" class="btn btn-success" onclick="crement('inc', @item.Id)">+</a>
-                    <script type="text/javascript">
-                        const crement = (action, id) => {
-
-                            var bookStockId = id;
-                            
-                            var url = '';
-                            let urlInc = '@(Url.Action("Increment", "BooksInStock"))';
-                            let urlDec = '@(Url.Action("Decrement", "BooksInStock"))';
-
-                            switch(action) {
-                                case "inc": url = urlInc; break;
-                                case "dec": url = urlDec; break;
-                            }
-
-                            $.ajax({
-                                url: url,
-                                type: 'POST',
-                                dataType: 'JSON',
-                                data: { bookStockId: bookStockId },
-                                success: function (response) {
-                                    if ($.isNumeric(response)) {
-                                        $('#span' + bookStockId).text(response);
-                                    }
-                                    else {
-                                        alert(response);
-                                    }
-                                },
-                                error: function () {
-                                    alert("Something went wrong.");
-                                }
-                            });
-
-                        }
-                    </script>
+                </td>
+                <td>
+                    <span id="available-@(item.Id)">@Html.DisplayFor(modelItem => item.AvailableStock)</span>
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger @(item.IsDeletable ? "" : "disabled")">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<script type="text/javascript">
+    const crement = (action, id) => {
+
+        var bookStockId = id;
+
+        var url = '';
+        let urlInc = '@(Url.Action("Increment", "BooksInStock"))';
+        let urlDec = '@(Url.Action("Decrement", "BooksInStock"))';
+
+        switch (action) {
+            case "inc": url = urlInc; break;
+            case "dec":
+                if ($('#available-' + bookStockId).text() == '0') {
+                    alert("There's no available stock.");
+                    return;
+                }
+                url = urlDec;
+                break;
+            default: return;
+        }
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'JSON',
+            data: { bookStockId: bookStockId },
+            success: function (response) {
+                if (response.succeded) {
+                    
+                    // Update current total stock.
+                    $('#quantity-' + bookStockId).text(response.totalStock);
+                    
+                    // Update current available stock.
+                    $('#available-' + bookStockId).text(response.availableStock);
+
+                }
+                else {
+                    alert(response);
+                }
+            },
+            error: function () {
+                alert("Something went wrong.");
+            }
+        });
+
+    }
+</script>

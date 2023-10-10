@@ -4,6 +4,7 @@ using Hybriotheca.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hybriotheca.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231006122047_AddCheckConstraintsToBookStock")]
+    partial class AddCheckConstraintsToBookStock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,7 +129,7 @@ namespace Hybriotheca.Web.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.BookEdition", b =>
@@ -193,7 +196,7 @@ namespace Hybriotheca.Web.Migrations
 
                     b.HasIndex("CategoryID");
 
-                    b.ToTable("BookEditions", (string)null);
+                    b.ToTable("BookEditions");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.BookStock", b =>
@@ -223,7 +226,7 @@ namespace Hybriotheca.Web.Migrations
                     b.HasIndex(new[] { "BookEditionID", "LibraryID" }, "IX_BookEdition_Library")
                         .IsUnique();
 
-                    b.ToTable("BooksInStock", null, t =>
+                    b.ToTable("BooksInStock", t =>
                         {
                             t.HasCheckConstraint("CK_AvailableStock_GreaterOrEqualZero", "[AvailableStock] >= 0");
 
@@ -245,7 +248,7 @@ namespace Hybriotheca.Web.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Fine", b =>
@@ -271,7 +274,7 @@ namespace Hybriotheca.Web.Migrations
                     b.HasIndex("LoanID")
                         .IsUnique();
 
-                    b.ToTable("Fines", (string)null);
+                    b.ToTable("Fines");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Library", b =>
@@ -296,7 +299,7 @@ namespace Hybriotheca.Web.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Libraries", (string)null);
+                    b.ToTable("Libraries");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Loan", b =>
@@ -341,7 +344,7 @@ namespace Hybriotheca.Web.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Loans", (string)null);
+                    b.ToTable("Loans");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Rating", b =>
@@ -376,7 +379,7 @@ namespace Hybriotheca.Web.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Ratings", (string)null);
+                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Reservation", b =>
@@ -411,7 +414,7 @@ namespace Hybriotheca.Web.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Reservations", (string)null);
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Subscription", b =>
@@ -432,7 +435,7 @@ namespace Hybriotheca.Web.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

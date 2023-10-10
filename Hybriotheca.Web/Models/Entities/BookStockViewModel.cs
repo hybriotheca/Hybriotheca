@@ -15,6 +15,10 @@
         public string BookEditionTitle { get; set; }
 
 
-        public int Quantity { get; set; }
+        public int TotalStock { get; set; }
+
+        public int AvailableStock { get; set; }
+
+        public bool IsDeletable { get; set; }
     }
 }

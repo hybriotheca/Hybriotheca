@@ -1,0 +1,79 @@
+﻿<script type="text/javascript">
+    const checkBookStock = () => {
+
+        // These 2 lines allow for directly creating a not yet existing BookStock.
+        $('#formEdit').attr('action', "/BooksInStock/Edit/");
+        $('#ID').attr('name', 'ID');
+
+        $('#DoesntExistCreateIt').hide();
+        $('#NoBookStockAvailable').hide();
+
+        var libraryId = $('#LibraryID').val();
+        var bookEditionId = $('#BookEditionID').val();
+
+        if (libraryId < 1 || bookEditionId < 1) {
+            return;
+        }
+        
+        checkBookStockExists(libraryId, bookEditionId);
+        
+        let quantity = $('#TotalStock').val();
+    }
+
+    function checkBookStockExists(libraryId, bookEditionId) {
+        $.ajax({
+            url: '@Url.Action("CheckBookStockExists", "BooksInStock")',
+            type: 'POST',
+            dataType: 'JSON',
+            data: { libraryId: libraryId, bookEditionId: bookEditionId },
+            success: function (response) {
+                $('#btnSave').attr('disabled', false);
+                if (response) {
+                    getMinBookStock(libraryId, bookEditionId);
+                }
+                else {
+                    $('#DoesntExistCreateIt').show();
+                    $('#formEdit').attr('action', "/BooksInStock/Create");
+                    $('#ID').attr('name', '');
+                }
+            },
+            error: function () {
+                $('#btnSave').attr('disabled', true);
+                alert("Checking book stock exists: something went wrong.");
+            }
+        });
+    }
+
+    function getMinBookStock(libraryId, bookEditionId) {
+        $.ajax({
+            url: '@Url.Action("GetMinBookStock", "BooksInStock")',
+            type: 'POST',
+            dataType: 'JSON',
+            data: { libraryId: libraryId, bookEditionId: bookEditionId },
+            success: function (response) {
+                if (isNaN(response)) {
+                    $('#btnSave').attr('disabled', true);
+                    alert(response);
+                }
+                else {
+                    if ($('#TotalStock').val() < response) {
+                        $('#NoBookStockAvailable').text("There's "+response+" books in use, hence the Total Stock has to be at least that number.");
+                        $('#NoBookStockAvailable').show();
+                        $('#btnSave').attr('disabled', true);
+                    }
+                    else {
+                        $('#btnSave').attr('disabled', false);
+                    }
+                }
+            },
+            error: function () {
+                $('#btnSave').attr('disabled', true);
+                alert("Checking book stock availability: something went wrong.");
+            }
+        });
+    }
+
+    $(
+        $('#TotalStock').on('input', checkBookStock)
+    );
+</script>

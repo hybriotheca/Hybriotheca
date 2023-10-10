@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Data.Entities
 {
@@ -13,7 +14,7 @@ namespace Hybriotheca.Web.Data.Entities
         public int LibraryID { get; set; }
         public Library Library { get; set; }
 
-        public int Quantity { get; set; }
-
+        public int TotalStock { get; set; }
+        public int AvailableStock { get; set; }
     }
 }

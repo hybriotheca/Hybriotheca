@@ -11,9 +11,18 @@
 <div>
     <partial name="_Display" />
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" />
-        <a asp-action="Index">Back to List</a>
-    </form>
+    @if (Model.IsDeletable)
+    {
+        <form asp-action="Delete">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <button class="btn btn-danger">Confirm</button>
+        </form>
+    }
+    else
+    {
+        <p class="text-warning">This Book Stock is not deletable. There are loaned books.</p>
+    }
+
+    <a asp-action="Index">Back to List</a>
 </div>

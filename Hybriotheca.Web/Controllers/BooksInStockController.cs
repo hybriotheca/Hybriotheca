@@ -2,6 +2,7 @@
 using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Controllers
@@ -33,25 +34,13 @@ namespace Hybriotheca.Web.Controllers
             // If any Id has been given, look for correspondent Book Stocks.
             if (searchModel != null && (searchModel.LibraryID > 0 || searchModel.BookEditionID > 0))
             {
-                // Get IQueryable.
-                var bookStocks = _bookStockRepository.GetAll();
-
-                // Filter by Library, if id given.
-                if (searchModel.LibraryID > 0)
-                    bookStocks = bookStocks.Where(bookStock => bookStock.LibraryID == searchModel.LibraryID);
-
-                // Filter by Book Edition, if id given.
-                if (searchModel.BookEditionID > 0)
-                    bookStocks = bookStocks.Where(bookStock => bookStock.BookEditionID == searchModel.BookEditionID);
-
-                // Select List of BookStockViewModel.
-                model.BookStocks = await bookStocks.Select(bookStock => new BookStockViewModel
+                model.BookStocks = await _bookStockRepository
+                    .SelectByLibraryAndBookEditionAsListViewModelAsync(
+                        searchModel.LibraryID, searchModel.BookEditionID);
+            }
+            else
                 {
-                    Id = bookStock.ID,
-                    LibraryName = bookStock.Library.Name,
-                    BookEditionTitle = bookStock.BookEdition.EditionTitle,
-                    Quantity = bookStock.Quantity,
-                }).ToListAsync();
+                model.BookStocks = await _bookStockRepository.SelectTop25AsListViewModelAsync();
             }
 
             ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
@@ -66,7 +55,7 @@ namespace Hybriotheca.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var model = await GetViewModelAsync(id.Value);
+            var model = await _bookStockRepository.SelectViewModelAsync(id.Value);
             if (model == null) return NotFound();
 
             // Success.
@@ -77,10 +66,7 @@ namespace Hybriotheca.Web.Controllers
         // GET: BooksInStock/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
-
-            return View();
+            return await ViewCreateAsync(null);
         }
 
         // POST: BooksInStock/Create
@@ -90,21 +76,33 @@ namespace Hybriotheca.Web.Controllers
         {
             ModelState.Remove(nameof(bookStock.Library));
             ModelState.Remove(nameof(bookStock.BookEdition));
+            ModelState.Remove(nameof(bookStock.AvailableStock));
 
             if (ModelState.IsValid)
             {
+                try
+                {
                 await _bookStockRepository.CreateAsync(bookStock);
 
                 // Success.
                 return RedirectToAction(nameof(Index));
             }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException is SqlException innerEx)
+                    {
+                        if (innerEx.Message.Contains("IX_BookEdition_Library"))
+                        {
+                            AddModelError("This Book Stock already exists.");
+                            return await ViewCreateAsync(bookStock);
+                        }
+                    }
+                }
+                catch { }
+            }
 
             AddModelError($"Could not create {nameof(BookStock)}.");
-
-            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
-
-            return View(bookStock);
+            return await ViewCreateAsync(bookStock);
         }
 
 
@@ -116,11 +114,7 @@ namespace Hybriotheca.Web.Controllers
             var bookStock = await _bookStockRepository.GetByIdAsync(id.Value);
             if (bookStock == null) return NotFound();
 
-            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
-
-            // Success.
-            return View(bookStock);
+            return await ViewEditAsync(bookStock);
         }
 
         // POST: BooksInStock/Edit/5
@@ -130,6 +124,7 @@ namespace Hybriotheca.Web.Controllers
         {
             ModelState.Remove(nameof(bookStock.Library));
             ModelState.Remove(nameof(bookStock.BookEdition));
+            ModelState.Remove(nameof(bookStock.AvailableStock));
 
             if (ModelState.IsValid)
             {
@@ -148,14 +143,27 @@ namespace Hybriotheca.Web.Controllers
                     }
                     else throw;
                 }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException is SqlException innerEx)
+                    {
+                        string constraintName =
+                            $"CK_{nameof(BookStock.AvailableStock)}_GreaterOrEqualZero";
+
+                        if (innerEx.Message.Contains(constraintName))
+                        {
+                            AddModelError(
+                                "There isn't enough available stock at this Library" +
+                                " to persist the intended changes.");
+                            return await ViewEditAsync(bookStock);
+                        }
+            }
+                }
+                catch { }
             }
 
             AddModelError($"Could not update {nameof(BookStock)}.");
-
-            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
-
-            return View(bookStock);
+            return await ViewEditAsync(bookStock);
         }
 
 
@@ -164,7 +172,7 @@ namespace Hybriotheca.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var model = await GetViewModelAsync(id.Value);
+            var model = await _bookStockRepository.SelectViewModelAsync(id.Value);
             if (model == null) return NotFound();
 
             // Success.
@@ -177,45 +185,72 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var bookStock = await _bookStockRepository.GetByIdAsync(id);
-            if (bookStock != null)
+            if (bookStock == null) return NotFound();
+
+            if (bookStock.TotalStock > bookStock.AvailableStock)
             {
-                await _bookStockRepository.DeleteAsync(bookStock);
+                AddModelError("Could not delete this Book Stock. There are loaned books.");
+                return await Delete(id);
             }
+
+            await _bookStockRepository.DeleteAsync(bookStock);
 
             return RedirectToAction(nameof(Index));
         }
 
 
+        public async Task<IActionResult> CheckBookStockExists(int libraryId, int bookEditionId)
+        {
+            return Json(await _bookStockRepository.ExistsAsync(libraryId, bookEditionId));
+        }
+
         public async Task<IActionResult> Decrement(int bookStockId)
         {
             var bookStock = await _bookStockRepository.GetByIdAsync(bookStockId);
-            if (bookStock != null)
-            {
-                // TODO: Check number of loans where LibraryID == bookStock.LibraryID and 
-                if (bookStock.Quantity > 0)
-                {
-                    bookStock.Quantity--;
-                    await _bookStockRepository.UpdateAsync(bookStock);
-                    return Json(bookStock.Quantity);
-                }
+            if (bookStock == null)
+                return Json("Could not find book stock.");
 
-                return Json("Can't have less than 0 books in stock.");
+            // Check there is at least 1 available book to dispense with.
+            if (bookStock.AvailableStock < 1)
+            {
+                return Json("There isn't enough available stock.");
             }
 
-            return Json("Could not find book stock.");
+            bookStock.TotalStock--;
+            bookStock.AvailableStock--;
+
+            try
+                {
+                    await _bookStockRepository.UpdateAsync(bookStock);
+
+                // Return the current values.
+                return Json(new { Succeded = true, bookStock.TotalStock, bookStock.AvailableStock });
+            }
+            catch
+            {
+                return Json("error");
+            }
+            }
+
+        public async Task<IActionResult> GetMinBookStock(int libraryId, int bookEditionId)
+        {
+            return Json(
+                await _bookStockRepository.GetUsedBookStockAsync(libraryId, bookEditionId));
         }
 
         public async Task<IActionResult> Increment(int bookStockId)
         {
             var bookStock = await _bookStockRepository.GetByIdAsync(bookStockId);
-            if (bookStock != null)
-            {
-                bookStock.Quantity++;
+            if (bookStock == null)
+                return Json("Could not find book stock.");
+
+            bookStock.TotalStock++;
+            bookStock.AvailableStock++;
                 await _bookStockRepository.UpdateAsync(bookStock);
-                return Json(bookStock.Quantity);
+
+            // Return the current values.
+            return Json(new { Succeded = true, bookStock.TotalStock, bookStock.AvailableStock });
             }
-            return Json("Could not find book stock");
-        }
 
 
         private void AddModelError(string errorMessage)
@@ -223,18 +258,20 @@ namespace Hybriotheca.Web.Controllers
             ModelState.AddModelError(string.Empty, errorMessage);
         }
 
-        private async Task<BookStockViewModel?> GetViewModelAsync(int id)
+        private async Task<ViewResult> ViewCreateAsync(BookStock? bookStock)
         {
-            return await _bookStockRepository.GetAll()
-                .Where(b => b.ID == id)
-                .Select(b => new BookStockViewModel
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
+            ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
+
+            return View(bookStock);
+        }
+
+        private async Task<ViewResult> ViewEditAsync(BookStock bookStock)
                 {
-                    Id = b.ID,
-                    LibraryName = b.Library.Name,
-                    BookEditionTitle = b.BookEdition.EditionTitle,
-                    Quantity = b.Quantity,
-                })
-                .SingleOrDefaultAsync();
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
+            ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
+
+            return View(bookStock);
         }
     }
 }
