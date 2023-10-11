@@ -25,7 +25,16 @@
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
                         <ul class="navbar-nav flex-grow-1">
-                            @if (User.IsInRole("Admin"))
+                            @if (User.IsInRole("Customer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="/Loans">Loans</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="/search/CarouselEditions">Editions Carousel</a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" href="/Books">Books</a>
@@ -55,6 +64,18 @@
                                     <a class="nav-link text-dark" href="/search/CarouselEditions">Editions Carousel</a>
                                 </li>
                             }
+                            else if (User.IsInRole("Librarian"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="/BooksInStock">Books in stock</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="/Loans">Loans</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="/search/CarouselEditions">Editions Carousel</a>
+                                </li>
+                            }
                         </ul>
                         <ul class="navbar-nav navbar-right">
                             <li class="nav-item">
@@ -68,6 +89,9 @@
                     else
                     {
                         <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/search/CarouselEditions">Editions Carousel</a>
+                            </li>
                         </ul>
                         <ul class="navbar-nav navbar-right">
                             <li class="nav-item">

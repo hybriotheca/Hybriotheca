@@ -1,17 +1,24 @@
 ﻿using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BooksController : Controller
     {
         private readonly IBookRepository _bookRepository;
+        private readonly IBookEditionRepository _bookEditionRepository;
 
-        public BooksController(IBookRepository bookRepository)
+        public BooksController(
+            IBookRepository bookRepository,
+            IBookEditionRepository bookEditionRepository)
         {
             _bookRepository = bookRepository;
+            _bookEditionRepository = bookEditionRepository;
         }
 
 
@@ -19,22 +26,6 @@ namespace Hybriotheca.Web.Controllers
         public IActionResult Index()
         {
             return View(_bookRepository.GetAll());
-            //return _context.Books != null ?
-            //            View(await _context.Books.ToListAsync()) :
-            //            Problem("Entity set 'DataContext.Books'  is null.");
-        }
-
-
-        // GET: Books/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var book = await _bookRepository.GetByIdAsync(id.Value);
-            if (book == null) return NotFound();
-
-            // Success.
-            return View(book);
         }
 
 
@@ -51,10 +42,14 @@ namespace Hybriotheca.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _bookRepository.CreateAsync(book);
+                try
+                {
+                    await _bookRepository.CreateAsync(book);
 
-                // Success.
-                return RedirectToAction(nameof(Index));
+                    // Success.
+                    return RedirectToAction(nameof(Index));
+                }
+                catch { }
             }
 
             AddModelError($"Could not create {nameof(Book)}.");
@@ -94,8 +89,8 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return NotFound();
                     }
-                    else throw;
                 }
+                catch { }
             }
 
             AddModelError($"Could not update {nameof(Book)}.");
@@ -111,7 +106,8 @@ namespace Hybriotheca.Web.Controllers
             var book = await _bookRepository.GetByIdAsync(id.Value);
             if (book == null) return NotFound();
 
-            // Success.
+            ViewBag.IsDeletable = ! await _bookEditionRepository.AnyWhereBookAsync(id.Value);
+
             return PartialView("_ModalDelete", book);
         }
 
@@ -121,12 +117,31 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var book = await _bookRepository.GetByIdAsync(id);
-            if (book != null)
+            if (book == null) return NotFound();
+
+            try
             {
                 await _bookRepository.DeleteAsync(book);
-            }
 
-            return RedirectToAction(nameof(Index));
+                // Success.
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains("FK_BookEditions_Books_BookID"))
+                    {
+                        ViewBag.ErrorTitle = "Cannot delete this Base book.";
+                        ViewBag.ErrorMessage =
+                            "You can't delete this Base Book" +
+                            " because there are Book Editions based on it.";
+                    }
+                }
+            }
+            catch { }
+
+            return View("Error");
         }
 
 

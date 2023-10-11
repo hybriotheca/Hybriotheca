@@ -1,14 +1,14 @@
 ﻿@model Hybriotheca.Web.Data.Entities.Book
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Base Book";
     Layout = "_LayoutAdminPanel";
 }
 
 <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 
     <h1 class="mb-4 text-xl font-semibold dark:text-white">
-        Edit Base Book
+        @ViewData["Title"]
     </h1>
 
     <form asp-action="Edit">

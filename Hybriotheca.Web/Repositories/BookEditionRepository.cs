@@ -17,6 +17,17 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
     }
 
 
+    public async Task<bool> AnyWhereBookAsync(int bookId)
+    {
+        return await _dataContext.BookEditions.AnyAsync(bookEdition => bookEdition.BookID == bookId);
+    }
+
+    public async Task<bool> AnyWhereCategoryAsync(int categoryId)
+    {
+        return await _dataContext.BookEditions
+            .AnyAsync(bookEdition => bookEdition.CategoryID == categoryId);
+    }
+
     public async Task<IEnumerable<SelectListItem>> GetComboBookEditionsAsync()
     {
         return await _dataContext.BookEditions

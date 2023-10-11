@@ -1,16 +1,24 @@
 ﻿using Hybriotheca.Web.Data.Entities;
+using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class SubscriptionsController : Controller
     {
+        private readonly IUserHelper _userHelper;
         private readonly ISubscriptionRepository _subscriptionRepository;
 
-        public SubscriptionsController(ISubscriptionRepository subscriptionRepository)
+        public SubscriptionsController(
+            IUserHelper userHelper,
+            ISubscriptionRepository subscriptionRepository)
         {
+            _userHelper = userHelper;
             _subscriptionRepository = subscriptionRepository;
         }
 
@@ -19,22 +27,6 @@ namespace Hybriotheca.Web.Controllers
         public IActionResult Index()
         {
             return View(_subscriptionRepository.GetAll());
-            //return _context.Subscriptions != null ?
-            //            View(await _context.Subscriptions.ToListAsync()) :
-            //            Problem("Entity set 'DataContext.Subscriptions'  is null.");
-        }
-
-
-        // GET: Subscriptions/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var subscription = await _subscriptionRepository.GetByIdAsync(id.Value);
-            if (subscription == null) return NotFound();
-
-            // Success.
-            return View(subscription);
         }
 
 
@@ -51,10 +43,14 @@ namespace Hybriotheca.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _subscriptionRepository.CreateAsync(subscription);
+                try
+                {
+                    await _subscriptionRepository.CreateAsync(subscription);
 
-                // Success.
-                return RedirectToAction(nameof(Index));
+                    // Success.
+                    return RedirectToAction(nameof(Index));
+                }
+                catch { }
             }
 
             AddModelError($"Could not create {nameof(Subscription)}.");
@@ -94,8 +90,8 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return NotFound();
                     }
-                    else throw;
                 }
+                catch { }
             }
 
             AddModelError($"Could not update {nameof(Subscription)}.");
@@ -108,21 +104,12 @@ namespace Hybriotheca.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var subscription = await _subscriptionRepository.GetByIdWithUsers(id.Value);
+            var subscript = await _subscriptionRepository.GetByIdAsync(id.Value);
+            if (subscript == null) return NotFound();
 
-            if (subscription == null) return NotFound();
+            ViewBag.IsDeletable = ! await _userHelper.AnyUserWhereSubscriptionAsync(subscript.ID);
 
-            if (subscription.Users == null || !subscription.Users.Any())
-            {
-                ViewBag.DeletePossible = true;
-
-                // Success.
-                return PartialView("_ModalDelete", subscription);
-            }
-
-            ViewBag.DeletePossible = false;
-
-            return PartialView("_ModalDelete", subscription);
+            return PartialView("_ModalDelete", subscript);
         }
 
         // POST: Subscriptions/Delete/5
@@ -131,12 +118,31 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var subscription = await _subscriptionRepository.GetByIdAsync(id);
-            if (subscription != null)
+            if (subscription == null) return NotFound();
+
+            try
             {
                 await _subscriptionRepository.DeleteAsync(subscription);
-            }
 
-            return RedirectToAction(nameof(Index));
+                // Success.
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains("FK_AspNetUsers_Subscriptions_SubscriptionID"))
+                    {
+                        ViewBag.ErrorTitle = "Cannot delete this Subscription.";
+                        ViewBag.ErrorMessage =
+                            "You can't delete this Subscription" +
+                            " because it is assigned to at least one User.";
+                    }
+                }
+            }
+            catch { }
+
+            return View("Error");
         }
 
 

@@ -13,8 +13,7 @@ public class Library : IEntity
     public string Location { get; set; }
 
     [Required]
-    [RegularExpression(@"^(9\d|2\d)[\d]{7}$", ErrorMessage = "Please insert a valid Portuguese phone number")]
-    public string Contact { get; set; } = string.Empty;
+    public string Contact { get; set; }
 
 
     public IEnumerable<BookStock>? BooksInStock { get; set; }

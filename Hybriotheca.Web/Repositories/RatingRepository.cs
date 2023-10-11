@@ -1,6 +1,7 @@
 ﻿using Hybriotheca.Web.Data;
 using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Repositories;
 
@@ -11,5 +12,11 @@ public class RatingRepository : GenericRepository<Rating>, IRatingRepository
     public RatingRepository(DataContext dataContext) : base(dataContext)
     {
         _dataContext = dataContext;
+    }
+
+
+    public async Task<bool> AnyWhereBookEditionAsync(int bookEditionId)
+    {
+        return await _dataContext.Ratings.AnyAsync(rating => rating.BookEditionID == bookEditionId);
     }
 }

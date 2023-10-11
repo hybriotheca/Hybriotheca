@@ -1,16 +1,22 @@
 ﻿using Hybriotheca.Web.Data.Entities;
+using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class LibrariesController : Controller
     {
+        private readonly IUserHelper _userHelper;
         private readonly ILibraryRepository _libraryRepository;
 
-        public LibrariesController(ILibraryRepository libraryRepository)
+        public LibrariesController(IUserHelper userHelper, ILibraryRepository libraryRepository)
         {
+            _userHelper = userHelper;
             _libraryRepository = libraryRepository;
         }
 
@@ -19,22 +25,6 @@ namespace Hybriotheca.Web.Controllers
         public IActionResult Index()
         {
             return View(_libraryRepository.GetAll());
-            //return _context.Libraries != null ?
-            //            View(await _context.Libraries.ToListAsync()) :
-            //            Problem("Entity set 'DataContext.Libraries'  is null.");
-        }
-
-
-        // GET: Libraries/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var library = await _libraryRepository.GetByIdAsync(id.Value);
-            if (library == null) return NotFound();
-
-            // Success.
-            return View(library);
         }
 
 
@@ -51,10 +41,14 @@ namespace Hybriotheca.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _libraryRepository.CreateAsync(library);
+                try
+                {
+                    await _libraryRepository.CreateAsync(library);
 
-                // Success.
-                return RedirectToAction(nameof(Index));
+                    // Success.
+                    return RedirectToAction(nameof(Index));
+                }
+                catch { }
             }
 
             AddModelError($"Could not create {nameof(Library)}.");
@@ -94,8 +88,8 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return NotFound();
                     }
-                    else throw;
                 }
+                catch { }
             }
 
             AddModelError($"Could not update {nameof(Library)}.");
@@ -111,6 +105,8 @@ namespace Hybriotheca.Web.Controllers
             var library = await _libraryRepository.GetByIdAsync(id.Value);
             if (library == null) return NotFound();
 
+            ViewBag.IsDeletable = ! await _userHelper.AnyUserWhereMainLibraryAsync(library.ID);
+
             // Success.
             return PartialView("_ModalDelete", library);
         }
@@ -121,12 +117,31 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var library = await _libraryRepository.GetByIdAsync(id);
-            if (library != null)
+            if (library == null) return NotFound();
+
+            try
             {
                 await _libraryRepository.DeleteAsync(library);
+
+                // Success.
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains(
+                        "The DELETE statement conflicted with the REFERENCE constraint"))
+                    {
+                        ViewBag.ErrorTitle = "Cannot delete this Library";
+                        ViewBag.ErrorMessage =
+                            "You cannot delete this Library " +
+                            "because there are Users whose Main Library is this one.";
+                    }
+                }
             }
 
-            return RedirectToAction(nameof(Index));
+            return View("Error");
         }
 
 

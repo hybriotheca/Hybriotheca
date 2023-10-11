@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Hybriotheca.Web.Data.Entities.BookEdition>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Book Editions";
     Layout = "_LayoutAdminPanel";
 }
 
@@ -36,7 +36,7 @@
             </nav>
             <!-- SECTION -->
             <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-                All Book Editions
+                @ViewData["Title"]
             </h1>
         </div>
         <div class="items-center justify-between block sm:flex md:divide-x md:divide-gray-100 dark:divide-gray-700">
@@ -45,7 +45,7 @@
                 <form class="sm:pr-3" action="#" method="GET">
                     <label for="products-search" class="sr-only">Search</label>
                     <div class="relative w-48 mt-1 sm:w-64 xl:w-96">
-                        <input type="text" name="email" id="products-search" class="bg-white border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search for categories">
+                        <input type="text" name="search" id="products-search" class="bg-white border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search for categories">
                     </div>
                 </form>
                 <!-- DELETE ICON -->
@@ -84,22 +84,19 @@
                                 </div>
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.ISBN)
+                                Book
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                Book
+                                @Html.DisplayNameFor(model => model.Language)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 @Html.DisplayNameFor(model => model.Publisher)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.PublishDate)
-                            </th>
-                            <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.Language)
+                                Year
                             </th>
                             <th scope="col" class="whitespace-nowrap w-[1%] p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.IsAvailableOnline)
+                                E-pub@*@Html.DisplayNameFor(model => model.IsAvailableOnline)*@
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 Actions
@@ -119,29 +116,31 @@
                                         <label for="checkbox-194556" class="sr-only">checkbox</label>
                                     </div>
                                 </td>
-                                <!-- ISBN -->
-                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => book.ISBN)
-                                </td>
                                 <!-- BOOK -->
                                 <td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
-                                    <!-- COVER IMAGE -->
-                                    <img src="@Html.DisplayFor(modelItem => book.CoverImageFullPath)" alt="@book.EditionTitle Cover" class="w-20 h-auto" />
+                                    <a asp-action="Edit" asp-route-id="@book.ID">
+                                        <!-- COVER IMAGE -->
+                                        <img src="@Html.DisplayFor(modelItem => book.CoverImageFullPath)" alt="Cover" class="@(string.IsNullOrEmpty(book.CoverImageFullPath) ? "hidden " : "")w-20 h-auto" />
 
-                                    <div class="mr-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        <!-- BOOK TITLE -->
-                                        <div class="text-base font-semibold text-gray-900 dark:text-white">
-                                            @Html.DisplayFor(modelItem => book.EditionTitle)
+                                        <div class="mr-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+                                            <!-- BOOK TITLE -->
+                                            <div class="text-base font-semibold text-gray-900 dark:text-white">
+                                                @Html.DisplayFor(modelItem => book.EditionTitle)
+                                            </div>
+                                            <!-- BOOK FORMAT -->
+                                            <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                                @Html.DisplayFor(modelItem => book.BookFormat)
+                                            </div>
+                                            <!-- ISBN -->
+                                            <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                                @(book.ISBN ?? "ISBN n/a")
+                                            </div>
                                         </div>
-                                        <!-- BOOK FORMAT -->
-                                        <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                            @Html.DisplayFor(modelItem => book.BookFormat)
-                                        </div>
-                                        <!-- Nº PAGES -->
-                                        <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                            @Html.DisplayFor(modelItem => book.NrPages) pages
-                                        </div>
-                                    </div>
+                                    </a>
+                                </td>
+                                <!-- LANGUAGE -->
+                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    @Html.DisplayFor(modelItem => book.Language)
                                 </td>
                                 <!-- PUBLISHER -->
                                 <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -149,11 +148,7 @@
                                 </td>
                                 <!-- PUBLISH DATE -->
                                 <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
-                                    @book.PublishDate.ToShortDateString()
-                                </td>
-                                <!-- LANGUAGE -->
-                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => book.Language)
+                                    @book.PublishDate.Year
                                 </td>
                                 <!-- IS AVAILABLE -->
                                 @* <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">

@@ -2,12 +2,15 @@
 using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BookEditionsController : Controller
     {
         // Helpers.
@@ -17,19 +20,31 @@ namespace Hybriotheca.Web.Controllers
         // Repositories.
         private readonly IBookRepository _bookRepository;
         private readonly IBookEditionRepository _bookEditionRepository;
+        private readonly IBookStockRepository _bookStockRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ILoanRepository _loanRepository;
+        private readonly IRatingRepository _ratingRepository;
+        private readonly IReservationRepository _reservationRepository;
 
         public BookEditionsController(
             IBlobHelper blobHelper, IConverterHelper converterHelper,
             IBookRepository bookRepository,
             IBookEditionRepository bookEditionRepository,
-            ICategoryRepository categoryRepository)
+            IBookStockRepository bookStockRepository,
+            ICategoryRepository categoryRepository,
+            ILoanRepository loanRepository,
+            IRatingRepository ratingRepository,
+            IReservationRepository reservationRepository)
         {
             _blobHelper = blobHelper;
             _converterHelper = converterHelper;
             _bookRepository = bookRepository;
             _bookEditionRepository = bookEditionRepository;
+            _bookStockRepository = bookStockRepository;
             _categoryRepository = categoryRepository;
+            _loanRepository = loanRepository;
+            _ratingRepository = ratingRepository;
+            _reservationRepository = reservationRepository;
         }
 
 
@@ -37,22 +52,6 @@ namespace Hybriotheca.Web.Controllers
         public IActionResult Index()
         {
             return View(_bookEditionRepository.GetAll());
-            //return _context.BookEditions != null ?
-            //            View(await _context.BookEditions.ToListAsync()) :
-            //            Problem("Entity set 'DataContext.BookEditions'  is null.");
-        }
-
-
-        // GET: BookEditions/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var bookEdition = await _bookEditionRepository.GetByIdAsync(id.Value);
-            if (bookEdition == null) return NotFound();
-
-            // Success.
-            return View(bookEdition);
         }
 
 
@@ -81,13 +80,28 @@ namespace Hybriotheca.Web.Controllers
 
                 // Upload Cover Image, if existent.
                 if (model.CoverImageFile != null)
-                    bookEdition.CoverImageID =
-                        await _blobHelper.UploadBlobAsync(model.CoverImageFile, "bookcovers");
+                {
+                    try
+                    {
+                        bookEdition.CoverImageID =
+                            await _blobHelper.UploadBlobAsync(model.CoverImageFile, "bookcovers");
+                    }
+                    catch
+                    {
+                        ViewBag.ErrorTitle = "Could not save Cover Image.";
+                        return View("Error");
+                    }
+                }
 
-                await _bookEditionRepository.CreateAsync(bookEdition);
+                // Create.
+                try
+                {
+                    await _bookEditionRepository.CreateAsync(bookEdition);
 
-                // Success.
-                return RedirectToAction(nameof(Index));
+                    // Success.
+                    return RedirectToAction(nameof(Index));
+                }
+                catch { }
             }
 
             AddModelError($"Could not create {nameof(BookEdition)}.");
@@ -114,13 +128,8 @@ namespace Hybriotheca.Web.Controllers
 
             var model = _converterHelper.BookEditionToViewModel(bookEdition);
 
-            ViewBag.Books = _bookRepository.GetComboBooks()
-                .AsEnumerable()
-                .Prepend(new SelectListItem { Text = $"Select a {nameof(Book)}", Value = "0" });
-
-            ViewBag.Categories = _categoryRepository.GetComboCategories()
-                .AsEnumerable()
-                .Prepend(new SelectListItem { Text = $"Select a {nameof(Category)}", Value = "0" });
+            ViewBag.Books = _bookRepository.GetComboBooks();
+            ViewBag.Categories = _categoryRepository.GetComboCategories();
 
             // Success.
             return View(model);
@@ -135,15 +144,30 @@ namespace Hybriotheca.Web.Controllers
             {
                 var bookEdition = _converterHelper.ViewModelToBookEdition(model);
 
+                // If new Cover Image was given, upload it and update BookEdition.
+                // If not, just update and keep CoverImageID.
                 try
                 {
-                    // Check new Cover Image was given.
                     if (model.CoverImageFile != null)
                     {
                         // Upload new Cover Image.
-                        bookEdition.CoverImageID =
-                            await _blobHelper.UploadBlobAsync(model.CoverImageFile, "bookcovers");
+                        try
+                        {
+                            // Delete previous cover image, if existent.
+                            if (bookEdition.CoverImageID != Guid.Empty)
+                                await _blobHelper.DeleteBlobAsync(
+                                    bookEdition.CoverImageID.ToString(), "bookcovers");
 
+                            // Upload new one.
+                            bookEdition.CoverImageID =
+                                await _blobHelper.UploadBlobAsync(model.CoverImageFile, "bookcovers");
+                        }
+                        catch
+                        {
+                            ViewBag.ErrorTitle = "Could not save Cover Image.";
+                            return View("Error");
+                        }
+                        
                         // Update BookEdition, including new CoverImageID.
                         await _bookEditionRepository.UpdateAsync(bookEdition);
                     }
@@ -162,19 +186,14 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return NotFound();
                     }
-                    else throw;
                 }
+                catch { }
             }
 
             AddModelError($"Could not update {nameof(BookEdition)}.");
 
-            ViewBag.Books = _bookRepository.GetComboBooks()
-                .AsEnumerable()
-                .Prepend(new SelectListItem { Text = $"Select a {nameof(Book)}", Value = "0" });
-
-            ViewBag.Categories = _categoryRepository.GetComboCategories()
-                .AsEnumerable()
-                .Prepend(new SelectListItem { Text = $"Select a {nameof(Category)}", Value = "0" });
+            ViewBag.Books = _bookRepository.GetComboBooks();
+            ViewBag.Categories = _categoryRepository.GetComboCategories();
 
             return View(model);
         }
@@ -188,6 +207,29 @@ namespace Hybriotheca.Web.Controllers
             var bookEdition = await _bookEditionRepository.GetByIdAsync(id.Value);
             if (bookEdition == null) return NotFound();
 
+            // Check dependent entities.
+            var anyBookStock = await _bookStockRepository.AnyWhereBookEditionAsync(bookEdition.ID);
+            var anyLoan = await _loanRepository.AnyWhereBookEditionAsync(bookEdition.ID);
+            var anyRating = await _ratingRepository.AnyWhereBookEditionAsync(bookEdition.ID);
+            var anyReservation = await _reservationRepository.AnyWhereBookEditionAsync(bookEdition.ID);
+
+            if (anyBookStock || anyLoan || anyRating || anyReservation)
+            {
+                ViewBag.IsDeletable = false;
+                ViewBag.Statement =
+                    "You can't delete this Book Edition" +
+                    " because there is at least 1 dependent entity using it." +
+                    " Possible entities:" +
+                    $" {nameof(BookStock)}," +
+                    $" {nameof(Loan)}," +
+                    $" {nameof(Rating)}," +
+                    $" {nameof(Reservation)}.";
+            }
+            else
+            {
+                ViewBag.IsDeletable = true;
+            }
+
             // Success.
             return PartialView("_ModalDelete", bookEdition);
         }
@@ -198,12 +240,37 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var bookEdition = await _bookEditionRepository.GetByIdAsync(id);
-            if (bookEdition != null)
+            if (bookEdition == null) return NotFound();
+
+            try
             {
                 await _bookEditionRepository.DeleteAsync(bookEdition);
+                
+                // Success.
+                return RedirectToAction(nameof(Index));
             }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains(
+                        "The DELETE statement conflicted with the REFERENCE constraint"))
+                    {
+                        ViewBag.ErrorTitle = "Cannot delete this Book edition.";
+                        ViewBag.ErrorMessage =
+                            "You can't delete this Base edition" +
+                            " because there is at least 1 entity using it." +
+                            " Possible entities:" +
+                            $" {nameof(BookStock)}," +
+                            $" {nameof(Loan)}," +
+                            $" {nameof(Rating)}," +
+                            $" {nameof(Reservation)}.";
+                    }
+                }
+            }
+            catch { }
 
-            return RedirectToAction(nameof(Index));
+            return View("Error");
         }
 
 

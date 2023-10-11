@@ -1,16 +1,23 @@
 ﻿using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
+        private readonly IBookEditionRepository _bookEditionRepository;
         private readonly ICategoryRepository _categoryRepository;
 
-        public CategoriesController(ICategoryRepository categoryRepository)
+        public CategoriesController(
+            IBookEditionRepository bookEditionRepository,
+            ICategoryRepository categoryRepository)
         {
+            _bookEditionRepository = bookEditionRepository;
             _categoryRepository = categoryRepository;
         }
 
@@ -19,22 +26,6 @@ namespace Hybriotheca.Web.Controllers
         public IActionResult Index()
         {
             return View(_categoryRepository.GetAll());
-            //return _context.Categories != null ?
-            //            View(await _context.Categories.ToListAsync()) :
-            //            Problem("Entity set 'DataContext.Categories'  is null.");
-        }
-
-
-        // GET: Categories/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var category = await _categoryRepository.GetByIdAsync(id.Value);
-            if (category == null) return NotFound();
-
-            // Success.
-            return View(category);
         }
 
 
@@ -94,8 +85,8 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return NotFound();
                     }
-                    else throw;
                 }
+                catch { }
             }
 
             AddModelError($"Could not update {nameof(Category)}.");
@@ -111,6 +102,8 @@ namespace Hybriotheca.Web.Controllers
             var category = await _categoryRepository.GetByIdAsync(id.Value);
             if (category == null) return NotFound();
 
+            ViewBag.IsDeletable = ! await _bookEditionRepository.AnyWhereCategoryAsync(category.ID);
+
             // Success.
             return PartialView("_ModalDelete", category);
         }
@@ -120,13 +113,33 @@ namespace Hybriotheca.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            id = 2;
             var category = await _categoryRepository.GetByIdAsync(id);
-            if (category != null)
+            if (category == null) return NotFound();
+            
+            try
             {
                 await _categoryRepository.DeleteAsync(category);
-            }
 
-            return RedirectToAction(nameof(Index));
+                // Success.
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains("FK_BookEditions_Categories_CategoryID"))
+                    {
+                        ViewBag.ErrorTitle = "Cannot delete this Category.";
+                        ViewBag.ErrorMessage =
+                            "You can't delete this Category" +
+                            " because there are Book Editions with it.";
+                    }
+                }
+            }
+            catch { }
+
+            return View("Error");
         }
 
 

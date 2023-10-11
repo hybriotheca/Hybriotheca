@@ -39,6 +39,16 @@ namespace Hybriotheca.Web.Helpers
             await _userManager.AddToRoleAsync(user, role);
         }
 
+        public async Task<bool> AnyUserWhereMainLibraryAsync(int libraryId)
+        {
+            return await _userManager.Users.AnyAsync(user => user.MainLibraryID == libraryId);
+        }
+
+        public async Task<bool> AnyUserWhereSubscriptionAsync(int subscriptionId)
+        {
+            return await _userManager.Users.AnyAsync(user => user.SubscriptionID == subscriptionId);
+        }
+
         public async Task<IdentityResult> ChangePasswordAsync(
             AppUser user, string oldPassword, string newPassword)
         {

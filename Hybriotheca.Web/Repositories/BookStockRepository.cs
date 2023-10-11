@@ -16,6 +16,12 @@ public class BookStockRepository : GenericRepository<BookStock>, IBookStockRepos
     }
 
 
+    public async Task<bool> AnyWhereBookEditionAsync(int bookEditionId)
+    {
+        return await _dataContext.BooksInStock
+            .AnyAsync(bookStock => bookStock.BookEditionID == bookEditionId);
+    }
+
     public async Task<bool> ExistsAsync(int libraryId, int bookEditionId)
     {
         return await _dataContext.BooksInStock.AnyAsync(bookStock =>
