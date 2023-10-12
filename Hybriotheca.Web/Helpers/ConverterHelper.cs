@@ -34,6 +34,7 @@ namespace Hybriotheca.Web.Helpers
             return new UserViewModel
             {
                 Id = user.Id,
+                Role = user.Role,
                 Email = user.Email,
                 EmailConfirmed = user.EmailConfirmed,
                 PhoneNumber = user.PhoneNumber,
@@ -75,6 +76,7 @@ namespace Hybriotheca.Web.Helpers
             return new AppUser
             {
                 Id = model.Id ?? Guid.NewGuid().ToString(),
+                Role = model.Role,
                 UserName = model.Email,
                 Email = model.Email,
                 EmailConfirmed = model.EmailConfirmed,
@@ -89,6 +91,7 @@ namespace Hybriotheca.Web.Helpers
         public AppUser ViewModelToUser(UserViewModel model, AppUser user)
         {
             user.Id = model.Id;
+            user.Role = model.Role;
             user.UserName = model.Email;
             user.Email = model.Email;
             user.EmailConfirmed = model.EmailConfirmed;

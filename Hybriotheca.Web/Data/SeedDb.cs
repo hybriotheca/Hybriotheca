@@ -144,6 +144,8 @@ namespace Hybriotheca.Web.Data
             {
                 var email = _configuration[$"SeedDb:Users:{name}:Email"];
                 
+                var roleName = _configuration[$"SeedDb:Users:{name}:Role"];
+
                 var user = await _userHelper.GetUserByEmailAsync(email);
                 if (user == null)
                 {
@@ -152,6 +154,7 @@ namespace Hybriotheca.Web.Data
 
                     user = new AppUser
                     {
+                        Role = roleName,
                         UserName = email,
                         Email = email,
                         EmailConfirmed = true,
@@ -164,8 +167,6 @@ namespace Hybriotheca.Web.Data
 
                     await _userHelper.AddUserAsync(user, password);
                 }
-
-                var roleName = _configuration[$"SeedDb:Users:{name}:Role"];
 
                 if (!await _userHelper.IsUserInRoleAsync(user, roleName))
                 {

@@ -231,6 +231,7 @@ namespace Hybriotheca.Web.Controllers
 
                 user = new AppUser
                 {
+                    Role = "Customer",
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
@@ -271,7 +272,12 @@ namespace Hybriotheca.Web.Controllers
                     }
 
                     // If it gets here, rollback user creation.
-                    await _userHelper.DeleteUserAsync(user);
+                    var deleteUser = await _userHelper.DeleteUserAsync(user);
+
+                    if (!deleteUser.Succeeded)
+                    {
+                        return View("Error");
+                    }
                 }
             }
 

@@ -38,7 +38,7 @@ namespace Hybriotheca.Web.Models.Entities
 
                 if (firstLetters.Length > 0)
                 {
-                    string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[firstLetters.Length - 1][0]);
+                    string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[^1][0]);
                     return nameAbbr;
                 }
                 return string.Empty;
@@ -61,6 +61,7 @@ namespace Hybriotheca.Web.Models.Entities
         public string? SubscriptionName { get; set; }
 
 
+        [Display(Name = "Main Library")]
         public int MainLibraryID { get; set; }
     }
 }

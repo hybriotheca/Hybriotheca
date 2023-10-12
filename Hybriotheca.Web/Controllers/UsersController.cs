@@ -1,9 +1,11 @@
-﻿using Hybriotheca.Web.Data.Entities;
+﻿using Hybriotheca.Web.Data;
+using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Controllers
@@ -41,26 +43,41 @@ namespace Hybriotheca.Web.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            var users = await _userHelper.GetAllUsersAsync();
-
-            var models = new List<UserViewModel>();
-
-            foreach (var user in users)
-            {
-                models.Add(await GetUserViewModelForViewAsync(user));
-            }
+            var models = await _userHelper.GetAllUsers()
+                .SelectUserViewModel()
+                .ToListAsync();
 
             var roleOrder = new List<string> { "Admin", "Librarian", "Customer" };
 
-            models = models
-                .OrderBy(m => roleOrder.IndexOf(m.Role))
-                .ThenBy(m => m.Email)
-                .ToList();
+            var orderedModels = models
+                .OrderBy(model => roleOrder.IndexOf(model.Role))
+                .ThenBy(model => model.Email);
 
-            return View(models);
-            //return _context.User != null ?
-            //            View(await _context.User.ToListAsync()) :
-            //            Problem("Entity set 'DataContext.User'  is null.");
+            return View(orderedModels);
+        }
+
+        // GET: Users/Admins
+        public async Task<IActionResult> Admins()
+        {
+            var models = await GetModelsOfRoleAsync("Admin");
+
+            return View(nameof(Index), models);
+        }
+
+        // GET: Users/Customers
+        public async Task<IActionResult> Customers()
+        {
+            var models = await GetModelsOfRoleAsync("Customer");
+
+            return View(nameof(Index), models);
+        }
+
+        // GET: Users/Librarians
+        public async Task<IActionResult> Librarians()
+        {
+            var models = await GetModelsOfRoleAsync("Librarian");
+
+            return View(nameof(Index), models);
         }
 
 
@@ -69,13 +86,8 @@ namespace Hybriotheca.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var user = await _userHelper.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
-
-            var model = await GetUserViewModelForViewAsync(user);
-            model.SubscriptionName =
-                await _subscriptionRepository.GetSubscriptionNameAsync(model.SubscriptionID)
-                ?? "not found";
+            var model = await GetModelForViewAsync(id);
+            if (model == null) return NotFound();
 
             return View(model);
         }
@@ -84,11 +96,7 @@ namespace Hybriotheca.Web.Controllers
         // GET: Users/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            ViewBag.Roles = await _userHelper.GetComboRolesAsync();
-            ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
-
-            return View();
+            return await ViewCreateAsync(null);
         }
 
         // POST: Users/Create
@@ -104,50 +112,67 @@ namespace Hybriotheca.Web.Controllers
             {
                 var user = _converterHelper.ViewModelToUser(model);
 
+                // Upload Photo if given.
                 if (model.PhotoFile != null)
                 {
-                    user.PhotoId = await _blobHelper.UploadBlobAsync(model.PhotoFile, "userphotos");
-                }
-
-                var addUser = await _userHelper.AddUserAsync(user);
-                if (addUser.Succeeded)
-                {
-                    await _userHelper.AddUserToRoleAsync(user, model.Role);
-
-                    string token = await _userHelper.GeneratePasswordResetTokenAsync(user);
-
-                    string? tokenUrl = Url.Action(
-                        action: nameof(AccountController.ResetPassword),
-                        controller: "Account",
-                        values: new { token },
-                        protocol: HttpContext.Request.Scheme);
-
-                    if (!string.IsNullOrEmpty(tokenUrl))
+                    try
                     {
-                        var sendPasswordResetEmail = _mailHelper.SendPasswordResetEmail(user, tokenUrl);
-                        if (sendPasswordResetEmail)
-                        {
-                            TempData["Message"] =
-                                $"An email has been sent to <i>{model.Email}</i> " +
-                                $"with a link to reset password.";
-
-                            // Success.
-                            return RedirectToAction(nameof(Index));
-                        }
+                        user.PhotoId = await _blobHelper.UploadBlobAsync(model.PhotoFile, "userphotos");
                     }
-
-                    // If it gets here, rollback user creation.
-                    await _userHelper.DeleteUserAsync(user);
+                    catch
+                    {
+                        AddModelError("Could not save photo. The user was not created.");
+                        return await ViewCreateAsync(model);
+                    }
                 }
+
+                // Add user and send email.
+                try
+                {
+                    var addUser = await _userHelper.AddUserAsync(user);
+                    if (addUser.Succeeded)
+                    {
+                        await _userHelper.AddUserToRoleAsync(user, user.Role);
+
+                        string token = await _userHelper.GeneratePasswordResetTokenAsync(user);
+
+                        string? tokenUrl = Url.Action(
+                            action: nameof(AccountController.ResetPassword),
+                            controller: "Account",
+                            values: new { token },
+                            protocol: HttpContext.Request.Scheme);
+
+                        if (!string.IsNullOrEmpty(tokenUrl))
+                        {
+                            var sendPasswordResetEmail = _mailHelper.SendPasswordResetEmail(user, tokenUrl);
+                            if (sendPasswordResetEmail)
+                            {
+                                TempData["Message"] =
+                                    $"An email has been sent to <i>{model.Email}</i> " +
+                                    $"with a link to reset password.";
+
+                                // Success.
+                                return RedirectToAction(nameof(Index));
+                            }
+                        }
+
+                        // If it gets here, rollback user creation.
+                        var deleteUser = await _userHelper.DeleteUserAsync(user);
+
+                        if (!deleteUser.Succeeded)
+                        {
+                            return View("Error");
+                        }
+
+                        AddModelError("Could not send confirmation email to User. User was not created.");
+                        return await ViewCreateAsync(model);
+                    }
+                }
+                catch { }
             }
 
-            AddModelError($"Could not create User.");
-
-            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            ViewBag.Roles = await _userHelper.GetComboRolesAsync();
-            ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
-
-            return View(model);
+            AddModelError("Could not create User.");
+            return await ViewCreateAsync(model);
         }
 
 
@@ -156,17 +181,10 @@ namespace Hybriotheca.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var user = await _userHelper.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            var model = await GetModelForViewAsync(id);
+            if (model == null) return NotFound();
 
-            var model = await GetUserViewModelForViewAsync(user);
-
-            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            ViewBag.Roles = await _userHelper.GetComboRolesAsync();
-            ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
-
-            // Success.
-            return View(model);
+            return await ViewEditAsync(model);
         }
 
         // POST: Users/Edit/5
@@ -205,9 +223,9 @@ namespace Hybriotheca.Web.Controllers
                     var updateUser = await _userHelper.UpdateUserAsync(user);
                     if (updateUser.Succeeded)
                     {
-                        if (!await _userHelper.IsUserInRoleAsync(user, model.Role))
+                        if (!await _userHelper.IsUserInRoleAsync(user, user.Role))
                         {
-                            await _userHelper.SetUserRoleAsync(user, model.Role);
+                            await _userHelper.SetUserRoleAsync(user, user.Role);
                         }
 
                         if (isEmailChanged)
@@ -261,17 +279,12 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return NotFound();
                     }
-                    else throw;
                 }
+                catch { }
             }
 
-            AddModelError($"Could not update User.");
-
-            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            ViewBag.Roles = await _userHelper.GetComboRolesAsync();
-            ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptions();
-
-            return View(model);
+            AddModelError("Could not update User.");
+            return await ViewEditAsync(model);
         }
 
 
@@ -280,15 +293,38 @@ namespace Hybriotheca.Web.Controllers
         {
             if (id == null) return NotFound();
 
-            var user = await _userHelper.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            var model = await GetModelForViewAsync(id);
+            if (model == null) return NotFound();
 
-            var model = await GetUserViewModelForViewAsync(user);
-            model.SubscriptionName =
-                await _subscriptionRepository.GetSubscriptionNameAsync(model.SubscriptionID)
-                ?? "not found";
+            // Check if this user is the last admin.
+            if (model.Role == "Admin")
+            {
+                var lastAdmin = !await _userHelper.IsThereAnyOtherAdminAsync(id);
+                if (lastAdmin)
+                {
+                    ViewBag.IsDeletable = false;
+                    ViewBag.Statement = "You cannot delete this User because there isn't any other Admin.";
+                    return PartialView("_ModalDelete", model);
+                }
+            }
 
-            // Success.
+            // Check if there is any entity dependent on this user.
+            var isConstrained = await _userHelper.IsConstrainedAsync(id);
+            if (isConstrained)
+            {
+                ViewBag.IsDeletable = false;
+                ViewBag.Statement =
+                    "You cannot delete this User because there are entities related to it." +
+                    " Possible entities:" +
+                    $" {nameof(Loan)}," +
+                    $" {nameof(Rating)}," +
+                    $" {nameof(Reservation)}.";
+
+                return PartialView("_ModalDelete", model);
+            }
+
+            // User is deletable.
+            ViewBag.IsDeletable = true;
             return PartialView("_ModalDelete", model);
         }
 
@@ -298,65 +334,93 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var user = await _userHelper.GetUserByIdAsync(id);
-            if (user != null)
-            {
-                await _userHelper.DeleteUserAsync(user);
+            if (user == null) return NotFound();
 
-                if (user.PhotoId != Guid.Empty)
+            try
+            {
+                var deleteUser = await _userHelper.DeleteUserAsync(user);
+
+                if (!deleteUser.Succeeded) return View("Error");
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains(
+                        "The DELETE statement conflicted with the REFERENCE constraint"))
+                    {
+                        ViewBag.ErrorTitle = "Cannot delete this User.";
+                        ViewBag.ErrorMessage =
+                            "You can't delete this User" +
+                            " because there is at least 1 entity related to it." +
+                            " Possible entities:" +
+                            $" {nameof(Loan)}," +
+                            $" {nameof(Rating)}," +
+                            $" {nameof(Reservation)}.";
+                    }
+                }
+            }
+            catch { return View("Error"); }
+
+            if (user.PhotoId != Guid.Empty)
+            {
+                try
                 {
                     await _blobHelper.DeleteBlobAsync(user.PhotoId.ToString(), "userphotos");
+                }
+                catch
+                {
+                    ViewBag.ErrorTitle = "The image was not deleted.";
+                    return View("Error");
                 }
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Admins()
-        {
-            var models = await GetModelsForUsersInRoleAsync("Admin");
 
-            return View(nameof(Index), models);
-        }
-
-        public async Task<IActionResult> Customers()
-        {
-            var models = await GetModelsForUsersInRoleAsync("Customer");
-
-            return View(nameof(Index), models);
-        }
-
-        public async Task<IActionResult> Librarians()
-        {
-            var models = await GetModelsForUsersInRoleAsync("Librarian");
-
-            return View(nameof(Index), models);
-        }
-
+        #region private helper methods
 
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
         }
 
-        private async Task<IEnumerable<UserViewModel>> GetModelsForUsersInRoleAsync(string roleName)
+        private async Task<UserViewModel?> GetModelForViewAsync(string id)
         {
-            var users = await _userHelper.GetUsersInRoleAsync(roleName);
-
-            var models = new List<UserViewModel>();
-
-            foreach (var user in users)
-            {
-                models.Add(await GetUserViewModelForViewAsync(user));
-            }
-            
-            return models.OrderBy(m => m.Email);
+            return await _userHelper.GetAllUsers()
+                .Where(user => user.Id == id)
+                .SelectUserViewModel()
+                .SingleOrDefaultAsync();
         }
 
-        private async Task<UserViewModel> GetUserViewModelForViewAsync(AppUser user)
+        private async Task<IEnumerable<UserViewModel>> GetModelsOfRoleAsync(string roleName)
         {
-            var model = _converterHelper.UserToViewModel(user);
-            model.Role = await _userHelper.GetUserRoleAsync(user);
-            return model;
+            return await _userHelper.GetAllUsers()
+                .Where(user => user.Role == roleName)
+                .SelectUserViewModel()
+                .OrderBy(user => user.Email)
+                .ToListAsync();
         }
+
+        private async Task<ViewResult> ViewCreateAsync(UserViewModel? model)
+        {
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
+            ViewBag.Roles = await _userHelper.GetComboRolesAsync();
+            ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptionsAsync();
+
+            return View(nameof(Create), model);
+        }
+
+        private async Task<ViewResult> ViewEditAsync(UserViewModel model)
+        {
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
+            ViewBag.Roles = await _userHelper.GetComboRolesAsync();
+            ViewBag.Subscriptions = await _subscriptionRepository.GetComboSubscriptionsAsync();
+
+            return View(nameof(Edit), model);
+        }
+
+        #endregion private helper methods
     }
 }

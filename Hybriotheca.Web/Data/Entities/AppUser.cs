@@ -4,6 +4,8 @@ namespace Hybriotheca.Web.Data.Entities;
 
 public class AppUser : IdentityUser
 {
+    public string Role { get; set; }
+
     public string FirstName { get; set; }
 
     public string LastName { get; set; }
@@ -18,7 +20,7 @@ public class AppUser : IdentityUser
                 .Where(word => !string.IsNullOrEmpty(word))
                 .ToArray();
 
-            string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[firstLetters.Length - 1][0]);
+            string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[^1][0]);
 
             return nameAbbr;
         }
@@ -42,9 +44,9 @@ public class AppUser : IdentityUser
     public Library? MainLibrary { get; set; }
 
 
-    public IEnumerable<Rating>? Ratings { get; set; }
-
     public IEnumerable<Loan>? Loans { get; set; }
+    
+    public IEnumerable<Rating>? Ratings { get; set; }
 
     public IEnumerable<Reservation>? Reservations { get; set; }
 

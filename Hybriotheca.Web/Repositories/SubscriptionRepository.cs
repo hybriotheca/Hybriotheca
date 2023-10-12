@@ -16,20 +16,6 @@ public class SubscriptionRepository : GenericRepository<Subscription>, ISubscrip
     }
 
 
-    public async Task<Subscription> GetByNameAsync(string name)
-    {
-        return await _dataContext.Subscriptions.AsNoTracking().FirstAsync(x => x.Name == name);
-
-    }
-
-    public async Task<Subscription?> GetByIdWithUsers(int id)
-    {
-        return await _dataContext.Subscriptions
-            .Where(s => s.ID == id)
-            .Include(x => x.Users)
-            .FirstOrDefaultAsync();
-    }
-
     public async Task<IEnumerable<SelectListItem>> GetComboSubscriptionsAsync()
     {
         return await _dataContext.Subscriptions.Select(s => new SelectListItem
@@ -44,14 +30,6 @@ public class SubscriptionRepository : GenericRepository<Subscription>, ISubscrip
         return await _dataContext.Subscriptions
             .Where(s => s.Name == "Standard")
             .Select(s => s.ID)
-            .FirstOrDefaultAsync();
-    }
-
-    public async Task<string?> GetSubscriptionNameAsync(int subscriptionId)
-    {
-        return await _dataContext.Subscriptions
-            .Where(s => s.ID == subscriptionId)
-            .Select(s => s.Name)
             .FirstOrDefaultAsync();
     }
 

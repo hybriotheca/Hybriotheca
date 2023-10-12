@@ -57,9 +57,9 @@ namespace Hybriotheca.Web.Helpers
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
-        public async Task DeleteUserAsync(AppUser user)
+        public async Task<IdentityResult> DeleteUserAsync(AppUser user)
         {
-            await _userManager.DeleteAsync(user);
+            return await _userManager.DeleteAsync(user);
         }
 
         public async Task<string> GenerateEmailConfirmationTokenAsync(AppUser user)
@@ -72,9 +72,9 @@ namespace Hybriotheca.Web.Helpers
             return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
-        public async Task<IEnumerable<AppUser>> GetAllUsersAsync()
+        public IQueryable<AppUser> GetAllUsers()
         {
-            return await _userManager.Users.AsNoTracking().ToListAsync();
+            return _userManager.Users.AsNoTracking();
         }
 
         public async Task<IEnumerable<SelectListItem>> GetComboCustomersAsync()
@@ -115,11 +115,6 @@ namespace Hybriotheca.Web.Helpers
             return await _userManager.FindByIdAsync(id);
         }
 
-        public async Task<string> GetUserRoleAsync(AppUser user)
-        {
-            return (await _userManager.GetRolesAsync(user))[0];
-        }
-
         public async Task<string?> GetUserRoleAsync(string userEmail)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
@@ -128,9 +123,16 @@ namespace Hybriotheca.Web.Helpers
             return (await _userManager.GetRolesAsync(user))[0];
         }
 
-        public async Task<IEnumerable<AppUser>> GetUsersInRoleAsync(string roleName)
+        public async Task<bool> IsConstrainedAsync(string id)
         {
-            return await _userManager.GetUsersInRoleAsync(roleName);
+            return await _userManager.Users
+                .Where(user => user.Id == id)
+                .AnyAsync(user => user.Loans.Any() || user.Ratings.Any() || user.Reservations.Any());
+        }
+
+        public async Task<bool> IsThereAnyOtherAdminAsync(string id)
+        {
+            return await _userManager.Users.AnyAsync(user => user.Role == "Admin" && user.Id != id);
         }
 
         public async Task<bool> IsUserInRoleAsync(AppUser user, string role)
