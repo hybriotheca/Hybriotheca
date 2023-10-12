@@ -11,14 +11,10 @@ namespace Hybriotheca.Web.Controllers
     public class BooksController : Controller
     {
         private readonly IBookRepository _bookRepository;
-        private readonly IBookEditionRepository _bookEditionRepository;
 
-        public BooksController(
-            IBookRepository bookRepository,
-            IBookEditionRepository bookEditionRepository)
+        public BooksController(IBookRepository bookRepository)
         {
             _bookRepository = bookRepository;
-            _bookEditionRepository = bookEditionRepository;
         }
 
 
@@ -106,7 +102,7 @@ namespace Hybriotheca.Web.Controllers
             var book = await _bookRepository.GetByIdAsync(id.Value);
             if (book == null) return NotFound();
 
-            ViewBag.IsDeletable = ! await _bookEditionRepository.AnyWhereBookAsync(id.Value);
+            ViewBag.IsDeletable = ! await _bookRepository.IsConstrainedAsync(id.Value);
 
             return PartialView("_ModalDelete", book);
         }

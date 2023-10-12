@@ -11,14 +11,10 @@ namespace Hybriotheca.Web.Controllers
     [Authorize(Roles = "Admin")]
     public class SubscriptionsController : Controller
     {
-        private readonly IUserHelper _userHelper;
         private readonly ISubscriptionRepository _subscriptionRepository;
 
-        public SubscriptionsController(
-            IUserHelper userHelper,
-            ISubscriptionRepository subscriptionRepository)
+        public SubscriptionsController(ISubscriptionRepository subscriptionRepository)
         {
-            _userHelper = userHelper;
             _subscriptionRepository = subscriptionRepository;
         }
 
@@ -107,7 +103,7 @@ namespace Hybriotheca.Web.Controllers
             var subscript = await _subscriptionRepository.GetByIdAsync(id.Value);
             if (subscript == null) return NotFound();
 
-            ViewBag.IsDeletable = ! await _userHelper.AnyUserWhereSubscriptionAsync(subscript.ID);
+            ViewBag.IsDeletable = ! await _subscriptionRepository.IsConstrainedAsync(subscript.ID);
 
             return PartialView("_ModalDelete", subscript);
         }

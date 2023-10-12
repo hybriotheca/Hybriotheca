@@ -22,4 +22,5 @@ public class Library : IEntity
 
     public IEnumerable<Reservation>? Reservations { get; set; }
 
+    public IEnumerable<AppUser>? Users { get; set; }
 }

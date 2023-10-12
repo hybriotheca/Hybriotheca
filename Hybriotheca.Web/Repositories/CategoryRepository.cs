@@ -2,6 +2,7 @@
 using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Repositories;
 
@@ -22,5 +23,12 @@ public class CategoryRepository : GenericRepository<Category>, ICategoryReposito
             Text = c.Name,
             Value = c.ID.ToString()
         });
+    }
+
+    public async Task<bool> IsConstrainedAsync(int id)
+    {
+        return await _dataContext.Categories
+            .Where(category => category.ID == id)
+            .AnyAsync(category => category.BookEditions.Any());
     }
 }

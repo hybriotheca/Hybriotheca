@@ -1,5 +1,4 @@
 ﻿using Hybriotheca.Web.Data.Entities;
-using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +10,10 @@ namespace Hybriotheca.Web.Controllers
     [Authorize(Roles = "Admin")]
     public class LibrariesController : Controller
     {
-        private readonly IUserHelper _userHelper;
         private readonly ILibraryRepository _libraryRepository;
 
-        public LibrariesController(IUserHelper userHelper, ILibraryRepository libraryRepository)
+        public LibrariesController(ILibraryRepository libraryRepository)
         {
-            _userHelper = userHelper;
             _libraryRepository = libraryRepository;
         }
 
@@ -105,7 +102,23 @@ namespace Hybriotheca.Web.Controllers
             var library = await _libraryRepository.GetByIdAsync(id.Value);
             if (library == null) return NotFound();
 
-            ViewBag.IsDeletable = ! await _userHelper.AnyUserWhereMainLibraryAsync(library.ID);
+            var isConstrained = await _libraryRepository.IsConstrainedAsync(library.ID);
+            if (isConstrained)
+            {
+                ViewBag.IsDeletable = false;
+                ViewBag.Statement =
+                    "You can't delete this Library" +
+                    " because there is at least 1 dependent entity using it." +
+                    " Possible entities:" +
+                    $" {nameof(BookStock)}," +
+                    $" {nameof(Loan)}," +
+                    $" {nameof(Reservation)}," +
+                    $" User.";
+            }
+            else
+            {
+                ViewBag.IsDeletable = true;
+            }
 
             // Success.
             return PartialView("_ModalDelete", library);

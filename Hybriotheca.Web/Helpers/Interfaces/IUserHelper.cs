@@ -9,8 +9,6 @@ namespace Hybriotheca.Web.Helpers.Interfaces
         Task<IdentityResult> AddUserAsync(AppUser user);
         Task<IdentityResult> AddUserAsync(AppUser user, string password);
         Task AddUserToRoleAsync(AppUser user, string role);
-        Task<bool> AnyUserWhereMainLibraryAsync(int libraryId);
-        Task<bool> AnyUserWhereSubscriptionAsync(int subscriptionId);
         Task<IdentityResult> ChangePasswordAsync(AppUser user, string oldPassword, string newPassword);
         Task ConfirmEmailAsync(AppUser user);
         Task<IdentityResult> ConfirmEmailAsync(AppUser user, string token);

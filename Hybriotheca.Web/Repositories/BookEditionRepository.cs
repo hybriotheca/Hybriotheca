@@ -17,17 +17,6 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
     }
 
 
-    public async Task<bool> AnyWhereBookAsync(int bookId)
-    {
-        return await _dataContext.BookEditions.AnyAsync(bookEdition => bookEdition.BookID == bookId);
-    }
-
-    public async Task<bool> AnyWhereCategoryAsync(int categoryId)
-    {
-        return await _dataContext.BookEditions
-            .AnyAsync(bookEdition => bookEdition.CategoryID == categoryId);
-    }
-
     public async Task<IEnumerable<SelectListItem>> GetComboBookEditionsAsync()
     {
         return await _dataContext.BookEditions
@@ -36,6 +25,17 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
                 Text = bookEdition.EditionTitle,
                 Value = bookEdition.ID.ToString(),
             }).ToListAsync();
+    }
+
+    public async Task<bool> IsConstrainedAsync(int id)
+    {
+        return await _dataContext.BookEditions
+            .Where(bookEdition => bookEdition.ID == id)
+            .AnyAsync(bookEdition =>
+                bookEdition.BooksInStock.Any()
+                || bookEdition.Loans.Any()
+                || bookEdition.Ratings.Any()
+                || bookEdition.Reservations.Any());
     }
 
     public async Task UpdateKeepCoverImageAsync(BookEdition bookEdition)

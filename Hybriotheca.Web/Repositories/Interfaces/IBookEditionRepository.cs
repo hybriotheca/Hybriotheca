@@ -12,6 +12,5 @@ public interface IBookEditionRepository : IGenericRepository<BookEdition>
 
     public List<BookEdition> CarouselEditionsInfiniteScroll(string category, int lastEditionID);
     Task<IEnumerable<SelectListItem>> GetComboBookEditionsAsync();
-    Task<bool> AnyWhereBookAsync(int bookId);
-    Task<bool> AnyWhereCategoryAsync(int categoryId);
+    Task<bool> IsConstrainedAsync(int id);
 }

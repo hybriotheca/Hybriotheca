@@ -10,14 +10,10 @@ namespace Hybriotheca.Web.Controllers
     [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
-        private readonly IBookEditionRepository _bookEditionRepository;
         private readonly ICategoryRepository _categoryRepository;
 
-        public CategoriesController(
-            IBookEditionRepository bookEditionRepository,
-            ICategoryRepository categoryRepository)
+        public CategoriesController(ICategoryRepository categoryRepository)
         {
-            _bookEditionRepository = bookEditionRepository;
             _categoryRepository = categoryRepository;
         }
 
@@ -102,7 +98,7 @@ namespace Hybriotheca.Web.Controllers
             var category = await _categoryRepository.GetByIdAsync(id.Value);
             if (category == null) return NotFound();
 
-            ViewBag.IsDeletable = ! await _bookEditionRepository.AnyWhereCategoryAsync(category.ID);
+            ViewBag.IsDeletable = ! await _categoryRepository.IsConstrainedAsync(category.ID);
 
             // Success.
             return PartialView("_ModalDelete", category);

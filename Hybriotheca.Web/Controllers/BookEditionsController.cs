@@ -20,31 +20,20 @@ namespace Hybriotheca.Web.Controllers
         // Repositories.
         private readonly IBookRepository _bookRepository;
         private readonly IBookEditionRepository _bookEditionRepository;
-        private readonly IBookStockRepository _bookStockRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ILoanRepository _loanRepository;
-        private readonly IRatingRepository _ratingRepository;
-        private readonly IReservationRepository _reservationRepository;
 
         public BookEditionsController(
-            IBlobHelper blobHelper, IConverterHelper converterHelper,
+            IBlobHelper blobHelper,
+            IConverterHelper converterHelper,
             IBookRepository bookRepository,
             IBookEditionRepository bookEditionRepository,
-            IBookStockRepository bookStockRepository,
-            ICategoryRepository categoryRepository,
-            ILoanRepository loanRepository,
-            IRatingRepository ratingRepository,
-            IReservationRepository reservationRepository)
+            ICategoryRepository categoryRepository)
         {
             _blobHelper = blobHelper;
             _converterHelper = converterHelper;
             _bookRepository = bookRepository;
             _bookEditionRepository = bookEditionRepository;
-            _bookStockRepository = bookStockRepository;
             _categoryRepository = categoryRepository;
-            _loanRepository = loanRepository;
-            _ratingRepository = ratingRepository;
-            _reservationRepository = reservationRepository;
         }
 
 
@@ -208,12 +197,8 @@ namespace Hybriotheca.Web.Controllers
             if (bookEdition == null) return NotFound();
 
             // Check dependent entities.
-            var anyBookStock = await _bookStockRepository.AnyWhereBookEditionAsync(bookEdition.ID);
-            var anyLoan = await _loanRepository.AnyWhereBookEditionAsync(bookEdition.ID);
-            var anyRating = await _ratingRepository.AnyWhereBookEditionAsync(bookEdition.ID);
-            var anyReservation = await _reservationRepository.AnyWhereBookEditionAsync(bookEdition.ID);
-
-            if (anyBookStock || anyLoan || anyRating || anyReservation)
+            var isConstrained = await _bookEditionRepository.IsConstrainedAsync(bookEdition.ID);
+            if (isConstrained)
             {
                 ViewBag.IsDeletable = false;
                 ViewBag.Statement =

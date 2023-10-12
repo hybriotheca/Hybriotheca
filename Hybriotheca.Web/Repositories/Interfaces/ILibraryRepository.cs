@@ -6,4 +6,5 @@ namespace Hybriotheca.Web.Repositories.Interfaces;
 public interface ILibraryRepository : IGenericRepository<Library>
 {
     Task<IEnumerable<SelectListItem>> GetComboLibrariesAsync();
+    Task<bool> IsConstrainedAsync(int id);
 }

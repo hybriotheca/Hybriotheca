@@ -54,4 +54,11 @@ public class SubscriptionRepository : GenericRepository<Subscription>, ISubscrip
             .Select(s => s.Name)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<bool> IsConstrainedAsync(int id)
+    {
+        return await _dataContext.Subscriptions
+            .Where(subscription => subscription.ID == id)
+            .AnyAsync(subscription => subscription.Users.Any());
+    }
 }

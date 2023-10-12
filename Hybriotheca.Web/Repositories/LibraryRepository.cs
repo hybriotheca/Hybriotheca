@@ -25,4 +25,15 @@ public class LibraryRepository : GenericRepository<Library>, ILibraryRepository
                 Value = library.ID.ToString(),
             }).ToListAsync();
     }
+
+    public async Task<bool> IsConstrainedAsync(int id)
+    {
+        return await _dataContext.Libraries
+            .Where(library => library.ID == id)
+            .AnyAsync(library =>
+                library.BooksInStock.Any()
+                || library.Loans.Any()
+                || library.Reservations.Any()
+                || library.Users.Any());
+    }
 }
