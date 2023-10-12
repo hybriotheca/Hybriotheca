@@ -6,9 +6,23 @@ namespace Hybriotheca.Web.Repositories.Interfaces;
 
 public interface IBookEditionRepository : IGenericRepository<BookEdition>
 {
-    public List<BookEdition> CarouselEditionsInfiniteScroll(string category, int lastEditionID);
-    public CarouselEditions GetCarouselEditions();
+    Task UpdateKeepCoverImageAsync(BookEdition bookEdition);
+
     Task<IEnumerable<SelectListItem>> GetComboBookEditionsAsync();
+
+    Task<CarouselEditionsViewModel> GetCarouselEditionsAsync();
+
+    Task<List<BookEdition>> CarouselEditionsInfiniteScrollAsync(string category, int lastEditionID);
+
+    Task<SearchViewModel> GetSearchResultsAsync(SearchViewModel viewModel);
+
+    IEnumerable<string> GetCheckBoxCategories();
+
+    IEnumerable<string> GetCheckBoxFormat();
+
+    IEnumerable<string> GetCheckBoxLang();
+
+    IEnumerable<string> GetCheckBoxPubYear();
     Task<bool> IsConstrainedAsync(int id);
     Task UpdateKeepCoverImageAsync(BookEdition bookEdition);
 }

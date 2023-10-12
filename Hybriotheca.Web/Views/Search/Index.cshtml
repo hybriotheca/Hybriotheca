@@ -1,0 +1,359 @@
+﻿@model Hybriotheca.Web.Models.Search.SearchViewModel
+
+<input class="form-control mb-3" type="search"
+       name="searchTerm" id="searchTerm" placeholder="Type to search..."
+       hx-post hx-target="#searchResults" hx-trigger="keyup changed delay:500ms, search" hx-include="#main-form" />
+
+<div hx-history="false" class="row">
+    <div class="col-3" style="background-color:azure">
+
+        <h5 class="mb-3 fw-bold">FILTERS</h5>
+
+        <button id="clearAllBtn" type="button" hidden class="btn mb-3 btn-primary">Clear all filters</button>
+
+        <form id="main-form" hx-post hx-target="#searchResults" hx-trigger="submitForm" hx-include="#searchTerm">
+            
+            <div class="mb-3">
+
+                <p class="mb-1"><strong>CATEGORIES</strong></p>
+
+                @foreach (var name in ViewBag.Categories)
+                {
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" value="@name" name="Categories" checked="@PreCheckCategory(name)">
+                        <label for="Categories" class="form-check-label">
+                            @name
+                        </label>
+                    </div>
+                }
+               
+            </div>
+
+            <div class="rating mb-3">
+
+                <p class="mb-1"><strong>RATING</strong></p>
+
+                @for (int i = 5; i >= 0; i--)
+                {
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" value="@i" name="Rating" checked="@PreCheckRating(i)">
+                        <label for="Rating" class="form-check-label">
+                            @i#
+                        </label>
+                    </div>
+                }
+
+            </div>
+
+            <div class="mb-3">
+
+                <p class="mb-1"><strong>FORMAT</strong></p>
+
+                @foreach (var name in ViewBag.Formats)
+                {
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" value="@name" name="Formats" checked="@PreCheckFormat(name)">
+                        <label for="Formats" class="form-check-label">
+                            @name
+                        </label>
+                    </div>
+                }
+                
+            </div>
+
+            <div class="mb-3">
+
+                <p class="mb-1"><strong>AVAILABILITY</strong></p>
+
+                <div class="form-check mb-1">
+                    <input asp-for="isAvailable" class="form-check-input" type="checkbox">
+                    <label asp-for="isAvailable" class="form-check-label">
+                        @Html.DisplayNameFor(model => model.isAvailable)
+                    </label>
+                </div>
+            </div>
+
+
+            <div class="mb-3">
+
+                <p class="mb-1"><strong>LANGUAGE</strong></p>
+
+                @foreach (var name in ViewBag.Languages)
+                {
+                    <div class="form-check mb-1">
+                        <input class="form-check-input" type="checkbox" value="@name" name="Languages" checked="@PreChecklang(name)">
+                        <label for="Languages" class="form-check-label">
+                            @name
+                        </label>
+                    </div>
+                }
+
+            </div>
+
+            <div class="mb-3">
+
+                <div class="accordion accordion-flush" id="accordionFlushExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                PUBLISH YEAR
+                            </button>
+                        </h2>
+                        <div id="flush-collapseOne" class="accordion-collapse collapse show">
+                            <div class="accordion-body">
+
+                                @foreach (var name in ViewBag.PubYears)
+                                {
+                                    <div class="form-check mb-1">
+                                        <input class="form-check-input" type="checkbox" value="@name" name="Year" checked="@PreCheckPubYear(name)">
+                                        <label for="Year" class="form-check-label">
+                                            @name
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+    <div class="col-8 offset-1">
+        <div class="row" style="background-color:bisque">
+            <div class="col-6" >
+                <p>Books per page:</p>
+                <select form="main-form" id="pageSize" name="pageSize" class="form-select" aria-label="Default select example">
+                    <option selected="@CheckPageSizeSelected(6)" value="6">6</option>
+                    <option selected="@CheckPageSizeSelected(12)" value="12">12</option>
+                    <option selected="@CheckPageSizeSelected(24)" value="24">24</option>
+                </select>
+            </div>
+
+            <div class="col-6">
+                <p>Sort by:</p>
+                <select form="main-form" id="SortBy" name="SortBy" class="form-select" aria-label="Default select example">
+                    <option selected="@CheckRelevanceSelected("relevance")" value="relevance">Relevance</option>
+                    <option selected="@CheckTitleA_ZSelected("title_A_Z")" value="title_A_Z">Title A-Z</option>
+                    <option selected="@CheckTitleZ_ASelected("title_Z_A")" value="title_Z_A">Title Z-A</option>
+                    <option selected="@CheckRatingSelected("rating")" value="rating">Rating desc</option>
+                    <option selected="@CheckPubDateSelected("pub_date")" value="pub_date">Publish Date</option>
+                </select>
+            </div>
+         </div>
+
+        <div class="row">
+            <div id="searchResults" class="col" style="background-color:brown">
+                @await Html.PartialAsync("_Results", Model)
+            </div>
+        </div>
+        
+
+    </div>
+
+</div>
+
+
+@{
+
+    Layout = "_Layout-BACKUP";
+
+    bool PreCheckCategory(string value)
+    {
+        if (Model.Categories is not null && Model.Categories.Any())
+        {
+            if (Model.Categories.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreCheckRating(int value)
+    {
+        if (Model.Rating is not null && Model.Rating.Any())
+        {
+            if (Model.Rating.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreCheckFormat(string value)
+    {
+        if (Model.Formats is not null && Model.Formats.Any())
+        {
+            if (Model.Formats.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreChecklang(string value)
+    {
+        if (Model.Languages is not null && Model.Languages.Any())
+        {
+            if (Model.Languages.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreCheckPubYear(string value)
+    {
+        if (Model.Year is not null && Model.Year.Any())
+        {
+            if (Model.Year.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool CheckPageSizeSelected(int value)
+    {
+        if (value == Model.PageSize)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckRelevanceSelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckTitleA_ZSelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckTitleZ_ASelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckRatingSelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckPubDateSelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+}
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const BooksPerPage = document.getElementById('pageSize');
+        const SortBy = document.getElementById('SortBy');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+
+        var anyChecked = false;
+
+        // Function to handle form submission
+        function submitForm() {
+            htmx.trigger("#main-form", "submitForm");
+        }
+
+        function HideShowBtnClear() {
+
+            anyChecked = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+
+                    anyChecked = true;
+
+                }
+            });
+
+            if (anyChecked) {
+
+                clearAllBtn.removeAttribute('hidden');
+
+            }
+            else {
+
+                if (!clearAllBtn.hasAttribute('hidden')) {
+                    clearAllBtn.setAttribute("hidden", "true");
+                }
+            }
+        }
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", submitForm);
+            checkbox.addEventListener("change", HideShowBtnClear);
+        });
+
+        BooksPerPage.addEventListener("change", submitForm);
+
+        SortBy.addEventListener("change", submitForm);
+
+        clearAllBtn.addEventListener("click", () => {
+
+            checkboxes.forEach(checkbox => {
+
+                checkbox.checked = false;
+
+            });
+
+            submitForm();
+
+            HideShowBtnClear();
+
+        });
+
+        HideShowBtnClear();
+
+    </script>
+}
+

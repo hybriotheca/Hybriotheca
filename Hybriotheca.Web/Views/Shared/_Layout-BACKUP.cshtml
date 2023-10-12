@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="htmx-config" historyCacheSize="0" refreshOnHistoryMiss="true" />
     <title>@ViewData["Title"] - Hybriotheca.Web</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css" />
@@ -63,6 +64,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" href="/search/CarouselEditions">Editions Carousel</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" href="/Search">Search test</a>
+                                </li>
                             }
                             else if (User.IsInRole("Librarian"))
                             {
@@ -106,7 +110,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container w-75">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

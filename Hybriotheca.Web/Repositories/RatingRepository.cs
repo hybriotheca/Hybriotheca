@@ -14,6 +14,17 @@ public class RatingRepository : GenericRepository<Rating>, IRatingRepository
         _dataContext = dataContext;
     }
 
+    public async Task<List<Rating>> GetRatingsByBookID(int id)
+    {
+        return await _dataContext.Ratings.Include(s => s.BookEdition).AsSplitQuery().Include(e => e.User).AsSplitQuery().Where(z => z.BookEditionID == id).AsNoTracking().ToListAsync();
+    }
+
+    public async Task<Rating> GetByIDWithAll(int id)
+    {
+        return await _dataContext.Ratings.Include(s => s.BookEdition).AsSplitQuery().Include(e => e.User).AsSplitQuery().AsNoTracking().FirstOrDefaultAsync(z => z.ID == id);
+    }
+
+
 
     public async Task<bool> AnyWhereBookEditionAsync(int bookEditionId)
     {
