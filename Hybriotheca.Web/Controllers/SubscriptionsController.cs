@@ -57,10 +57,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Subscriptions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return SubscriptionNotFound();
 
             var subscription = await _subscriptionRepository.GetByIdAsync(id.Value);
-            if (subscription == null) return NotFound();
+            if (subscription == null) return SubscriptionNotFound();
 
             // Success.
             return View(subscription);
@@ -84,7 +84,7 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (!await _subscriptionRepository.ExistsAsync(subscription.ID))
                     {
-                        return NotFound();
+                        return SubscriptionNotFound();
                     }
                 }
                 catch { }
@@ -98,14 +98,14 @@ namespace Hybriotheca.Web.Controllers
         // GET: Subscriptions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return SubscriptionNotFound();
 
-            var subscript = await _subscriptionRepository.GetByIdAsync(id.Value);
-            if (subscript == null) return NotFound();
+            var subscription = await _subscriptionRepository.GetByIdAsync(id.Value);
+            if (subscription == null) return SubscriptionNotFound();
 
-            ViewBag.IsDeletable = ! await _subscriptionRepository.IsConstrainedAsync(subscript.ID);
+            ViewBag.IsDeletable = ! await _subscriptionRepository.IsConstrainedAsync(subscription.ID);
 
-            return PartialView("_ModalDelete", subscript);
+            return PartialView("_ModalDelete", subscription);
         }
 
         // POST: Subscriptions/Delete/5
@@ -114,7 +114,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var subscription = await _subscriptionRepository.GetByIdAsync(id);
-            if (subscription == null) return NotFound();
+            if (subscription == null) return SubscriptionNotFound();
 
             try
             {
@@ -145,6 +145,15 @@ namespace Hybriotheca.Web.Controllers
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
+        }
+
+        private ViewResult SubscriptionNotFound()
+        {
+            ViewBag.Title = "Subscription not found";
+            ViewBag.ItemNotFound = "Subscription";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
     }
 }

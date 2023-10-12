@@ -56,10 +56,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Books/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return BookNotFound();
 
             var book = await _bookRepository.GetByIdAsync(id.Value);
-            if (book == null) return NotFound();
+            if (book == null) return BookNotFound();
 
             // Success.
             return View(book);
@@ -83,7 +83,7 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (!await _bookRepository.ExistsAsync(book.ID))
                     {
-                        return NotFound();
+                        return BookNotFound();
                     }
                 }
                 catch { }
@@ -97,10 +97,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Books/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return BookNotFound();
 
             var book = await _bookRepository.GetByIdAsync(id.Value);
-            if (book == null) return NotFound();
+            if (book == null) return BookNotFound();
 
             ViewBag.IsDeletable = ! await _bookRepository.IsConstrainedAsync(id.Value);
 
@@ -113,7 +113,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var book = await _bookRepository.GetByIdAsync(id);
-            if (book == null) return NotFound();
+            if (book == null) return BookNotFound();
 
             try
             {
@@ -144,6 +144,15 @@ namespace Hybriotheca.Web.Controllers
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
+        }
+
+        private ViewResult BookNotFound()
+        {
+            ViewBag.Title = "Book not found";
+            ViewBag.ItemNotFound = "Book";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
     }
 }

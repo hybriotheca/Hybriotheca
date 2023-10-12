@@ -56,10 +56,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: BooksInStock/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return BookStockNotFound();
 
             var model = await _bookStockRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return NotFound();
+            if (model == null) return BookStockNotFound();
 
             // Success.
             return View(model);
@@ -120,10 +120,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: BooksInStock/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return BookStockNotFound();
 
             var bookStock = await _bookStockRepository.GetByIdAsync(id.Value);
-            if (bookStock == null) return NotFound();
+            if (bookStock == null) return BookStockNotFound();
 
             return await ViewEditAsync(bookStock);
         }
@@ -165,7 +165,7 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (!await _bookStockRepository.ExistsAsync(bookStock.ID))
                     {
-                        return NotFound();
+                        return BookStockNotFound();
                     }
                     else throw;
                 }
@@ -196,10 +196,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: BooksInStock/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return BookStockNotFound();
 
             var model = await _bookStockRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return NotFound();
+            if (model == null) return BookStockNotFound();
 
             // Success.
             return View(model);
@@ -211,7 +211,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var bookStock = await _bookStockRepository.GetByIdAsync(id);
-            if (bookStock == null) return NotFound();
+            if (bookStock == null) return BookStockNotFound();
 
             if (bookStock.TotalStock > bookStock.AvailableStock)
             {
@@ -288,6 +288,15 @@ namespace Hybriotheca.Web.Controllers
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
+        }
+
+        private ViewResult BookStockNotFound()
+        {
+            ViewBag.Title = "Book Stock not found";
+            ViewBag.ItemNotFound = "Book Stock";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
 
         private async Task<ViewResult> ViewCreateAsync(BookStock? bookStock)

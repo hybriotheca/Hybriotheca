@@ -47,10 +47,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Loans/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return LoanNotFound();
 
             var model = await _loanRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return NotFound();
+            if (model == null) return LoanNotFound();
 
             // Success.
             return View(model);
@@ -77,7 +77,7 @@ namespace Hybriotheca.Web.Controllers
             if (User.IsInRole("Librarian"))
             {
                 var libraryId = await _userHelper.GetMainLibraryIdOfUserAsync(GetCurrentUserName());
-                if (libraryId == null) return NotFound();
+                if (libraryId == null) return LibraryNotFound();
 
                 model.LibraryId = libraryId.Value;
             }
@@ -87,7 +87,7 @@ namespace Hybriotheca.Web.Controllers
                 var bookStock = await _bookStockRepository
                     .GetByLibraryAndBookEditionAsync(model.LibraryId, model.BookEditionId);
 
-                if (bookStock == null) return NotFound();
+                if (bookStock == null) return BookStockNotFound();
 
                 var dateToday = DateTime.UtcNow.Date;
                 var loan = new Loan
@@ -136,10 +136,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Loans/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return LoanNotFound();
 
             var loan = await _loanRepository.GetByIdAsync(id.Value);
-            if (loan == null) return NotFound();
+            if (loan == null) return LoanNotFound();
 
             return await ViewEditAsync(loan);
         }
@@ -157,7 +157,7 @@ namespace Hybriotheca.Web.Controllers
             if (ModelState.IsValid)
             {
                 var current = await _loanRepository.GetByIdAsync(loan.ID);
-                if (current == null) return NotFound();
+                if (current == null) return LoanNotFound();
 
                 if (!(current.IsReturned && loan.IsReturned))
                 {
@@ -169,7 +169,7 @@ namespace Hybriotheca.Web.Controllers
                         var bookStockCurrent = await _bookStockRepository
                             .GetByLibraryAndBookEditionAsync(current.LibraryID, current.BookEditionID);
 
-                        if (bookStockCurrent == null) return NotFound();
+                        if (bookStockCurrent == null) return BookStockNotFound();
 
                         bookStockCurrent.AvailableStock++;
                     }
@@ -202,7 +202,7 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (!await _loanRepository.ExistsAsync(loan.ID))
                     {
-                        return NotFound();
+                        return LoanNotFound();
                     }
                     else throw;
                 }
@@ -233,10 +233,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Loans/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return LoanNotFound();
 
             var model = await _loanRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return NotFound();
+            if (model == null) return LoanNotFound();
 
             // Success.
             return View(model);
@@ -255,7 +255,7 @@ namespace Hybriotheca.Web.Controllers
                     var bookStock = await _bookStockRepository
                         .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
 
-                    if (bookStock == null) return NotFound();
+                    if (bookStock == null) return BookStockNotFound();
 
                     bookStock.AvailableStock++;
                 }
@@ -269,10 +269,10 @@ namespace Hybriotheca.Web.Controllers
 
         public async Task<IActionResult> ReturnBook(int? loanId)
         {
-            if (loanId == null) return NotFound();
+            if (loanId == null) return LoanNotFound();
 
             var model = await _loanRepository.SelectViewModelAsync(loanId.Value);
-            if (model == null) return NotFound();
+            if (model == null) return LoanNotFound();
 
             return View(model);
         }
@@ -282,7 +282,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> ReturnBookConfirmed(int loanId)
         {
             var loan = await _loanRepository.GetByIdAsync(loanId);
-            if (loan == null) return NotFound();
+            if (loan == null) return LoanNotFound();
 
             loan.IsReturned = true;
             loan.EndDate = DateTime.UtcNow;
@@ -290,7 +290,7 @@ namespace Hybriotheca.Web.Controllers
             var bookStock = await _bookStockRepository
                 .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
 
-            if (bookStock == null) return NotFound();
+            if (bookStock == null) return BookStockNotFound();
 
             // BookStock is updated on SaveChangesAsync() inside UpdateAsync().
             bookStock.AvailableStock++;
@@ -307,9 +307,36 @@ namespace Hybriotheca.Web.Controllers
             ModelState.AddModelError(string.Empty, errorMessage);
         }
 
+        private ViewResult BookStockNotFound()
+        {
+            ViewBag.Title = "Book Stock not found";
+            ViewBag.ItemNotFound = "Book Stock";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
+        }
+
         private string GetCurrentUserName()
         {
             return User.Identity?.Name ?? "";
+        }
+
+        private ViewResult LibraryNotFound()
+        {
+            ViewBag.Title = "Loan not found";
+            ViewBag.ItemNotFound = "Loan";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
+        }
+
+        private ViewResult LoanNotFound()
+        {
+            ViewBag.Title = "Loan not found";
+            ViewBag.ItemNotFound = "Loan";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
 
         private async Task<ViewResult> ViewCreateAsync(CreateLoanViewModel model)

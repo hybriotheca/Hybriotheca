@@ -84,10 +84,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Users/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return UserNotFound();
 
             var model = await GetModelForViewAsync(id);
-            if (model == null) return NotFound();
+            if (model == null) return UserNotFound();
 
             return View(model);
         }
@@ -179,10 +179,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return UserNotFound();
 
             var model = await GetModelForViewAsync(id);
-            if (model == null) return NotFound();
+            if (model == null) return UserNotFound();
 
             return await ViewEditAsync(model);
         }
@@ -197,7 +197,7 @@ namespace Hybriotheca.Web.Controllers
                 try
                 {
                     var user = await _userHelper.GetUserByIdAsync(model.Id);
-                    if (user == null) return NotFound();
+                    if (user == null) return UserNotFound();
 
                     var isEmailChanged = user.Email != model.Email;
                     var oldEmail = user.Email;
@@ -247,29 +247,32 @@ namespace Hybriotheca.Web.Controllers
                                 var sendConfirmationEmail = _mailHelper.SendConfirmationEmail(user, tokenUrl);
                                 if (sendConfirmationEmail)
                                 {
-                                    // Success.
                                     TempData["Message"] =
                                         $"User email address has changed." +
                                         $"A confirmation email has been sent to <i>{user.Email}</i>";
 
+                                    // Success 1/2 (email changed).
                                     return RedirectToAction(nameof(Index));
                                 }
                             }
 
                             // Email address has changed but could not send reset password email.
-                            TempData["Message"] = $"Could not send confirmation email.";
+                            var error = $"Could not send confirmation email.";
                             user.Email = oldEmail;
 
                             var revertUserEmail = await _userHelper.UpdateUserAsync(user);
 
                             if (revertUserEmail.Succeeded)
                             {
-                                TempData["Message"] += "<br />User email has been reverted.";
+                                error += "<br />User email has been reverted.";
                             }
-                            else TempData["Message"] += "<br />Could not revert User email.";
+                            else error += "<br />Could not revert User email.";
+
+                            AddModelError(error);
+                            return await ViewEditAsync(model);
                         }
 
-                        // Success.
+                        // Success 2/2 (email not changed).
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -277,7 +280,7 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (!await _userHelper.UserExistsAsync(model.Id))
                     {
-                        return NotFound();
+                        return UserNotFound();
                     }
                 }
                 catch { }
@@ -291,10 +294,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return UserNotFound();
 
             var model = await GetModelForViewAsync(id);
-            if (model == null) return NotFound();
+            if (model == null) return UserNotFound();
 
             // Check if this user is the last admin.
             if (model.Role == "Admin")
@@ -334,7 +337,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var user = await _userHelper.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            if (user == null) return UserNotFound();
 
             try
             {
@@ -401,6 +404,15 @@ namespace Hybriotheca.Web.Controllers
                 .SelectUserViewModel()
                 .OrderBy(user => user.Email)
                 .ToListAsync();
+        }
+
+        private ViewResult UserNotFound()
+        {
+            ViewBag.Title = "User not found";
+            ViewBag.ItemNotFound = "User";
+            
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
 
         private async Task<ViewResult> ViewCreateAsync(UserViewModel? model)

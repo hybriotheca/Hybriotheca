@@ -35,5 +35,16 @@ namespace Hybriotheca.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+        [Route("/Error/404")]
+        public IActionResult NotFoundView()
+        {
+            return View("NotFound");
+        }
     }
 }

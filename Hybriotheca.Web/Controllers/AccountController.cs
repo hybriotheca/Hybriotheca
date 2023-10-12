@@ -69,16 +69,20 @@ namespace Hybriotheca.Web.Controllers
         {
             if (string.IsNullOrEmpty(userid) || string.IsNullOrEmpty(token))
             {
-                return NotFound();
+                ViewBag.ErrorTitle = "This link does not work.";
+                ViewBag.ErrorMessage = "This link cannot be used to Confirm email.";
+
+                return View("Error");
             }
 
             var user = await _userHelper.GetUserByIdAsync(userid);
-            if (user == null) return NotFound();
-
-            var confirmEmail = await _userHelper.ConfirmEmailAsync(user, token);
-            if (confirmEmail.Succeeded)
+            if (user != null)
             {
-                return View("EmailConfirmed");
+                var confirmEmail = await _userHelper.ConfirmEmailAsync(user, token);
+                if (confirmEmail.Succeeded)
+                {
+                    return View("EmailConfirmed");
+                }
             }
 
             ViewBag.Message = "Could not confirm email.";
@@ -129,7 +133,7 @@ namespace Hybriotheca.Web.Controllers
             }
 
             ModelState.AddModelError(string.Empty, "Could not send password reset email.");
-            return View(nameof(ForgotPassword), model);
+            return View(model);
         }
 
 
@@ -137,7 +141,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userHelper.GetUserByEmailAsync(GetCurrentUserName());
-            if (user == null) return NotFound();
+            if (user == null) return View("Error");
 
             var model = new UpdateUserViewModel
             {
@@ -242,7 +246,7 @@ namespace Hybriotheca.Web.Controllers
                 var registerUser = await _userHelper.AddUserAsync(user, model.Password);
                 if (registerUser.Succeeded)
                 {
-                    await _userHelper.AddUserToRoleAsync(user, "Customer");
+                    await _userHelper.AddUserToRoleAsync(user, user.Role);
 
                     string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
 
@@ -341,7 +345,8 @@ namespace Hybriotheca.Web.Controllers
                     {
                         user.PhotoId = await _blobHelper.UploadBlobAsync(model.PhotoFile, "userphotos");
                     }
-                    else if (model.DeletePhoto)
+                    
+                    if (model.DeletePhoto && user.PhotoId != Guid.Empty)
                     {
                         await _blobHelper.DeleteBlobAsync(user.PhotoId.ToString(), "userphotos");
                         user.PhotoId = Guid.Empty;

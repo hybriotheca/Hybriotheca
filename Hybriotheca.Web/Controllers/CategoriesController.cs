@@ -52,10 +52,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return CategoryNotFound();
 
             var category = await _categoryRepository.GetByIdAsync(id.Value);
-            if (category == null) return NotFound();
+            if (category == null) return CategoryNotFound();
 
             // Success.
             return View(category);
@@ -79,7 +79,7 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (!await _categoryRepository.ExistsAsync(category.ID))
                     {
-                        return NotFound();
+                        return CategoryNotFound();
                     }
                 }
                 catch { }
@@ -93,10 +93,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return CategoryNotFound();
 
             var category = await _categoryRepository.GetByIdAsync(id.Value);
-            if (category == null) return NotFound();
+            if (category == null) return CategoryNotFound();
 
             ViewBag.IsDeletable = ! await _categoryRepository.IsConstrainedAsync(category.ID);
 
@@ -111,7 +111,7 @@ namespace Hybriotheca.Web.Controllers
         {
             id = 2;
             var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null) return NotFound();
+            if (category == null) return CategoryNotFound();
             
             try
             {
@@ -142,6 +142,15 @@ namespace Hybriotheca.Web.Controllers
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
+        }
+
+        private ViewResult CategoryNotFound()
+        {
+            ViewBag.Title = "Category not found";
+            ViewBag.ItemNotFound = "Category";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
     }
 }

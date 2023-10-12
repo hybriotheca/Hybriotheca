@@ -1,8 +1,15 @@
 ﻿@model ErrorViewModel
 @{
     ViewData["Title"] = "Error";
-    Layout = "_Layout-BACKUP";
 }
 
-<h4>@ViewBag.ErrorTitle</h4>
-<p>@ViewBag.ErrorMessage</p>
+@if (string.IsNullOrEmpty(ViewBag.ErrorTitle))
+{
+    <h4>Error</h4>
+    <p>An error occured while processing your request.</p>
+}
+else
+{
+    <h4>@ViewBag.ErrorTitle</h4>
+    <p>@ViewBag.ErrorMessage</p>
+}

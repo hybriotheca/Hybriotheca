@@ -56,10 +56,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Libraries/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return LibraryNotFound();
 
             var library = await _libraryRepository.GetByIdAsync(id.Value);
-            if (library == null) return NotFound();
+            if (library == null) return LibraryNotFound();
 
             // Success.
             return View(library);
@@ -83,7 +83,7 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (!await _libraryRepository.ExistsAsync(library.ID))
                     {
-                        return NotFound();
+                        return LibraryNotFound();
                     }
                 }
                 catch { }
@@ -97,10 +97,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: Libraries/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return LibraryNotFound();
 
             var library = await _libraryRepository.GetByIdAsync(id.Value);
-            if (library == null) return NotFound();
+            if (library == null) return LibraryNotFound();
 
             var isConstrained = await _libraryRepository.IsConstrainedAsync(library.ID);
             if (isConstrained)
@@ -130,7 +130,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var library = await _libraryRepository.GetByIdAsync(id);
-            if (library == null) return NotFound();
+            if (library == null) return LibraryNotFound();
 
             try
             {
@@ -161,6 +161,15 @@ namespace Hybriotheca.Web.Controllers
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
+        }
+
+        private ViewResult LibraryNotFound()
+        {
+            ViewBag.Title = "Library not found";
+            ViewBag.ItemNotFound = "Library";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
     }
 }

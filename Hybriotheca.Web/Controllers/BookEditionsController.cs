@@ -93,10 +93,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: BookEditions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return BookEditionNotFound();
 
             var bookEdition = await _bookEditionRepository.GetByIdAsync(id.Value);
-            if (bookEdition == null) return NotFound();
+            if (bookEdition == null) return BookEditionNotFound();
 
             var model = _converterHelper.BookEditionToViewModel(bookEdition);
 
@@ -152,7 +152,7 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (!await _bookEditionRepository.ExistsAsync(bookEdition.ID))
                     {
-                        return NotFound();
+                        return BookEditionNotFound();
                     }
                 }
                 catch { }
@@ -166,10 +166,10 @@ namespace Hybriotheca.Web.Controllers
         // GET: BookEditions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return BookEditionNotFound();
 
             var bookEdition = await _bookEditionRepository.GetByIdAsync(id.Value);
-            if (bookEdition == null) return NotFound();
+            if (bookEdition == null) return BookEditionNotFound();
 
             // Check dependent entities.
             var isConstrained = await _bookEditionRepository.IsConstrainedAsync(bookEdition.ID);
@@ -200,7 +200,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var bookEdition = await _bookEditionRepository.GetByIdAsync(id);
-            if (bookEdition == null) return NotFound();
+            if (bookEdition == null) return BookEditionNotFound();
 
             try
             {
@@ -239,6 +239,15 @@ namespace Hybriotheca.Web.Controllers
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
+        }
+
+        public ViewResult BookEditionNotFound()
+        {
+            ViewBag.Title = "Book edition not found";
+            ViewBag.ItemNotFound = "Book edition";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
 
         public async Task<ViewResult> ViewCreateAsync(BookEditionViewModel model)
