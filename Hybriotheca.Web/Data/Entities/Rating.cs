@@ -1,5 +1,10 @@
-﻿namespace Hybriotheca.Web.Data.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using NuGet.LibraryModel;
+using System.ComponentModel.DataAnnotations;
 
+namespace Hybriotheca.Web.Data.Entities;
+
+[Index(nameof(UserID), nameof(BookEditionID), IsUnique = true, Name = "IX_AppUser_BookEdition")]
 public class Rating : IEntity
 {
     public int ID { get; set; }
@@ -10,11 +15,16 @@ public class Rating : IEntity
     public int BookEditionID { get; set; }
     public BookEdition BookEdition { get; set; }
 
-
+    [Display(Name = "My rating")]
+    [Range(0, 5, ErrorMessage ="Please choose an acceptable value")]
     public int BookRating { get; set; }
 
-    public string RatingTitle { get; set; }
+    [Display(Name = "Title")]
+    public string? RatingTitle { get; set; }
 
-    public string RatingBody { get; set; }
+    [Display(Name = "What did you think?")]
+    public string? RatingBody { get; set; }
+
+    public DateTime RatingDate { get; set; } = DateTime.Now;
 
 }

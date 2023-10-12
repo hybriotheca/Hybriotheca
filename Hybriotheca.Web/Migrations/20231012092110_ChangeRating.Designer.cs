@@ -4,6 +4,7 @@ using Hybriotheca.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hybriotheca.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231012092110_ChangeRating")]
+    partial class ChangeRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,10 +80,6 @@ namespace Hybriotheca.Web.Migrations
 
                     b.Property<Guid>("PhotoId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -208,16 +207,13 @@ namespace Hybriotheca.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("AvailableStock")
-                        .HasColumnType("int");
-
                     b.Property<int>("BookEditionID")
                         .HasColumnType("int");
 
                     b.Property<int>("LibraryID")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalStock")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -227,12 +223,7 @@ namespace Hybriotheca.Web.Migrations
                     b.HasIndex(new[] { "BookEditionID", "LibraryID" }, "IX_BookEdition_Library")
                         .IsUnique();
 
-                    b.ToTable("BooksInStock", t =>
-                        {
-                            t.HasCheckConstraint("CK_AvailableStock_GreaterOrEqualZero", "[AvailableStock] >= 0");
-
-                            t.HasCheckConstraint("CK_TotalStock_GreaterOrEqual_AvailableStock", "[TotalStock] >= [AvailableStock]");
-                        });
+                    b.ToTable("BooksInStock");
                 });
 
             modelBuilder.Entity("Hybriotheca.Web.Data.Entities.Category", b =>
@@ -316,6 +307,9 @@ namespace Hybriotheca.Web.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPastDueDate")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsReturned")
                         .HasColumnType("bit");

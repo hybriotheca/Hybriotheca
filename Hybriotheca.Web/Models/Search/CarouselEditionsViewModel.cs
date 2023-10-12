@@ -2,7 +2,7 @@
 
 namespace Hybriotheca.Web.Models.Search;
 
-public class CarouselEditions
+public class CarouselEditionsViewModel
 {
     public List<BookEdition> Adventure { get; set; }
 

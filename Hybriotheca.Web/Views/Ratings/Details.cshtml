@@ -1,0 +1,86 @@
+﻿@model Hybriotheca.Web.Data.Entities.Rating
+
+@{
+    Layout = "_LayoutAdminPanel";
+
+    string NameAbbr(string fullName)
+    {
+        var firstLetters = fullName.Split(' ')
+                    .Where(word => !string.IsNullOrEmpty(word))
+                    .ToArray();
+
+        if (firstLetters.Length > 0)
+        {
+            string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[firstLetters.Length - 1][0]);
+            return nameAbbr;
+        }
+        return string.Empty;
+    }
+}
+
+<div class="w-full lg:w-8/12 p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+
+    <h1 class="mb-4 text-xl font-semibold dark:text-white">
+        Rating Details
+    </h1>
+
+    <div class="space-y-4">
+
+        <article>
+            <div class="flex items-center mb-4 space-x-4">
+                @if (Model.User.PhotoId != Guid.Empty)
+                {
+                    <div class="flex justify-center items-center max-w-xs max-h-xs w-10 h-10 rounded-full">
+                        <img class="w-full h-full object-cover rounded-full"
+                             src="@Model.User.PhotoFullPath"
+                             alt="@Model.User.FullName profile picture" />
+                    </div>
+                }
+                else
+                {
+                    <div class="flex justify-center items-center overflow-hidden max-w-xs max-h-xs w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500">
+
+                        <span class="font-bold text-white select-none">
+                            @NameAbbr(Model.User.FullName)
+                        </span>
+                    </div>
+                }
+                <div class="space-y-1 font-medium dark:text-white">
+                    <p>@Model.User.FullName</p>
+                </div>
+            </div>
+            <div class="flex items-center mb-1">
+                @for (int i = 0; i < Model.BookRating; i++)
+                {
+                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                }
+                @for (int i = 0; i < 5 - Model.BookRating; i++)
+                {
+                    <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                    </svg>
+                }
+          
+                <h3 class="ml-2 text-sm font-semibold text-gray-900 dark:text-white">@Model.RatingTitle</h3>
+            </div>
+            <footer class="mb-5 text-sm text-gray-500 dark:text-gray-400"><p>Reviewed on <time datetime="@Model.RatingDate.ToString("yyyy-MM-dd HH:mm")">@Model.RatingDate.ToString("MMMM d, yyyy")</time></p></footer>
+            <p class="mb-2 text-gray-500 dark:text-gray-400">@Model.RatingBody</p>
+        </article>
+
+        @* <!-- BUTTONS --> *@
+        <div class="bottom-0 left-0 flex justify-center w-full pb-4 space-x-4 md:px-4">
+
+            <a asp-action="Index" class="text-white w-full justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 8 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 1 1.3 6.326a.91.91 0 0 0 0 1.348L7 13" />
+                </svg>
+                Go Back
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
