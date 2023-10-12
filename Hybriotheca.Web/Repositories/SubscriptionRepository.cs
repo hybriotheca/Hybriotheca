@@ -30,7 +30,7 @@ public class SubscriptionRepository : GenericRepository<Subscription>, ISubscrip
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<SelectListItem>> GetComboSubscriptions()
+    public async Task<IEnumerable<SelectListItem>> GetComboSubscriptionsAsync()
     {
         return await _dataContext.Subscriptions.Select(s => new SelectListItem
         {

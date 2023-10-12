@@ -45,17 +45,9 @@ namespace Hybriotheca.Web.Controllers
 
 
         // GET: BookEditions/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Books = _bookRepository.GetComboBooks()
-                .AsEnumerable()
-                .Prepend(new SelectListItem { Text = $"Select a {nameof(Book)}", Value = "0" });
-
-            ViewBag.Categories = _categoryRepository.GetComboCategories()
-                .AsEnumerable()
-                .Prepend(new SelectListItem { Text = $"Select a {nameof(Category)}", Value = "0" });
-
-            return View(new BookEditionViewModel());
+            return await ViewCreateAsync(new BookEditionViewModel());
         }
 
         // POST: BookEditions/Create
@@ -94,16 +86,7 @@ namespace Hybriotheca.Web.Controllers
             }
 
             AddModelError($"Could not create {nameof(BookEdition)}.");
-
-            ViewBag.Books = _bookRepository.GetComboBooks()
-                .AsEnumerable()
-                .Prepend(new SelectListItem { Text = $"Select a {nameof(Book)}", Value = "0" });
-
-            ViewBag.Categories = _categoryRepository.GetComboCategories()
-                .AsEnumerable()
-                .Prepend(new SelectListItem { Text = $"Select a {nameof(Category)}", Value = "0" });
-
-            return View(model);
+            return await ViewCreateAsync(model);
         }
 
 
@@ -117,11 +100,7 @@ namespace Hybriotheca.Web.Controllers
 
             var model = _converterHelper.BookEditionToViewModel(bookEdition);
 
-            ViewBag.Books = _bookRepository.GetComboBooks();
-            ViewBag.Categories = _categoryRepository.GetComboCategories();
-
-            // Success.
-            return View(model);
+            return await ViewEditAsync(model);
         }
 
         // POST: BookEditions/Edit/5
@@ -180,11 +159,7 @@ namespace Hybriotheca.Web.Controllers
             }
 
             AddModelError($"Could not update {nameof(BookEdition)}.");
-
-            ViewBag.Books = _bookRepository.GetComboBooks();
-            ViewBag.Categories = _categoryRepository.GetComboCategories();
-
-            return View(model);
+            return await ViewEditAsync(model);
         }
 
 
@@ -259,9 +234,41 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
+        #region private helper methods
+
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
         }
+
+        public async Task<ViewResult> ViewCreateAsync(BookEditionViewModel model)
+        {
+            ViewBag.Books = (await _bookRepository.GetComboBooksAsync())
+                .Prepend(new SelectListItem
+                {
+                    Text = $"Select a {nameof(Book)}",
+                    Value = "0"
+                });
+
+
+            ViewBag.Categories = (await _categoryRepository.GetComboCategoriesAsync())
+                .Prepend(new SelectListItem
+                {
+                    Text = $"Select a {nameof(Category)}",
+                    Value = "0"
+                });
+
+            return View(nameof(Create), model);
+        }
+
+        public async Task<ViewResult> ViewEditAsync(BookEditionViewModel model)
+        {
+            ViewBag.Books = await _bookRepository.GetComboBooksAsync();
+            ViewBag.Categories = await _categoryRepository.GetComboCategoriesAsync();
+
+            return View(nameof(Edit), model);
+        }
+
+        #endregion private helper methods
     }
 }

@@ -16,13 +16,13 @@ public class BookRepository : GenericRepository<Book>, IBookRepository
     }
 
 
-    public IEnumerable<SelectListItem> GetComboBooks()
+    public async Task<IEnumerable<SelectListItem>> GetComboBooksAsync()
     {
-        return _dataContext.Books.Select(c => new SelectListItem
+        return await _dataContext.Books.Select(c => new SelectListItem
         {
             Text = c.OriginalTitle,
             Value = c.ID.ToString()
-        });
+        }).ToListAsync();
     }
 
     public async Task<bool> IsConstrainedAsync(int id)

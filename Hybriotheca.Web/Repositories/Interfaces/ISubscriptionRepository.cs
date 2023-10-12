@@ -8,7 +8,7 @@ public interface ISubscriptionRepository : IGenericRepository<Subscription>
     Task<Subscription> GetByNameAsync(string name);
 
     Task<Subscription?> GetByIdWithUsers(int id);
-    Task<IEnumerable<SelectListItem>> GetComboSubscriptions();
+    Task<IEnumerable<SelectListItem>> GetComboSubscriptionsAsync();
     Task<string?> GetSubscriptionNameAsync(int subscriptionId);
     Task<int> GetDefaultSubscriptionIdForNewUserAsync();
     Task<bool> IsConstrainedAsync(int id);

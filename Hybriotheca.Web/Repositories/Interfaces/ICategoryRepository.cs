@@ -5,6 +5,6 @@ namespace Hybriotheca.Web.Repositories.Interfaces;
 
 public interface ICategoryRepository : IGenericRepository<Category>
 {
-    IEnumerable<SelectListItem> GetComboCategories();
+    Task<IEnumerable<SelectListItem>> GetComboCategoriesAsync();
     Task<bool> IsConstrainedAsync(int id);
 }

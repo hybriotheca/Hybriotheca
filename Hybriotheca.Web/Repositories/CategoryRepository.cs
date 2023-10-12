@@ -16,13 +16,13 @@ public class CategoryRepository : GenericRepository<Category>, ICategoryReposito
     }
 
 
-    public IEnumerable<SelectListItem> GetComboCategories()
+    public async Task<IEnumerable<SelectListItem>> GetComboCategoriesAsync()
     {
-        return _dataContext.Categories.Select(c => new SelectListItem
+        return await _dataContext.Categories.Select(c => new SelectListItem
         {
             Text = c.Name,
             Value = c.ID.ToString()
-        });
+        }).ToListAsync();
     }
 
     public async Task<bool> IsConstrainedAsync(int id)
