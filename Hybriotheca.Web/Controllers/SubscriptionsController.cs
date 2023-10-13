@@ -1,5 +1,4 @@
 ﻿using Hybriotheca.Web.Data.Entities;
-using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +45,19 @@ namespace Hybriotheca.Web.Controllers
                     // Success.
                     return RedirectToAction(nameof(Index));
                 }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException is SqlException innerEx)
+                    {
+                        if (innerEx.Message.Contains("GreaterOrEqualZero"))
+                        {
+                            AddModelError(
+                                "The values for maximum Loans and Loan term limit must be positive or 0.");
+
+                            return View(subscription);
+                        }
+                    }
+                }
                 catch { }
             }
 
@@ -85,6 +97,19 @@ namespace Hybriotheca.Web.Controllers
                     if (!await _subscriptionRepository.ExistsAsync(subscription.ID))
                     {
                         return SubscriptionNotFound();
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException is SqlException innerEx)
+                    {
+                        if (innerEx.Message.Contains("GreaterOrEqualZero"))
+                        {
+                            AddModelError(
+                                "The values for maximum Loans and Loan term limit must be positive or 0.");
+
+                            return View(subscription);
+                        }
                     }
                 }
                 catch { }

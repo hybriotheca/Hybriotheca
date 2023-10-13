@@ -42,5 +42,17 @@ public class DataContext : IdentityDbContext<AppUser>
             .ToTable(t => t.HasCheckConstraint(
                 $"CK_{TotalStock}_GreaterOrEqual_{AvailableStock}",
                 $"[{TotalStock}] >= [{AvailableStock}]"));
+
+        // Define literal names of Properties.
+        var MaxLoanDays = nameof(Subscription.MaxLoanDays);
+        var MaxLoans = nameof(Subscription.MaxLoans);
+
+        modelBuilder.Entity<Subscription>()
+            .ToTable(t => t.HasCheckConstraint(
+                $"CK_{MaxLoanDays}_GreaterOrEqualZero",
+                $"[{MaxLoanDays}] >= 0"))
+            .ToTable(t => t.HasCheckConstraint(
+                $"CK_{MaxLoans}_GreaterOrEqualZero",
+                $"[{MaxLoans}] >= 0"));
     }
 }

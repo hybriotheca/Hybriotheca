@@ -25,6 +25,11 @@ public class LoanRepository : GenericRepository<Loan>, ILoanRepository
                 && !loan.IsReturned);
     }
 
+    public async Task<int> CountUnreturnedWhereUserAsync(string userId)
+    {
+        return await _dataContext.Loans.CountAsync(loan => loan.UserID == userId && !loan.IsReturned);
+    }
+
     public async Task<IEnumerable<LoanViewModel>> SelectLastCreatedAsListViewModelsAsync(int rows)
     {
         return await _dataContext.Loans

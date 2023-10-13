@@ -57,7 +57,7 @@
                 <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
                 </svg>
-                Add Library
+                Add Subscription
             </a>
         </div>
     </div>
@@ -82,7 +82,10 @@
                                 @Html.DisplayNameFor(model => model.Name)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.Details)
+                                @Html.DisplayNameFor(model => model.MaxLoans)
+                            </th>
+                            <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                @Html.DisplayNameFor(model => model.MaxLoanDays)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 Actions
@@ -106,9 +109,13 @@
                                 <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     @Html.DisplayFor(modelItem => subscription.Name)
                                 </td>
-                                <!-- DETAILS -->
+                                <!-- MAX LOANS -->
+                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    @Html.DisplayFor(modelItem => subscription.MaxLoans)
+                                </td>
+                                <!-- MAX LOAN DAYS -->
                                 <td class="p-4 text-base text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => subscription.Details)
+                                    @Html.DisplayFor(modelItem => subscription.MaxLoanDays)
                                 </td>
                                 <!-- ACTIONS -->
                                 <td class="p-4 space-x-2 whitespace-nowrap">

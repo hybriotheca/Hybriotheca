@@ -16,19 +16,22 @@ namespace Hybriotheca.Web.Controllers
         private readonly IBookStockRepository _bookStockRepository;
         private readonly ILibraryRepository _libraryRepository;
         private readonly ILoanRepository _loanRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
 
         public LoansController(
             IUserHelper userHelper,
             IBookEditionRepository bookEditionRepository,
             IBookStockRepository bookStockRepository,
             ILibraryRepository libraryRepository,
-            ILoanRepository loanRepository)
+            ILoanRepository loanRepository,
+            ISubscriptionRepository subscriptionRepository)
         {
             _userHelper = userHelper;
             _bookEditionRepository = bookEditionRepository;
             _bookStockRepository = bookStockRepository;
             _libraryRepository = libraryRepository;
             _loanRepository = loanRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
 
@@ -89,6 +92,23 @@ namespace Hybriotheca.Web.Controllers
 
                 if (bookStock == null) return BookStockNotFound();
 
+                // Check if user has reached limit of loans.
+
+                var user = await _userHelper.GetUserByIdAsync(model.UserId);
+                if (user == null) return UserNotFound();
+
+                var subscription = await _subscriptionRepository.GetByIdAsync(user.SubscriptionID);
+                if (subscription == null) return SubscriptionNotFound();
+
+                var userLoans = await _loanRepository.CountUnreturnedWhereUserAsync(user.Id);
+                if (userLoans >= subscription.MaxLoans)
+                {
+                    AddModelError("This user has reached the limit of loans.");
+                    return await ViewCreateAsync(model);
+                }
+
+                // Create Loan.
+
                 var dateToday = DateTime.UtcNow.Date;
                 var loan = new Loan
                 {
@@ -97,7 +117,7 @@ namespace Hybriotheca.Web.Controllers
                     BookEditionID = model.BookEditionId,
                     ReservationID = null,
                     StartDate = dateToday,
-                    EndDate = dateToday.AddDays(14),
+                    EndDate = dateToday.AddDays(subscription.MaxLoanDays),
                     IsReturned = false,
                 };
 
@@ -161,22 +181,34 @@ namespace Hybriotheca.Web.Controllers
 
                 if (!(current.IsReturned && loan.IsReturned))
                 {
-                    // Update AvailableStocks.
+                    // Check count of user loans and update AvailableStocks.
 
-                    // If Loan was previously not returned, increment its BookStock AvailableStock.
-                    if (!current.IsReturned)
-                    {
-                        var bookStockCurrent = await _bookStockRepository
-                            .GetByLibraryAndBookEditionAsync(current.LibraryID, current.BookEditionID);
-
-                        if (bookStockCurrent == null) return BookStockNotFound();
-
-                        bookStockCurrent.AvailableStock++;
-                    }
-
-                    // If the edited Loan is not returned, decrement its BookStock AvailableStock.
+                    // If the edited Loan is not returned,
+                    // check user has reached limit of loans
+                    // and decrement loan's BookStock AvailableStock.
                     if (!loan.IsReturned)
                     {
+                        // Check user has reached limit of loans.
+                        if (current.IsReturned || current.UserID != loan.UserID)
+                        {
+                            var user = await _userHelper.GetUserByIdAsync(loan.UserID);
+                            if (user == null) return UserNotFound();
+
+                            var subscription = await _subscriptionRepository
+                                .GetByIdAsync(user.SubscriptionID);
+
+                            if (subscription == null) return SubscriptionNotFound();
+
+                            var userLoans = await _loanRepository.CountUnreturnedWhereUserAsync(user.Id);
+                            if (userLoans >= subscription.MaxLoans)
+                            {
+                                AddModelError("This user has reached the limit of loans.");
+                                return await ViewEditAsync(loan);
+                            }
+                        }
+
+                        // Update BookStock.
+
                         var bookStockEdited = await _bookStockRepository
                             .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
 
@@ -187,6 +219,17 @@ namespace Hybriotheca.Web.Controllers
                         }
 
                         bookStockEdited.AvailableStock--;
+                    }
+
+                    // If Loan was previously not returned, increment its BookStock AvailableStock.
+                    if (!current.IsReturned)
+                    {
+                        var bookStockCurrent = await _bookStockRepository
+                            .GetByLibraryAndBookEditionAsync(current.LibraryID, current.BookEditionID);
+
+                        if (bookStockCurrent == null) return BookStockNotFound();
+
+                        bookStockCurrent.AvailableStock++;
                     }
                 }
 
@@ -267,6 +310,7 @@ namespace Hybriotheca.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         public async Task<IActionResult> ReturnBook(int? loanId)
         {
             if (loanId == null) return LoanNotFound();
@@ -299,6 +343,25 @@ namespace Hybriotheca.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        public async Task<IActionResult> HasUserReachedLoanLimit(string userId)
+        {
+            var user = await _userHelper.GetUserByIdAsync(userId);
+            if (user == null) return Json("The user was not found.");
+
+            var subscription = await _subscriptionRepository
+                .GetByIdAsync(user.SubscriptionID);
+
+            if (subscription == null) return Json("The user's subscription was not found");
+
+            var userLoans = await _loanRepository.CountUnreturnedWhereUserAsync(user.Id);
+            if (userLoans < subscription.MaxLoans)
+            {
+                return Json(false);
+            }
+
+            return Json(true);
+        }
 
         #region private helper methods
 
@@ -334,6 +397,24 @@ namespace Hybriotheca.Web.Controllers
         {
             ViewBag.Title = "Loan not found";
             ViewBag.ItemNotFound = "Loan";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
+        }
+
+        private ViewResult SubscriptionNotFound()
+        {
+            ViewBag.Title = "Subscription not found";
+            ViewBag.ItemNotFound = "Subscription";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
+        }
+
+        private ViewResult UserNotFound()
+        {
+            ViewBag.Title = "User not found";
+            ViewBag.ItemNotFound = "User";
 
             Response.StatusCode = StatusCodes.Status404NotFound;
             return View("NotFound");

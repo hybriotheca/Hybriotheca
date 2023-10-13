@@ -125,7 +125,11 @@ namespace Hybriotheca.Web.Data
                     await _context.Subscriptions.AddAsync(new Subscription
                     {
                         Name = subscriptionName,
-                        Details = _configuration[$"SeedDb:Subscriptions:{subscriptionName}"],
+                        Details = _configuration[$"SeedDb:Subscriptions:{subscriptionName}:Details"],
+                        MaxLoanDays = int.Parse(
+                            _configuration[$"SeedDb:Subscriptions:{subscriptionName}:MaxLoanDays"]),
+                        MaxLoans = int.Parse(
+                            _configuration[$"SeedDb:Subscriptions:{subscriptionName}:MaxLoans"]),
                     });
                 }
             }

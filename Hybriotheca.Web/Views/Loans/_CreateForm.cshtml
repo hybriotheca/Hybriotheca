@@ -7,7 +7,7 @@
     {
         <div class="mb-3">
             <label class="form-label">Select library</label>
-            <select asp-for="LibraryId" class="form-control" asp-items="ViewBag.Libraries" oninput="checkIsBookAvailable()">
+            <select asp-for="LibraryId" class="form-control" asp-items="ViewBag.Libraries" oninput="checkLoan()">
                 <option disabled selected>Select library</option>
             </select>
             <span asp-validation-for="LibraryId" class="text-danger"></span>
@@ -16,7 +16,7 @@
 
     <div class="mb-3">
         <label class="form-label">Select book</label>
-        <select asp-for="BookEditionId" class="form-control" asp-items="ViewBag.BookEditions" oninput="checkIsBookAvailable()">
+        <select asp-for="BookEditionId" class="form-control" asp-items="ViewBag.BookEditions" oninput="checkLoan()">
             <option disabled selected>Select book</option>
         </select>
         <span asp-validation-for="BookEditionId" class="text-danger"></span>
@@ -24,71 +24,111 @@
 
     <div class="mb-3">
         <label class="form-label">Select user</label>
-        <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users">
+        <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users" oninput="checkLoan()">
             <option disabled selected>Select user</option>
         </select>
         <span asp-validation-for="UserId" class="text-danger"></span>
     </div>
 
-    <!-- p elements with feedback messages from ajax request checkIsBookAvailable -->
+    <!-- p elements with feedback messages from ajax request checkLoan -->
     <p id="CheckingIsBookAvailable" class="text-secondary" style="display: none">Checking availabilty...</p>
+    <p id="ErrorCheckingAvailability" class="text-warning" style="display: none">Error while checking availabilty...</p>
     <p id="BookIsAvailable" class="text-success" style="display: none">This book is available at this Library.</p>
     <p id="BookIsntAvailable" class="text-danger" style="display: none">This book is not available at this Library.</p>
-    <p id="ErrorCheckingAvailability" class="text-warning" style="display: none">Error while checking availabilty...</p>
+    <p id="LoanIsAllowed" class="text-success" style="display: none">This loan is allowed.</p>
+    <p id="LoanLimit" class="text-danger" style="display: none">This user has reached the limit of loans.</p>
 
     <div class="mb-3">
         <input type="submit" value="Save" id="btnSave" class="btn btn-primary" disabled="true" />
     </div>
 
     <script type="text/javascript">
-        const checkIsBookAvailable = () => {
+        const checkLoan = () => {
             
             $('#btnSave').attr('disabled', true);
 
+            $('#ErrorCheckingAvailability').hide();
             $('#BookIsAvailable').hide();
             $('#BookIsntAvailable').hide();
-            $('#ErrorCheckingAvailability').hide();
+            $('#LoanIsAllowed').hide();
+            $('#LoanLimit').hide();
 
             var libraryId = $('#LibraryId').val();
             var bookEditionId = $('#BookEditionId').val();
 
             if (libraryId < 1 || bookEditionId < 1) {
-                $('#CheckingIsBookAvailable').hide();
+                var userId = $('#UserId').val() ?? '';
+                if (userId.length == 36) {
+                    $('#CheckingIsBookAvailable').show();
+                    hasUserReachedLoanLimit(userId, false);
+                }
+                else {
+                    $('#CheckingIsBookAvailable').hide();
+                }
                 return;
             }
             else {
                 $('#CheckingIsBookAvailable').show();
             }
 
+            isBookAvailable(libraryId, bookEditionId);
+        }
+
+        function isBookAvailable(libraryId, bookEditionId) {
             $.ajax({
                 url: '@Url.Action("CheckIsBookAvailable", "BooksInStock")',
                 type: 'POST',
                 dataType: 'JSON',
                 data: { libraryId: libraryId, bookEditionId: bookEditionId },
                 success: function (response) {
+                    $('#CheckingIsBookAvailable').hide();
                     if (response) {
-                        $('#btnSave').attr('disabled', false);
-                        
-                        $('#CheckingIsBookAvailable').hide();
-                        $('#BookIsAvailable').show();
-                        $('#BookIsntAvailable').hide();
-                        $('#ErrorCheckingAvailability').hide();
+                        var userId = $('#UserId').val() ?? '';
+                        if (userId.length == 36) {
+                            hasUserReachedLoanLimit(userId, true);
+                        }
+                        else{
+                            $('#BookIsAvailable').show();
+                        }
                     }
                     else {
-                        $('#CheckingIsBookAvailable').hide();
-                        $('#BookIsAvailable').hide();
                         $('#BookIsntAvailable').show();
-                        $('#ErrorCheckingAvailability').hide();
                     }
                 },
                 error: function () {
                     $('#CheckingIsBookAvailable').hide();
-                    $('#BookIsAvailable').hide();
-                    $('#BookIsntAvailable').hide();
                     $('#ErrorCheckingAvailability').show();
                 }
-            })
-            
+            });
+        }
+
+        function hasUserReachedLoanLimit(userId, enableSave) {
+            $.ajax({
+                url: '@Url.Action("HasUserReachedLoanLimit", "Loans")',
+                type: 'POST',
+                dataType: 'JSON',
+                data: { userId: userId },
+                success: function (response) {
+                    $('#CheckingIsBookAvailable').hide();
+                    if (response == false) {
+                        if (enableSave) {
+                            $('#btnSave').attr('disabled', false);
+
+                            $('#LoanIsAllowed').show();
+                        }
+                    }
+                    else if (response == true) {
+                        $('#LoanLimit').show();
+                    }
+                    else {
+                        alert(response);
+                    }
+                },
+                error: function () {
+                    $('#CheckingIsBookAvailable').hide();
+                    $('#ErrorCheckingAvailability').show();
+                }
+            });
         }
     </script>
 
