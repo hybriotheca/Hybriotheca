@@ -188,9 +188,9 @@ namespace Hybriotheca.Web.Controllers
                         }
 
                         // Redirect to AdminPanel
-                        if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+                        if (user.Role == "Admin" || user.Role == "Librarian")
                         {
-                            RedirectToAction("AdminPanel", "Home");
+                            return RedirectToAction(nameof(HomeController.AdminPanel), "Home");
                         }
 
                         return RedirectToHomePage();
