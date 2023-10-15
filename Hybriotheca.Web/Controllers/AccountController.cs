@@ -181,11 +181,19 @@ namespace Hybriotheca.Web.Controllers
                     {
                         string? returnUrl = Request.Query["ReturnUrl"];
 
+                        // Redirect to return url.
                         if (!string.IsNullOrEmpty(returnUrl))
                         {
                             return Redirect(returnUrl);
                         }
-                        else return RedirectToHomePage();
+
+                        // Redirect to AdminPanel
+                        if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+                        {
+                            RedirectToAction("AdminPanel", "Home");
+                        }
+
+                        return RedirectToHomePage();
                     }
                     else if (login.IsNotAllowed)
                     {
@@ -345,7 +353,7 @@ namespace Hybriotheca.Web.Controllers
                     {
                         user.PhotoId = await _blobHelper.UploadBlobAsync(model.PhotoFile, "userphotos");
                     }
-                    
+
                     if (model.DeletePhoto && user.PhotoId != Guid.Empty)
                     {
                         await _blobHelper.DeleteBlobAsync(user.PhotoId.ToString(), "userphotos");
