@@ -15,7 +15,16 @@
 
                     <form method="POST" class="space-y-4 md:space-y-6">
 
-                        <div asp-validation-summary="ModelOnly"></div>
+                        <!-- VALIDATION -->
+                        <div asp-validation-summary="ModelOnly" class="flex items-center p-4 mb-4 font-medium text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                            <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                            </svg>
+                            <span class="sr-only">Info</span>
+                            <div>
+                                <span class="font-medium"></span>
+                            </div>
+                        </div>
 
                         <!-- EMAIL -->
                         <div>
@@ -55,11 +64,11 @@
                         <!-- ACCEPT TERMS AND CONDITIONS -->
                         <div class="flex items-start">
                             <div class="flex items-center h-5">
-                                <input id="terms" aria-describedby="terms" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-sky-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-sky-600 dark:ring-offset-gray-800" required="">
+                                <input id="terms" aria-describedby="terms" type="checkbox" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" required>
                             </div>
                             <div class="ml-3 text-sm">
                                 <label for="terms" class="font-light text-gray-500 dark:text-gray-300">
-                                    I accept the <a class="font-medium text-sky-600 hover:underline dark:text-sky-500" href="#">Terms and Conditions</a>
+                                    I accept the <a data-modal-target="modal-terms-and-conditions" data-modal-toggle="modal-terms-and-conditions" class="cursor-pointer font-medium text-sky-600 hover:underline dark:text-sky-500" href="#">Terms and Conditions</a>
                                 </label>
                             </div>
                         </div>
@@ -80,8 +89,26 @@
     </main>
 </div>
 
+<!-- MODAL -->
+<div id="modal-terms-and-conditions" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-2xl max-h-full">
+        <partial name="_TermsAndConditions" />
+    </div>
+</div>
+
+
 @section Scripts{
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        const targetEl = document.getElementById('modal-terms-and-conditions');
+        const options = {
+            backdrop: 'dynamic',
+            backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-50',
+            closable: true
+        }
+        var modal = new Modal(targetEl, options);
+    </script>
 }

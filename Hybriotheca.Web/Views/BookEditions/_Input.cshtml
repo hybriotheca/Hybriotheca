@@ -8,7 +8,7 @@
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
         <select asp-for="BookID"
                 asp-items="ViewBag.Books"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></select>
+                class=""></select>
         <span asp-validation-for="BookID" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
     </div>
 
@@ -26,19 +26,19 @@
 
     @* <!-- CATEGORY --> *@
     <div>
-        <label asp-for="CategoryID" 
+        <label asp-for="CategoryID"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <select asp-for="CategoryID" 
-                asp-items="ViewBag.Categories" 
+        <select asp-for="CategoryID"
+                asp-items="ViewBag.Categories"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></select>
         <span asp-validation-for="CategoryID" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
     </div>
 
     @* <!-- ISBN --> *@
     <div>
-        <label asp-for="ISBN" 
+        <label asp-for="ISBN"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <input asp-for="ISBN" 
+        <input asp-for="ISBN"
                type="text"
                placeholder="Type book ISBN"
                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
@@ -47,10 +47,10 @@
 
     @* <!-- PUBLISHER --> *@
     <div>
-        <label asp-for="Publisher" 
+        <label asp-for="Publisher"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <input asp-for="Publisher" 
-               type="text" 
+        <input asp-for="Publisher"
+               type="text"
                placeholder="Type book publisher"
                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
         <span asp-validation-for="Publisher" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
@@ -58,10 +58,10 @@
 
     @* <!-- PUBLISH DATE --> *@
     <div>
-        <label asp-for="PublishDate" 
+        <label asp-for="PublishDate"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <input asp-for="PublishDate" 
-               type="date" 
+        <input asp-for="PublishDate"
+               type="date"
                value="2020-01-01"
                min="1500-01-01"
                placeholder="Select the publish date"
@@ -71,10 +71,10 @@
 
     @* <!-- LANGUAGE --> *@
     <div>
-        <label asp-for="Language" 
+        <label asp-for="Language"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <input asp-for="Language" 
-               type="text" 
+        <input asp-for="Language"
+               type="text"
                placeholder="Type book language"
                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
         <span asp-validation-for="Language" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
@@ -82,10 +82,10 @@
 
     @* <!-- TRANSLATION AUTHOR --> *@
     <div>
-        <label asp-for="TranslationAuthor" 
+        <label asp-for="TranslationAuthor"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <input asp-for="TranslationAuthor" 
-               type="text" 
+        <input asp-for="TranslationAuthor"
+               type="text"
                placeholder="Type translation author"
                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
         <span asp-validation-for="TranslationAuthor" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
@@ -93,10 +93,10 @@
 
     @* <!-- AWARDS --> *@
     <div>
-        <label asp-for="Awards" 
+        <label asp-for="Awards"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <input asp-for="Awards" 
-               type="text" 
+        <input asp-for="Awards"
+               type="text"
                placeholder="Type awards received"
                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
         <span asp-validation-for="Awards" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
@@ -104,10 +104,10 @@
 
     @* <!-- BOOK FORMAT --> *@
     <div>
-        <label asp-for="BookFormat" 
+        <label asp-for="BookFormat"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <input asp-for="BookFormat" 
-               type="text" 
+        <input asp-for="BookFormat"
+               type="text"
                placeholder="Type book format"
                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
         <span asp-validation-for="BookFormat" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
@@ -115,10 +115,10 @@
 
     @* <!-- Nº PAGES --> *@
     <div>
-        <label asp-for="NrPages" 
+        <label asp-for="NrPages"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <input asp-for="NrPages" 
-               type="number" 
+        <input asp-for="NrPages"
+               type="number"
                placeholder="Type nº of pages"
                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
         <span asp-validation-for="NrPages" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
@@ -126,7 +126,7 @@
 
     @* <!-- EBOOK ID --> *@
     <div>
-        <label asp-for="EbookID" 
+        <label asp-for="EbookID"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
         <input asp-for="EbookID"
                placeholder="Type ebook ID"
@@ -137,12 +137,12 @@
     @* <!-- IS AVAILABLE ONLINE --> *@
     <div class="flex items-center">
         <div class="flex items-center h-5">
-            <input asp-for="IsAvailableOnline" 
-                   type="checkbox" 
-                   value="" 
+            <input asp-for="IsAvailableOnline"
+                   type="checkbox"
+                   value=""
                    class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800">
         </div>
-        <label asp-for="IsAvailableOnline" 
+        <label asp-for="IsAvailableOnline"
                class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
             @Html.DisplayNameFor(model => model.IsAvailableOnline)
         </label>
@@ -167,14 +167,15 @@
 
     @* <!-- SYNOPSIS --> *@
     <div class="col-span-2">
-        <label asp-for="Synopsis" 
+        <label asp-for="Synopsis"
                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
-        <textarea asp-for="Synopsis" 
-                  type="text" 
-                  rows="5" 
+        <textarea asp-for="Synopsis"
+                  type="text"
+                  rows="5"
                   placeholder="Write the book synopsis..."
-                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" ></textarea>
+                  class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
         <span asp-validation-for="Synopsis" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
     </div>
 
 </div>
+

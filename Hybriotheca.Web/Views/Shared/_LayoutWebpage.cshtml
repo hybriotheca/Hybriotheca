@@ -12,6 +12,11 @@
 
     string HasPhoto()
     {
+        if(loggedUser == null)
+        {
+            return string.Empty;
+        }
+
         if (loggedUser.PhotoId == Guid.Empty)
         {
             return "bg-gradient-to-r from-cyan-500 to-blue-500";
@@ -26,25 +31,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Hybriotheca.Web</title>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     @* <!-- FLOWBITE --> *@
     <link rel="stylesheet" href="~/lib/flowbite/dist/flowbite.min.css" asp-append-version="true" />
     @* <!-- TAILWIND CSS --> *@
     <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
-
-
-    <link rel="stylesheet" type="text/css" href="~/lib/slick/slick.css" />
-    <link rel="stylesheet" type="text/css" href="~/lib/slick/slick-theme.css" />
-
-
-
-
-
-
-    @* <!-- TINY SLIDER --> *@
-    @* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css"> *@
-    <!--[if (lt IE 9)]><script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/min/tiny-slider.helper.ie8.js"></script><![endif]-->
-
+    @await RenderSectionAsync("Stylesheets", required: false)
 
     <script>
         if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -54,43 +46,46 @@
         }
     </script>
 
-
-
 </head>
-<body class="flex flex-col h-full bg-white dark:bg-gray-900">
+
+<body class="flex flex-col justify-between h-full bg-white dark:bg-gray-950">
 
     @* <!-- HEADER --> *@
-    <header>
-        <nav class="bg-white border-b border-gray-100 dark:border-gray-800 dark:bg-gray-900">
-            <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-                @* <!-- LOGO --> *@
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="flex items-center dark:text-white">
-                    <img src="~/images/logo.svg" class="h-10 mr-3" alt="Hybriotheca Logo" />
-                    <span class="self-center text-2xl font-semibold whitespace-nowrap">Hybriotheca</span>
-                </a>
+    <header class="fixed w-full z-20 backdrop-blur">
+        <nav class="bg-white/75 border-b border-gray-200 dark:border-gray-800 dark:bg-gray-900/75">
+            <div class="flex flex-wrap max-sm:grid max-sm:grid-cols-2 max-sm:grid-rows-2 items-center justify-between max-w-screen-xl mx-auto py-4">
 
-                <div class="flex md:order-1">
-                    @* <!-- SEARCH BAR --> *@
-                    <div id="navbar-search" class="relative hidden md:block">
+                <div class="flex">
+                    <!-- HAMBURGER MENU -->
+                    <button type="button" data-drawer-target="drawer-navigation" data-drawer-show="drawer-navigation" aria-controls="drawer-navigation" class="inline-flex items-center p-2 mr-3 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+                        </svg>
+                    </button>
+
+                    @* <!-- LOGO --> *@
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="flex items-center dark:text-white">
+                        <img src="~/images/logo.svg" class="h-10 mr-3" alt="Hybriotheca Logo" />
+                        <span class="self-center text-2xl font-semibold whitespace-nowrap">Hybriotheca</span>
+                    </a>
+                </div>
+
+                @* <!-- SEARCH BAR --> *@
+                <div class="flex grow m-0 px-6 max-sm:mt-3 max-sm:px-2 order-1 max-sm:order-3 max-sm:col-span-2">
+                    <div id="navbar-search" class="relative w-full md:block">
+                        <!-- Magnifier icon -->
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                             <span class="sr-only">Search icon</span>
                         </div>
-                        <input type="text" id="search-navbar" class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search...">
+                        <input type="text" id="search-navbar" class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for a book...">
                     </div>
-
-                    @* <!-- SEARCH BUTTON - MOBILE --> *@
-                    <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false" class="md:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 mr-1">
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                        </svg>
-                        <span class="sr-only">Search</span>
-                    </button>
                 </div>
 
-                <div class="flex items-center md:order-3">
+                <div class="flex items-center order-1 sm:order-3 max-sm:justify-self-end">
 
                     @* <!-- THEME TOGGLER BUTTON --> *@
                     <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2.5 mr-2">
@@ -107,11 +102,11 @@
                                 aria-expanded="false"
                                 data-dropdown-toggle="user-dropdown"
                                 data-dropdown-placement="bottom"
-                                class="flex justify-center items-center overflow-hidden w-8 h-8 mr-3 text-sm @HasPhoto() rounded-full md:mr-0 hover:ring-4 hover:ring-gray-300 dark:hover:ring-gray-600 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
+                                class="flex justify-center items-center overflow-hidden w-8 h-8 mx-3 text-sm @HasPhoto() rounded-full hover:ring-4 hover:ring-gray-300 dark:hover:ring-gray-600 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600">
                             <span class="sr-only">Open user menu</span>
                             @if (loggedUser.PhotoId != Guid.Empty)
                             {
-                                <img class="w-full h-auto rounded-full"
+                                <img class="w-full h-full object-cover rounded-full"
                                      src="@loggedUser.PhotoFullPath"
                                      alt="@loggedUser.FullName profile picture" />
                             }
@@ -137,53 +132,70 @@
                                         ;
                                     }
                                 </span>
-                                <span class="block text-sm  text-gray-500 truncate dark:text-gray-400">@this.User.Identity.Name</span>
+                                <span class="block text-sm text-gray-500 truncate dark:text-gray-400">@this.User.Identity.Name</span>
                             </div>
+                            @if (this.User.IsInRole("Admin"))
+                            {
+                                <div class="py-2">
+                                    <ul class="" aria-labelledby="user-menu-button">
+                                        <li>
+                                            <a asp-area="" asp-controller="Home" asp-action="AdminPanel" class="group flex items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                                <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M18 7.5h-.423l-.452-1.09.3-.3a1.5 1.5 0 0 0 0-2.121L16.01 2.575a1.5 1.5 0 0 0-2.121 0l-.3.3-1.089-.452V2A1.5 1.5 0 0 0 11 .5H9A1.5 1.5 0 0 0 7.5 2v.423l-1.09.452-.3-.3a1.5 1.5 0 0 0-2.121 0L2.576 3.99a1.5 1.5 0 0 0 0 2.121l.3.3L2.423 7.5H2A1.5 1.5 0 0 0 .5 9v2A1.5 1.5 0 0 0 2 12.5h.423l.452 1.09-.3.3a1.5 1.5 0 0 0 0 2.121l1.415 1.413a1.5 1.5 0 0 0 2.121 0l.3-.3 1.09.452V18A1.5 1.5 0 0 0 9 19.5h2a1.5 1.5 0 0 0 1.5-1.5v-.423l1.09-.452.3.3a1.5 1.5 0 0 0 2.121 0l1.415-1.414a1.5 1.5 0 0 0 0-2.121l-.3-.3.452-1.09H18a1.5 1.5 0 0 0 1.5-1.5V9A1.5 1.5 0 0 0 18 7.5Zm-8 6a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Z" />
+                                                </svg>
+                                                Admin Panel
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
                             <ul class="py-2" aria-labelledby="user-menu-button">
-                                @if (this.User.IsInRole("Admin"))
-                                {
-                                    <li>
-                                        <a asp-area="" asp-controller="Home" asp-action="AdminPanel" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                            Dashboard
-                                        </a>
-                                    </li>
-                                }
                                 <li>
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                    <a asp-controller="Home" asp-action="UserProfile" asp-route-id="@loggedUser.Id" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                        <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 18">
+                                            <path d="M7 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm2 1H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+                                        </svg>
+                                        My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Home" asp-action="UserLoans" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                        <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
+                                            <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z" />
+                                        </svg>
+                                        My Loans
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Home" asp-action="UserSettings" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                        <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.75 4H19M7.75 4a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 4h2.25m13.5 6H19m-2.25 0a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 10h11.25m-4.5 6H19M7.75 16a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 16h2.25" />
+                                        </svg>
                                         Settings
                                     </a>
                                 </li>
                                 <li>
-                                    <a asp-area="" asp-controller="Account" asp-action="Logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                    <a asp-area="" asp-controller="Account" asp-action="Logout" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                        <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3" />
+                                        </svg>
                                         Sign out
                                     </a>
                                 </li>
                             </ul>
                         </div>
-                        <button data-collapse-toggle="navbar-user" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-user" aria-expanded="false">
-                            <span class="sr-only">Open main menu</span>
-                            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
-                            </svg>
-                        </button>
 
                     }
                     else
                     {
                         @* <!-- LOGIN BUTTON --> *@
-                        <a asp-area="" asp-controller="Account" asp-action="Login" class="flex flex-row space-x-2 items-center text-sm font-medium text-gray-900 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2.5">
-                            <svg class="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 15">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 7.5h11m0 0L8 3.786M12 7.5l-4 3.714M12 1h3c.53 0 1.04.196 1.414.544.375.348.586.82.586 1.313v9.286c0 .492-.21.965-.586 1.313A2.081 2.081 0 0 1 15 14h-3" />
-                            </svg>
+                        <a asp-area="" asp-controller="Account" asp-action="Login" class="flex flex-row space-x-2 items-center mr-2 py-2.5 px-5 text-sm font-medium text-gray-900 rounded-lg dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <span>Login</span>
                         </a>
 
                         @* <!-- REGISTER BUTTON --> *@
-                        <a asp-area="" asp-controller="Account" asp-action="Register" class="flex flex-row space-x-2 items-center text-sm font-medium text-gray-900 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg p-2.5">
-                            <svg class="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
-                                <path d="M6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Zm11-3h-2V5a1 1 0 0 0-2 0v2h-2a1 1 0 1 0 0 2h2v2a1 1 0 0 0 2 0V9h2a1 1 0 1 0 0-2Z" />
-                            </svg>
-                            <span>Register</span>
+                        <a asp-area="" asp-controller="Account" asp-action="Register" class="flex flex-row space-x-2 items-center transition-all duration-300 ease-in-out inline-flex justify-center items-center py-2.5 px-5 text-sm font-medium text-center text-white rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 hover:hue-rotate-90 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                            <span>Sign Up</span>
                         </a>
                     }
                 </div>
@@ -192,18 +204,127 @@
         </nav>
     </header>
 
+    <!-- DRAWER COMPONENT -->
+    <div id="drawer-navigation" class="fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white w-64 dark:bg-gray-800" tabindex="-1" aria-labelledby="drawer-navigation-label">
+        <h5 id="drawer-navigation-label" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Menu</h5>
+        <button type="button" data-drawer-hide="drawer-navigation" aria-controls="drawer-navigation" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 right-2.5 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+            <span class="sr-only">Close menu</span>
+        </button>
+        <div class="py-4 overflow-y-auto">
+            <ul class="space-y-2 font-medium">
+                <!-- ABOUT US -->
+                <li>
+                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <span class="ml-3">About Us</span>
+                    </a>
+                </li>
+                <!-- OUR LIBRARIES -->
+                <li>
+                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <span class="ml-3">Our Libraries</span>
+                    </a>
+                </li>
+                <!-- SUBSCRIPTION PLANS -->
+                <li>
+                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <span class="ml-3">Subscription Plans</span>
+                    </a>
+                </li>
+                <!-- FAQ -->
+                <li>
+                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <span class="ml-3">FAQ</span>
+                    </a>
+                </li>
+                <!-- CONTACT -->
+                <li>
+                    <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <span class="ml-3">Contact</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- CATALOGUE -->
+            <ul class="pt-5 mt-5 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
+                <li>
+                    <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700" aria-controls="dropdown-catalogue" data-collapse-toggle="dropdown-catalogue">
+                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
+                            <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z" />
+                        </svg>
+                        <span class="flex-1 ml-3 text-left whitespace-nowrap">
+                            Our Catalogue
+                        </span>
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
+
+                    <ul id="dropdown-catalogue" class="hidden py-2 space-y-2">
+                        <li>
+                            <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                                Featured
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                                New Releases
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                                Romance
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                                Fantasy
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                                Sci-Fi
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- COMMUNITIES -->
+            <ul class="pt-5 mt-5 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
+                <li>
+                    <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">
+                        <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 19">
+                            <path d="M14.5 0A3.987 3.987 0 0 0 11 2.1a4.977 4.977 0 0 1 3.9 5.858A3.989 3.989 0 0 0 14.5 0ZM9 13h2a4 4 0 0 1 4 4v2H5v-2a4 4 0 0 1 4-4Z" />
+                            <path d="M5 19h10v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2ZM5 7a5.008 5.008 0 0 1 4-4.9 3.988 3.988 0 1 0-3.9 5.859A4.974 4.974 0 0 1 5 7Zm5 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm5-1h-.424a5.016 5.016 0 0 1-1.942 2.232A6.007 6.007 0 0 1 17 17h2a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5ZM5.424 9H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h2a6.007 6.007 0 0 1 4.366-5.768A5.016 5.016 0 0 1 5.424 9Z" />
+                        </svg>
+                        <span class="flex-1 ml-3 text-left whitespace-nowrap">
+                            Communities
+                        </span>
+                    </button>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+
     @* <!-- MAIN CONTENT --> *@
-    @RenderBody()
+    <div class="mt-[72px] max-sm:mt-[132px]">
+        @RenderBody()
+    </div>
 
     @* <!-- FOOTER --> *@
-    <footer class="p-4 bg-gray-100 md:p-8 lg:p-10 dark:bg-gray-800">
+    <footer class="p-4 bg-gray-100 md:p-8 lg:p-10 dark:bg-gray-900">
         <div class="mx-auto max-w-screen-xl text-center">
-            <a href="#" class="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white">
+            <a href="#" class="flex justify-center items-center w-fit mx-auto my-0 text-2xl font-semibold text-gray-900 dark:text-white">
                 <img src="~/images/logo.svg" class="h-10 mr-3" alt="Hybriotheca Logo" />
                 Hybriotheca
             </a>
             <p class="my-6 text-gray-500 dark:text-gray-400">
-                Immerse in a world of books with our virtual library app. Rent, read online, and connect with physical libraries - all in one place.
+                Immerse yourself in a world of books with our virtual library. Borrow books, read online, and connect with other book lovers - all in one place.
             </p>
             <ul class="flex flex-wrap justify-center items-center mb-6 text-gray-900 dark:text-white">
                 <li>
@@ -239,56 +360,6 @@
     <script src="~/lib/flowbite/dist/flowbite.min.js"></script>
     @* <!-- CUSTOM JS --> *@
     <script src="~/js/site.js" asp-append-version="true" defer></script>
-
-    
-
-
-    @* <script type="text/javascript">
-        $(document).ready(function () {
-            $('.slider-new-releases').slick({
-                infinite: false,
-                dots: true,
-                slidesToShow: 2,
-                slidesToScroll: 2
-            });
-
-            $('.slider-2').slick({
-                infinite: false,
-                dots: true,
-                slidesToShow: 2,
-                slidesToScroll: 2
-            });
-        });
-    </script> *@
-
-
-    @* <!-- TINY SLIDER --> *@
-    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
-    <!-- NOTE: prior to v2.2.1 tiny-slider.js need to be in <body> -->
-
-    <script type="text/javascript">
-        import { tns } from './lib/tiny-slider-2.9.3/src/tiny-slider.js';
-
-        var slider1 = tns({
-            container: '.slider-new-releases',
-            items: 6,
-            slideBy: 'page',
-            autoplay: false,
-            gutter: 20,
-            edgePadding: 0
-        });
-
-        var slider2 = tns({
-            container: '.slider-2',
-            items: 6,
-            slideBy: 'page',
-            autoplay: false,
-            loop: false,
-            rewind: true,
-            gutter: 20,
-            edgePadding: 0
-        });
-    </script> *@
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

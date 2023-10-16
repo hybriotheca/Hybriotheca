@@ -1,0 +1,1170 @@
+﻿@model Hybriotheca.Web.Data.Entities.BookEdition
+
+@{
+    ViewData["Title"] = "Model.EditionTitle";
+}
+
+<div class="p-4 grow">
+    <main role="main" class="max-w-screen-xl mx-auto dark:text-white">
+
+        <!-- MAIN CONTAINER -->
+        <div class="flex gap-2 w-full">
+
+            <!-- LEFT SIDE CONTAINER -->
+            <div class="w-1/4 min-w-min">
+                <!-- STICKY CONTAINER -->
+                <div class="sticky top-24">
+                    <!-- BOOK COVER -->
+                    <div class="mx-4">
+                        <img class="rounded-r-xl shadow" src="~/images/HP.jpg" alt="Eragon cover" />
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="flex flex-col my-4">
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <!-- BORROW -->
+                            <button class="transition-all duration-200 ease-in-out inline-flex justify-center items-center mx-4 my-2 py-2 px-5 font-medium text-white rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                                Borrow this book
+                            </button>
+
+                            <!-- READ -->
+                            <a href="../Home/EbookReader" class="transition-all duration-200 ease-in-out relative inline-flex justify-center items-center mx-4 my-2 p-0.5 overflow-hidden text-center font-medium rounded-full group bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 group-hover:from-cyan-500 group-hover:to-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-900">
+                                <span class="grow relative px-5 py-1.5 bg-gray-50 dark:bg-gray-900 rounded-full text-gray-900 dark:text-white">
+                                    Read online
+                                </span>
+                            </a>
+                        }
+                        else
+                        {
+                            <!-- BORROW -->
+                            <a asp-controller="Account" asp-action="Register" class="transition-all duration-200 ease-in-out inline-flex justify-center items-center mx-4 my-2 py-2 px-5 text-center font-medium text-white rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                                Borrow this book
+                            </a>
+
+                            <!-- READ -->
+                            <a asp-controller="Account" asp-action="Register" class="transition-all duration-200 ease-in-out relative inline-flex justify-center items-center mx-4 my-2 p-0.5 overflow-hidden text-center font-medium rounded-full group bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 group-hover:from-cyan-500 group-hover:to-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-900">
+                                <span class="grow relative px-5 py-1.5 bg-gray-50 dark:bg-gray-900 rounded-full text-gray-900 dark:text-white">
+                                    Read online
+                                </span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE CONTAINER -->
+            <div class="grow w-3/4">
+                <!-- BOOK TITLE -->
+                <h2 class="font-serif text-4xl mb-2 font-bold dark:text-white">
+                    Harry Potter and the Sorcerer's Stone
+                </h2>
+
+                <div class="text-xl text-gray-500 dark:text-gray-400">
+                    <!-- RATING -->
+                    <div class="flex items-center ">
+                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">4.0</span>
+                    </div>
+                    <!-- AUTHOR -->
+                    <span class="text-xl text-gray-500 dark:text-gray-400">
+                        J. K. Rowling
+                    </span>
+
+                </div>
+
+                <!-- SYNOPSIS -->
+                <p class="my-5">
+                    Harry Potter thinks he is an ordinary boy - until he is rescued by an owl, taken to Hogwarts School of Witchcraft and Wizardry, learns to play Quidditch and does battle in a deadly duel. The Reason ... HARRY POTTER IS A WIZARD!
+                </p>
+
+                <!-- DETAILS TABS -->
+                <div class="border-b border-gray-200 dark:border-gray-700">
+                    <!-- TABS BUTTONS -->
+                    <ul class="flex flex-wrap -mb-px font-medium text-center" id="bookDetailsTab" data-tabs-toggle="#tabContents" role="tablist">
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 border-b-2 rounded-t-lg"
+                                    id="details-tab" data-tabs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="bg-gray-700">
+                                Details
+                            </button>
+                        </li>
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                                    id="reviews-tab" data-tabs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">
+                                Reviews
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- TABS CONTENTS -->
+                <div id="tabContents">
+                    <!-- BOOK DETAILS -->
+                    <div class="hidden p-4 bg-gray-50 dark:bg-gray-800" id="details" role="tabpanel" aria-labelledby="details-tab">
+                        <table class="mx-3 border-separate border-spacing-y-2">
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    ISBN
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    1234567890
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Format
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    Paperback
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Pages
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    223
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Genre
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    Fantasy
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Language
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    English
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Translator
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    -
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Original Title
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    Harry Potter and the Philosopher’s Stone
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Publish date
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    June 30, 1997
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Publisher
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    Bloomsbury Publishing
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Awards
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    -
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- REVIEWS -->
+                    <div class="hidden p-4 bg-gray-50 dark:bg-gray-800" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                        <!-- AVARAGE RATING -->
+                        <div class="mb-8">
+                            <!-- Stars -->
+                            <div class="flex items-center mb-2">
+                                <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                </svg>
+                                <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                </svg>
+                                <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                </svg>
+                                <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                </svg>
+                                <svg class="w-4 h-4 text-gray-300 mr-1 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                </svg>
+                                <p class="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    4.95 out of 5
+                                </p>
+                            </div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                1,745 global ratings
+                            </p>
+                            <!-- Bars -->
+                            <!-- Bar 5 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">5 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: 70%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    70%
+                                </span>
+                            </div>
+                            <!-- Bar 4 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">4 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: 17%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    17%
+                                </span>
+                            </div>
+                            <!-- Bar 3 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">3 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: 8%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    8%
+                                </span>
+                            </div>
+                            <!-- Bar 2 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">2 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: 4%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    4%
+                                </span>
+                            </div>
+                            <!-- Bar 1 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">1 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: 1%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    1%
+                                </span>
+                            </div>
+                        </div>
+
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <!-- SUBMIT REVIEW -->
+                            <div>
+                                <h2 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+                                    Write a review
+                                </h2>
+                                <form>
+                                    <!-- STARS -->
+                                    <div class="flex gap-2 mb-4">
+                                        <p class="font-medium text-gray-500 dark:text-gray-400">Your rating: </p>
+                                        <div class="cursor-pointer flex flex-row-reverse justify-end">
+                                            <!-- 5 stars -->
+                                            <input type="radio" id="star5" name="your-rating" value="5" class="hidden peer" required />
+                                            <label for="star5" title="5 stars" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                                                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                </svg>
+                                                <span class="sr-only">5 stars</span>
+                                            </label>
+
+                                            <!-- 4 stars -->
+                                            <input type="radio" id="star4" name="your-rating" value="4" class="hidden peer" required />
+                                            <label for="star4" title="4 stars" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                                                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                </svg>
+                                                <span class="sr-only">4 stars</span>
+                                            </label>
+
+                                            <!-- 3 stars -->
+                                            <input type="radio" id="star3" name="your-rating" value="3" class="hidden peer" required />
+                                            <label for="star3" title="3 stars" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                                                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                </svg>
+                                                <span class="sr-only">3 stars</span>
+                                            </label>
+
+                                            <!-- 2 stars -->
+                                            <input type="radio" id="star2" name="your-rating" value="2" class="hidden peer" required />
+                                            <label for="star2" title="2 stars" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                                                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                </svg>
+                                                <span class="sr-only">2 stars</span>
+                                            </label>
+
+                                            <!-- 1 star -->
+                                            <input type="radio" id="star1" name="your-rating" value="1" class="hidden peer" required />
+                                            <label for="star1" title="1 star" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                                                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                </svg>
+                                                <span class="sr-only">1 star</span>
+                                            </label>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- REVIEW TITLE -->
+                                    <input type="text"
+                                           id="your-review-title"
+                                           class="mb-4 bg-white border border-gray-300 text-gray-900 text-sm rounded focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500"
+                                           placeholder="Add a title (optional)">
+
+                                    <!-- REVIEW BODY -->
+                                    <textarea id="your-review"
+                                              rows="4"
+                                              class="block mb-1 p-2.5 w-full text-sm text-gray-900 bg-white rounded border border-gray-300 focus:ring-sky-500 focus:border-sky-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500"
+                                              placeholder="Share your thoughts..."
+                                              required></textarea>
+
+                                    <!-- GUIDELINES-->
+                                    <p class="ml-auto mb-2 text-xs text-gray-500 dark:text-gray-400">
+                                        Remember, your review must follow our <a data-modal-target="modal-guidelines" data-modal-toggle="modal-guidelines" class="cursor-pointer text-sky-600 dark:text-sky-500 hover:underline">Community Guidelines</a>.
+                                    </p>
+
+                                    <!-- SUBMIT BUTTON -->
+                                    <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900">
+                                        Submit review
+                                    </button>
+                                </form>
+                            </div>
+
+                            <hr class="my-8 border-gray-200 dark:border-gray-700" />
+                        }
+
+                        <!-- USERS REVIEWS -->
+                        <div>
+                            <article>
+                                <!-- REVIEW HEADER -->
+                                <div class="flex items-center mb-4 space-x-4">
+                                    <a href="#">
+                                        <img class="w-10 h-10 rounded-full" src="~/images/HP.jpg" alt="">
+                                    </a>
+                                    <div class="space-y-1 font-medium dark:text-white">
+                                        <a href="#" class="hover:underline">
+                                            Jese Leos
+                                        </a>
+                                        <p class="block text-sm text-gray-500 dark:text-gray-400">
+                                            16 reviews
+                                        </p>
+                                    </div>
+                                </div>
+                                <!-- REVIEW RATING -->
+                                <div class="flex items-center mb-5">
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <h3 class="ml-2 text-sm font-semibold text-gray-900 dark:text-white">Thinking to buy another one!</h3>
+                                </div>
+                                <!-- REVIEW TEXT -->
+                                <div class="line-clamp-4">
+                                    <p class="mb-2 text-gray-500 dark:text-gray-400">This is my third Invicta Pro Diver. They are just fantastic value for money. This one arrived yesterday and the first thing I did was set the time, popped on an identical strap from another Invicta and went in the shower with it to test the waterproofing.... No problems.</p>
+                                    <p class="mb-3 text-gray-500 dark:text-gray-400">It is obviously not the same build quality as those very expensive watches. But that is like comparing a Citroën to a Ferrari. This watch was well under £100! An absolute bargain.</p>
+                                </div>
+                                <!-- READ MORE BUTTON -->
+                                <a href="#" class="block mb-5 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">Read more</a>
+                                <!-- REVIEW FOOTER-->
+                                <aside>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        19 people liked this review
+                                    </p>
+                                    <div class="flex items-center mt-3 space-x-3 divide-x divide-gray-200 dark:divide-gray-600">
+                                        <a href="#" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                            Like
+                                        </a>
+                                        <a href="#" class="pl-4 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">
+                                            Report abuse
+                                        </a>
+                                    </div>
+                                </aside>
+                            </article>
+
+                            <!-- DIVIDER -->
+                            <hr class="my-8 border-gray-200 dark:border-gray-700" />
+
+                            <article>
+                                <div class="flex items-center mb-4 space-x-4">
+                                    <a href="#">
+                                        <img class="w-10 h-10 rounded-full" src="~/images/HP.jpg" alt="">
+                                    </a>
+                                    <div class="space-y-1 font-medium dark:text-white">
+                                        <a href="#" class="hover:underline">
+                                            Jese Leos
+                                        </a>
+                                        <p class="block text-sm text-gray-500 dark:text-gray-400">
+                                            16 reviews
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center mb-5">
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <h3 class="ml-2 text-sm font-semibold text-gray-900 dark:text-white">Thinking to buy another one!</h3>
+                                </div>
+                                <div class="line-clamp-4">
+                                    <p class="mb-2 text-gray-500 dark:text-gray-400">This is my third Invicta Pro Diver. They are just fantastic value for money. This one arrived yesterday and the first thing I did was set the time, popped on an identical strap from another Invicta and went in the shower with it to test the waterproofing.... No problems.</p>
+                                    <p class="mb-3 text-gray-500 dark:text-gray-400">It is obviously not the same build quality as those very expensive watches. But that is like comparing a Citroën to a Ferrari. This watch was well under £100! An absolute bargain.</p>
+                                </div>
+                                <a href="#" class="block mb-5 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">
+                                    Read more
+                                </a>
+                                <aside>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        19 people liked this review
+                                    </p>
+                                    <div class="flex items-center mt-3 space-x-3 divide-x divide-gray-200 dark:divide-gray-600">
+                                        <a href="#" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                            Like
+                                        </a>
+                                        <a href="#" class="pl-4 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">
+                                            Report abuse
+                                        </a>
+                                    </div>
+                                </aside>
+                            </article>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OTHER EDITIONS SLIDER -->
+                <div class="mb-20 mt-6">
+                    <h2 class="mb-4 text-3xl font-thin text-gray-900 dark:text-white">
+                        Other editions
+                    </h2>
+                    <section id="slider-other-editions" class="splide">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+                                <li class="splide__slide w-full max-w-sm m-2 p-4 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                    <a href="#" class="flex justify-center">
+                                        <img class="max-h-[200px]" src="~/images/HP.jpg" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                    </a>
+                                    <div class="mt-4">
+                                        <a href="#">
+                                            <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                Paperback
+                                            </h5>
+                                            <h5 class="mb-1 line-clamp-1 text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                Publisher One
+                                            </h5>
+                                            <h5 class="mb-1 text-sm tracking-tight text-gray-400">
+                                                Portuguese
+                                            </h5>
+                                            <h5 class="text-sm tracking-tight text-gray-400">
+                                                1997
+                                            </h5>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="splide__slide w-full max-w-sm m-2 p-4 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                    <a href="#" class="flex justify-center">
+                                        <img class="max-h-[200px]" src="~/images/HP.jpg" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                    </a>
+                                    <div class="mt-4">
+                                        <a href="#">
+                                            <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                Digital
+                                            </h5>
+                                            <h5 class="mb-1 line-clamp-1 text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                Publisher One
+                                            </h5>
+                                            <h5 class="mb-1 text-sm tracking-tight text-gray-400">
+                                                Portuguese
+                                            </h5>
+                                            <h5 class="text-sm tracking-tight text-gray-400">
+                                                2005
+                                            </h5>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="splide__slide w-full max-w-sm m-2 p-4 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                    <a href="#" class="flex justify-center">
+                                        <img class="max-h-[200px]" src="~/images/HP.jpg" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                    </a>
+                                    <div class="mt-4">
+                                        <a href="#">
+                                            <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                Digital
+                                            </h5>
+                                            <h5 class="mb-1 line-clamp-1 text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                Publisher Two
+                                            </h5>
+                                            <h5 class="mb-1 text-sm tracking-tight text-gray-400">
+                                                English
+                                            </h5>
+                                            <h5 class="text-sm tracking-tight text-gray-400">
+                                                2000
+                                            </h5>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="splide__slide w-full max-w-sm m-2 p-4 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                    <a href="#" class="flex justify-center">
+                                        <img class="max-h-[200px]" src="~/images/HP.jpg" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                    </a>
+                                    <div class="mt-4">
+                                        <a href="#">
+                                            <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                Paperback
+                                            </h5>
+                                            <h5 class="mb-1 line-clamp-1 text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                Publisher Three
+                                            </h5>
+                                            <h5 class="mb-1 text-sm tracking-tight text-gray-400">
+                                                Spanish
+                                            </h5>
+                                            <h5 class="text-sm tracking-tight text-gray-400">
+                                                1998
+                                            </h5>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="splide__slide w-full max-w-sm m-2 p-4 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                    <a href="#" class="flex justify-center">
+                                        <img class="max-h-[200px]" src="~/images/HP.jpg" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                    </a>
+                                    <div class="mt-4">
+                                        <a href="#">
+                                            <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                Hardcover
+                                            </h5>
+                                            <h5 class="mb-1 line-clamp-1 text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                Publisher Four
+                                            </h5>
+                                            <h5 class="mb-1 text-sm tracking-tight text-gray-400">
+                                                German
+                                            </h5>
+                                            <h5 class="text-sm tracking-tight text-gray-400">
+                                                2010
+                                            </h5>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="splide__slide w-full max-w-sm m-2 p-4 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                    <a href="#" class="flex justify-center">
+                                        <img class="max-h-[200px]" src="~/images/HP.jpg" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                    </a>
+                                    <div class="mt-4">
+                                        <a href="#">
+                                            <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                Paperback
+                                            </h5>
+                                            <h5 class="mb-1 line-clamp-1 text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                Publisher Five
+                                            </h5>
+                                            <h5 class="mb-1 text-sm tracking-tight text-gray-400">
+                                                English
+                                            </h5>
+                                            <h5 class="text-sm tracking-tight text-gray-400">
+                                                2015
+                                            </h5>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="flex items-center my-3">
+            <div class="grow h-px bg-gray-200 dark:bg-gray-700"></div>
+            <img src="~/images/logo.svg" class="h-10 mx-5" alt="Hybriotheca Logo" />
+            <div class="grow h-px bg-gray-200 dark:bg-gray-700"></div>
+        </div>
+
+        <!-- RECOMMENDATIONS -->
+        <div class="mt-6">
+
+            <!-- SIMILAR BOOKS -->
+            <div class="mb-20">
+                <h2 class="mb-6 text-4xl font-thin text-gray-900 dark:text-white">
+                    Readers also enjoyed
+                </h2>
+                <section id="slider-recommendations" class="splide">
+                    <div class="splide__track">
+                        <ul class="splide__list">
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/HP.jpg" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            Harry Potter and the Philosopher's Stone
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            J. K. Rowling
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/ER.png" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            Eragon
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            Christopher Paolini
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/CN.jpg" alt="Chronicles of Narnia cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            Chronicles of Narnia
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            C. S. Lewis
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/HG.jpg" alt="HitchHiker Guide to the Galaxy cover" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            HitchHiker's Guide to the Galaxy
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            Douglas Adams
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/LR.jpg" alt="Lord of the Rings cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            The Lord of the Rings - The Fellowship of the Ring
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            J. R. R. Tolkien
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/SG.jpg" alt="The Selfish Gene cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            The Selfish Gene
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            Richard Dawkins
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            <!-- BOOKS BY THE SAME AUTHOR -->
+            <div class="mb-20">
+                <h2 class="mb-6 text-4xl font-thin text-gray-900 dark:text-white">
+                    Other books by <a href="#" class="italic font-medium text-sky-600 dark:text-sky-400 hover:underline">J. K. Rowling</a>
+                </h2>
+                <section id="slider-same-author" class="splide">
+                    <div class="splide__track">
+                        <ul class="splide__list">
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/HP.jpg" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            Harry Potter and the Philosopher's Stone
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            J. K. Rowling
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/ER.png" alt="Harry Potter and the Philosopher's Stone cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            Eragon
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            Christopher Paolini
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/CN.jpg" alt="Chronicles of Narnia cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            Chronicles of Narnia
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            C. S. Lewis
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/HG.jpg" alt="HitchHiker Guide to the Galaxy cover" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            HitchHiker's Guide to the Galaxy
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            Douglas Adams
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/LR.jpg" alt="Lord of the Rings cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            The Lord of the Rings - The Fellowship of the Ring
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            J. R. R. Tolkien
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                <a href="#" class="flex justify-center">
+                                    <img class="max-h-[200px]" src="~/images/SG.jpg" alt="The Selfish Gene cover'" />
+                                </a>
+                                <div class="mt-4">
+                                    <a href="#">
+                                        <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                            Paperback
+                                        </h5>
+                                        <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                            The Selfish Gene
+                                        </h5>
+                                        <h5 class="text-sm tracking-tight text-gray-400">
+                                            Richard Dawkins
+                                        </h5>
+                                    </a>
+                                    <div class="flex items-center mt-2.5">
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <svg class="w-4 h-4 text-gray-200 dark:text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                        </svg>
+                                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">5.0</span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal-guidelines" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-2xl max-h-full">
+        <partial name="_CommunityGuidelines" />
+    </div>
+</div>
+
+
+
+@section Stylesheets{
+    <link rel="stylesheet" type="text/css" href="~/lib/splide/dist/css/splide.min.css" />
+}
+
+@section Scripts{
+    <script src="~/lib/splide/dist/js/splide.min.js"></script>
+
+    <script>
+        const targetEl = document.getElementById('modal-delete');
+        const options = {
+            backdrop: 'dynamic',
+            backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-50',
+            closable: true
+        }
+        var modal = new Modal(targetEl, options);
+    </script>
+
+
+    <script>
+        Splide.defaults = {
+            drag: 'free',
+            snap: true,
+            perPage: 5,
+            pagination: false,
+            gap: '1rem',
+            padding: 70,
+            paginationKeyboard: true,
+            breakpoints: {
+                1200: {
+                    perPage: 4,
+                },
+                1000: {
+                    perPage: 3,
+                },
+                640: {
+                    perPage: 2,
+                },
+                500: {
+                    perPage: 1,
+                }
+            }
+        }
+
+        new Splide('#slider-other-editions').mount();
+        new Splide('#slider-recommendations').mount();
+        new Splide('#slider-same-author').mount();
+    </script>
+}

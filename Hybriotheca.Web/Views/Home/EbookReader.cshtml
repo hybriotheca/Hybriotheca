@@ -1,0 +1,347 @@
+﻿@model Hybriotheca.Web.Data.Entities.BookEdition;
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html class="h-full">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hybriotheca.Web</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @* <!-- FLOWBITE --> *@
+    <link rel="stylesheet" href="~/lib/flowbite/dist/flowbite.min.css" asp-append-version="true" />
+    @* <!-- TAILWIND CSS --> *@
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+
+    <style>
+        @@media(min-width:880px) {
+            #ebook-container.spreads:before {
+                position: absolute;
+                width: 1px;
+                border-right: 1px rgba(0, 0, 0, 0.08) solid;
+                height: calc(100% - 56px);
+                z-index: 1;
+                left: 50%;
+                margin-left: -1px;
+                box-shadow: -2px 0 15px rgba(0, 0, 0, 0.8);
+                content: "";
+            }
+        }
+    </style>
+</head>
+<body class="h-full">
+    <!-- OUTERMOST CONTAINER -->
+    <div class="flex flex-col w-full h-full">
+        <!-- HEADER -->
+        <div class="grid grid-cols-3 items-center w-full p-2 bg-gray-900 select-none">
+
+            <!-- HYBRIOTHECA LOGO -->
+            <div class="flex items-center gap-2">
+                <a asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.svg" class="h-8 mx-2" alt="Hybriotheca Logo" />
+                </a>
+
+                <a href="javascript:history.back()" class="cursor-pointer inline-flex items-center px-3 py-2 text-xs font-medium text-center text-white bg-gray-800 border border-gray-600 rounded-lg hover:bg-sky-800 hover:border-sky-600">
+                    <svg class="w-2.5 h-2.5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
+                    </svg>
+                    Go back
+                </a>
+            </div>
+
+            <!-- BOOK TITLE -->
+            <div class="select-text text-sm text-center font-medium text-gray-200">
+                Book Title <span class="font-normal text-gray-400">‒ Author</span>
+            </div>
+
+            <!-- MENU BUTTON -->
+            <div class="flex items-center justify-end">
+                <div class="mr-2">
+                    <button id="btnMenu" data-dropdown-toggle="ebook-dropdown" data-dropdown-placement="bottom-end" class="inline-flex items-center w-10 h-10 justify-center text-sm text-gray-300 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="h-7 w-7" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <circle cx="18" cy="16" r="3" />  <line x1="21" y1="13" x2="21" y2="19" />  <path d="M3 19l5 -13l5 13" />  <line x1="5" y1="14" x2="11" y2="14" /></svg>
+                    </button>
+                    <!-- Dropdown menu -->
+                    <div id="ebook-dropdown" class="z-10 hidden bg-gray-50 w-44 p-4 divide-y divide-gray-100 rounded-lg border shadow">
+                        <div class="flex flex-col items-center text-sm font-medium text-gray-600 me-auto">
+                            <!-- Fontsize -->
+                            <span class="mb-2">Font size</span>
+                            <div class="mb-4">
+                                <button onclick="resizeEbookFont(false)" class="mr-2 p-1 rounded-lg hover:bg-gray-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m40-200 210-560h100l210 560h-96l-51-143H187l-51 143H40Zm176-224h168l-82-232h-4l-82 232Zm384-16v-80h320v80H600Z" /></svg>
+                                </button>
+                                <button onclick="resizeEbookFont(true)" class="p-1 rounded-lg hover:bg-gray-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m40-200 210-560h100l210 560h-96l-51-143H187l-51 143H40Zm176-224h168l-82-232h-4l-82 232Zm504 104v-120H600v-80h120v-120h80v120h120v80H800v120h-80Z" /></svg>
+                                </button>
+                            </div>
+
+                            <!-- Theme -->
+                            <span class="mb-2">Theme</span>
+                            <div class="flex gap-2 mb-5">
+                                <button onclick="changeEbookTheme('light')" class="h-8 w-8 p-1 bg-white rounded-lg border border-gray-300 hover:border-2"><span class="sr-only">Light theme</span></button>
+                                <button onclick="changeEbookTheme('dark')" class="h-8 w-8 p-1 bg-black rounded-lg border border-gray-300 hover:border-2"><span class="sr-only">Dark theme</span></button>
+                                <button onclick="changeEbookTheme('sepia')" class="h-8 w-8 p-1 bg-[#E7DEC7] rounded-lg border border-gray-300 hover:border-2"><span class="sr-only">Sepia theme</span></button>
+                            </div>
+
+                            <!-- Line height -->
+                            <span class="mb-2">Line spacing</span>
+                            <div class="">
+                                <button onclick="changeEbookLineHeight(false)" class="mr-2 p-1 rounded-lg hover:bg-gray-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
+                                    </svg>
+                                </button>
+                                <button onclick="changeEbookLineHeight(true)" class="p-1 rounded-lg hover:bg-gray-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- TABLE OF CONTENTS -->
+                <select id="toc" class="block w-2/4 p-1 pl-2 bg-gray-700 border border-gray-600 text-sm text-white rounded-lg hover:ring-1 hover:ring-sky-600"></select>
+            </div>
+        </div>
+
+        <!-- EBOOK CONTAINER -->
+        <div id="ebook-container" class="spreads flex h-full bg-white">
+            <!-- PREVIOUS PAGE BUTTON -->
+            <a id="prev" href="#prev" class="arrow group order-0 flex justify-center items-center h-full px-2 hover:bg-gray-300/25" style="visibility: visible;">
+                <svg class="transition-all group-hover:-translate-x-1 w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4" />
+                </svg>
+            </a>
+
+            <!-- PREVIOUS PAGE BUTTON -->
+            <a id="next" href="#next" class="arrow group order-3 flex justify-center items-center h-full px-2 hover:bg-gray-300/25" style="visibility: visible;">
+                <svg class="transition-all group-hover:translate-x-1 w-6 h-6 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- FLOWBITE -->
+    <script src="~/lib/flowbite/dist/flowbite.min.js"></script>
+    <!-- EPUB.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="~/lib/epub.js/epub.min.js"></script>
+
+    <script>
+        // EBOOK CREATE & DISPLAY
+        var book = ePub('https://ligawebblob.blob.core.windows.net/epub/15283592-7cb9-4dc5-ac39-f3f3e805ad40.epub');
+        var rendition = book.renderTo("ebook-container", {
+            width: "100%",
+            height: "100%",
+            spread: "always"
+        });
+
+        rendition.display();
+
+        //CHANGE EBOOK FONT SIZE
+        var fontSize = 100;
+        function resizeEbookFont(increase) {
+
+            if (increase) {
+                fontSize += 10;
+                rendition.themes.fontSize(`${fontSize}%`);
+
+            } else {
+                fontSize -= 10;
+                rendition.themes.fontSize(`${fontSize}%`);
+            }
+        }
+
+        // CHANGE EBOOK THEME
+        function changeEbookTheme(theme) {
+
+            if (theme == 'light') {
+                document.getElementById("ebook-container").style.backgroundColor = "white";
+
+                rendition.themes.default({
+                    body: {
+                        'background': 'white',
+                        color: 'black'
+                    }
+                });
+                return;
+            }
+
+            if (theme == 'dark') {
+                document.getElementById("ebook-container").style.backgroundColor = "#030712";
+
+                rendition.themes.default({
+                    body: {
+                        'background': '#030712',
+                        color: '#f3f4f6'
+                    }
+                });
+                return;
+            }
+
+            if (theme == 'sepia') {
+                document.getElementById("ebook-container").style.backgroundColor = "#eadbcb";
+
+                rendition.themes.default({
+                    body: {
+                        'background': '#E7DEC7',
+                        color: '#5D4232'
+                    }
+                });
+                return;
+            }
+        }
+
+        // CHANGE EBOOK LINE HEIGHT
+        var lineHeight = 1.33;
+        function changeEbookLineHeight(increase) {
+            if (increase) {
+                lineHeight += 0.2;
+
+                rendition.themes.default({
+                    body: {
+                        'line-height': `${lineHeight}`,
+                    }
+                });
+            } else {
+                lineHeight -= 0.2;
+
+                rendition.themes.default({
+                    body: {
+                        'line-height': `${lineHeight}`,
+                    }
+                });
+            }
+        }
+
+
+        book.ready.then(() => {
+
+            var next = document.getElementById("next");
+
+            // LISTEN TO PAGE ARROW TO CHANGE PAGE
+            next.addEventListener("click", function (e) {
+                book.package.metadata.direction === "rtl" ? rendition.prev() : rendition.next();
+                e.preventDefault();
+            }, false);
+
+            var prev = document.getElementById("prev");
+            prev.addEventListener("click", function (e) {
+                book.package.metadata.direction === "rtl" ? rendition.next() : rendition.prev();
+                e.preventDefault();
+            }, false);
+
+            // LISTEN TO KEY PRESS TO CHANGE PAGE
+            var keyListener = function (e) {
+
+                // Left Key
+                if ((e.keyCode || e.which) == 37) {
+                    book.package.metadata.direction === "rtl" ? rendition.next() : rendition.prev();
+                }
+
+                // Right Key
+                if ((e.keyCode || e.which) == 39) {
+                    book.package.metadata.direction === "rtl" ? rendition.prev() : rendition.next();
+                }
+
+            };
+
+            rendition.on("keyup", keyListener);
+            document.addEventListener("keyup", keyListener, false);
+
+            // LISTEN TO MOUSE WHEEL MOVEMENT TO CHANGE PAGE
+            var wheelListener = function (e) {
+
+                const delta = e.deltaY;
+                console.log("teste")
+                // Wheel down
+                if (delta < 0) {
+                    book.package.metadata.direction === "rtl" ? rendition.next() : rendition.prev();
+                }
+
+                // Wheel up
+                if (delta > 0) {
+                    book.package.metadata.direction === "rtl" ? rendition.prev() : rendition.next();
+                }
+
+            };
+
+            //rendition.on("wheel", wheelListener);
+            document.addEventListener("wheel", wheelListener, false);
+        });
+
+        // SET THE TOC DYNAMICALLY BASED ON THE POSITION IN THE BOOK
+        rendition.on("rendered", function (section) {
+            var current = book.navigation && book.navigation.get(section.href);
+
+            if (current) {
+                var $select = document.getElementById("toc");
+                var $selected = $select.querySelector("option[selected]");
+                if ($selected) {
+                    $selected.removeAttribute("selected");
+                }
+
+                var $options = $select.querySelectorAll("option");
+                for (var i = 0; i < $options.length; ++i) {
+                    let selected = $options[i].getAttribute("ref") === current.href;
+                    if (selected) {
+                        $options[i].setAttribute("selected", "");
+                    }
+                }
+            }
+
+        });
+
+        // HIDE NAVIGATION ARROW WHEN AT THE START OR END OF BOOK
+        rendition.on("relocated", function (location) {
+
+            var next = book.package.metadata.direction === "rtl" ? document.getElementById("prev") : document.getElementById("next");
+            var prev = book.package.metadata.direction === "rtl" ? document.getElementById("next") : document.getElementById("prev");
+
+            if (location.atEnd) {
+                next.style.visibility = "hidden";
+            } else {
+                next.style.visibility = "visible";
+            }
+
+            if (location.atStart) {
+                prev.style.visibility = "hidden";
+            } else {
+                prev.style.visibility = "visible";
+            }
+
+        });
+
+        // CREATE THE TABLE OF CONTENTS OPTIONS AND FUNCTIONALITY
+        book.loaded.navigation.then(function (toc) {
+            var $select = document.getElementById("toc"),
+                docfrag = document.createDocumentFragment();
+
+            toc.forEach(function (chapter) {
+                var option = document.createElement("option");
+                option.textContent = chapter.label;
+                option.setAttribute("ref", chapter.href);
+
+                docfrag.appendChild(option);
+            });
+
+            $select.appendChild(docfrag);
+
+            $select.onchange = function () {
+                var index = $select.selectedIndex,
+                    url = $select.options[index].getAttribute("ref");
+                rendition.display(url);
+                return false;
+            };
+        });
+    </script>
+
+</body>
+</html>
+

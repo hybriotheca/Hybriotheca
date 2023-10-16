@@ -1,0 +1,295 @@
+﻿@model Hybriotheca.Web.Data.Entities.AppUser
+
+<div class="p-4 grow">
+    <main role="main" class="max-w-screen-xl justify-between mx-auto dark:text-white">
+
+        <!-- MAIN CONTAINER -->
+        <div class="relative bg-white rounded-lg shadow-xl pb-8 mb-8 dark:bg-gray-900">
+
+            <!-- OTHER USERS ACTIONS -->
+            @if (User.Identity?.IsAuthenticated ?? false && User.Identity.Name != Model.Email)
+            {
+                <div class="absolute top-4 right-4 rounded">
+                    <button type="button" id="other-users-dropdown" data-dropdown-toggle="dropdown-other-actions" class="border border-gray-400 p-2 rounded text-gray-300 hover:text-gray-300 bg-gray-100 bg-opacity-10 hover:bg-opacity-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                        </svg>
+                    </button>
+                    <!-- Dropwdown menu-->
+                    <div id="dropdown-other-actions" class="hidden bg-white absolute right-0 w-40 py-2 mt-1 border border-gray-200 shadow-2xl rounded-lg">
+                        <div class="py-2 border-b">
+                            <p class="text-gray-400 text-xs px-6 uppercase mb-1">Settings</p>
+                            <button class="w-full flex items-center px-6 py-1.5 space-x-2 hover:bg-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                </svg>
+                                <span class="text-sm text-gray-700">Share Profile</span>
+                            </button>
+                            <button class="w-full flex items-center py-1.5 px-6 space-x-2 hover:bg-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                                </svg>
+                                <span class="text-sm text-gray-700">Block User</span>
+                            </button>
+                        </div>
+                        <div class="py-2">
+                            <p class="text-gray-400 text-xs px-6 uppercase mb-1">Feedback</p>
+                            <button class="w-full flex items-center py-1.5 px-6 space-x-2 hover:bg-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <span class="text-sm text-gray-700">Report</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- USER BACKGROUND -->
+            <div class="w-full h-[250px]">
+                <img src="https://vojislavd.com/ta-template-demo/assets/img/profile-background.jpg" class="w-full h-full rounded-t-lg" title="">
+            </div>
+
+            <!-- PROFILE CONTAINER -->
+            <div class="px-4">
+                <div class="flex flex-col items-center -mt-20">
+                    <!-- USER PICTURE -->
+                    @if (Model.PhotoId != Guid.Empty)
+                    {
+                        <img src="@Model.PhotoFullPath" class="w-40 h-40 object-cover border-4 border-white dark:border-gray-900 rounded-full" alt="@Model.FullName profile picture">
+                    }
+                    else
+                    {
+                        <div class="flex justify-center items-center overflow-hidden w-40 h-40 mx-3 text-sm border-4 border-white dark:border-gray-900 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full">
+                            <span class="text-4xl font-bold text-white select-none">
+                                @Model.NameAbbr
+                            </span>
+                        </div>
+                    }
+
+                    <!-- USER NAME -->
+                    <div class="flex items-center space-x-2 mt-2">
+                        <p class="text-2xl">
+                            @Model.FullName
+                        </p>
+
+                        <!-- USER BADGE -->
+                        @if (Model.Role == "Admin")
+                        {
+                            <span class="bg-blue-500 rounded-full p-1" title="Verified">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-100 h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                        }
+                        else if (Model.Role == "Librarian")
+                        {
+                            <span class="bg-green-500 rounded-full p-1" title="Verified">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-100 h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                        }
+
+                        @* @if(Model.Subscription.Name == "Premium")
+                        {
+                        <span class="bg-yellow-500 rounded-full p-1" title="Verified">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-100 h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        </span>
+                        } *@
+
+                    </div>
+
+                    <!-- USER SUBSCRIPTION -->
+                    @if (Model.Role == "Admin" || Model.Role == "Librarian")
+                    {
+                        <p class="text-sm text-gray-500">@Model.Role</p>
+                    }
+                    else
+                    {
+                        <p class="text-sm text-gray-500">@Model.Subscription.Name user</p>
+                    }
+
+                    <!-- USER BIO -->
+                    <p class="text-gray-700 dark:text-gray-300">Fantasy book enthusiast 📚✨</p>
+
+                    <!-- USER STATS -->
+                    <div class="mt-6 mb-3 flex gap-14">
+                        <div class="flex flex-col items-center justify-center">
+                            <p class="text-2xl font-bold text-navy-700 dark:text-white">17</p>
+                            <p class="text-sm font-normal text-gray-500">Reviews</p>
+                        </div>
+                        <div class="flex flex-col items-center justify-center">
+                            <p class="text-2xl font-bold text-navy-700 dark:text-white">
+                                9.7K
+                            </p>
+                            <p class="text-sm font-normal text-gray-500">Followers</p>
+                        </div>
+                        <div class="flex flex-col items-center justify-center">
+                            <p class="text-2xl font-bold text-navy-700 dark:text-white">
+                                434
+                            </p>
+                            <p class="text-sm font-normal text-gray-500">Following</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="flex-1 flex flex-col items-center justify-end px-8 mt-2">
+                    <div class="flex items-center space-x-4 mt-2">
+                        <button class="flex items-center bg-sky-600 hover:bg-sky-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                            </svg>
+                            <span>Follow</span>
+                        </button>
+                        <button class="flex items-center bg-sky-600 hover:bg-sky-700 text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>Message</span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="my-8 mx-auto border-gray-200 dark:border-gray-800" />
+
+                <!-- IF USER MADE NO RATINGS -->
+                @if (Model.Ratings is null)
+                {
+                    <div class="px-4 pb-4" id="reviews">
+                        <h2 class="mb-8 text-2xl text-center font-bold text-gray-900 dark:text-white">This user still hasn't rated any book</h2>
+                    </div>
+                }
+                else
+                {
+                    <!-- USER REVIEWS -->
+                    <div class="px-4 pb-4" id="reviews">
+                        <h2 class="mb-8 text-2xl text-center font-bold text-gray-900 dark:text-white">My Reviews</h2>
+
+                        @{
+                            var counter = 0;
+                        }
+                        @foreach (var rating in Model.Ratings)
+                        {
+                            <!-- BOOK REVIEW -->
+                            <div class="flex gap-6">
+                                <div class="flex flex-col items-center w-96">
+                                    <!-- COVER -->
+                                    <img src="@rating.BookEdition.CoverImageFullPath" class="h-auto max-w-[150px] mb-2" />
+                                    <!-- BOOK TITLE -->
+                                    <h2 class="text-center font-medium text-base">@rating.BookEdition.EditionTitle</h2>
+                                    <!-- AUTHOR -->
+                                    <h3 class="text-center text-sm text-gray-400">@rating.BookEdition.Book.Author</h3>
+                                </div>
+                                <article>
+                                    <!-- REVIEW RATING -->
+                                    <div class="flex items-center mb-5">
+                                        @for (var i = 0; i < rating.BookRating; i++)
+                                        {
+                                            <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        }
+                                        @for (var i = 5; i != rating.BookRating; i--)
+                                        {
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        }
+                                        <!-- REVIEW TITLE -->
+                                        <h3 class="ml-2 text-sm font-semibold text-gray-900 dark:text-white">@rating.RatingTitle</h3>
+                                    </div>
+                                    <!-- REVIEW BODY  -->
+                                    <div id="rating-@counter++" class="line-clamp-4">
+                                        <p class="mb-2 text-gray-500 dark:text-gray-400">@rating.RatingBody</p>
+                                    </div>
+                                    <!-- READ MORE BUTTON -->
+                                    <button onclick="readMore(rating-@counter)" class="block mb-5 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">Read more</button>
+                                    <!-- REVIEW FOOTER-->
+                                    <aside>
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                            19 people liked this review
+                                        </p>
+                                        <div class="flex items-center mt-3 space-x-3 divide-x divide-gray-200 dark:divide-gray-600">
+                                            <a href="#" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                                Like
+                                            </a>
+                                            <a href="#" class="pl-4 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">
+                                                Report abuse
+                                            </a>
+                                        </div>
+                                    </aside>
+                                </article>
+                            </div>
+
+                            <!-- DIVIDER -->
+                            <hr class="my-8 border-gray-200 dark:border-gray-700" />
+                        }
+
+                        <!-- BOOK REVIEW -->
+                        <div class="flex gap-6">
+                            <div class="flex flex-col items-center w-96">
+                                <img src="~/images/CN.jpg" class="h-auto max-w-[150px] mb-2" />
+                                <h2 class="text-center font-medium text-base">The Chronicles of Narnia</h2>
+                                <h3 class="text-center text-sm text-gray-400">C. S. Lewis</h3>
+                            </div>
+                            <article>
+                                <!-- REVIEW RATING -->
+                                <div class="flex items-center mb-5">
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                    <h3 class="ml-2 text-sm font-semibold text-gray-900 dark:text-white">Thinking to buy another one!</h3>
+                                </div>
+                                <!-- REVIEW TEXT -->
+                                <div class="line-clamp-4">
+                                    <p class="mb-2 text-gray-500 dark:text-gray-400">This is my third Invicta Pro Diver. They are just fantastic value for money. This one arrived yesterday and the first thing I did was set the time, popped on an identical strap from another Invicta and went in the shower with it to test the waterproofing.... No problems.</p>
+                                    <p class="mb-3 text-gray-500 dark:text-gray-400">It is obviously not the same build quality as those very expensive watches. But that is like comparing a Citroën to a Ferrari. This watch was well under £100! An absolute bargain.</p>
+                                </div>
+                                <!-- READ MORE BUTTON -->
+                                <a href="#" class="block mb-5 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">Read more</a>
+                                <!-- REVIEW FOOTER-->
+                                <aside>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        19 people liked this review
+                                    </p>
+                                    <div class="flex items-center mt-3 space-x-3 divide-x divide-gray-200 dark:divide-gray-600">
+                                        <a href="#" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                            Like
+                                        </a>
+                                        <a href="#" class="pl-4 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">
+                                            Report abuse
+                                        </a>
+                                    </div>
+                                </aside>
+                            </article>
+                        </div>
+                    </div>
+                }
+            </div>
+
+    </main>
+</div>
+
+@section Scripts{
+    <script>
+        function readMore(ratingId) {
+            document.getElementById(ratingId).classList.remove("line-clamp-4");
+        }
+    </script>
+}

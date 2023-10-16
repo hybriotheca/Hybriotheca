@@ -38,6 +38,20 @@
     </form>
 </div>
 
+@section Stylesheets {
+    <link rel="stylesheet" type="text/css" href="~/lib/selectize.js-0.15.2/dist/css/selectize.css" />
+}
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="~/lib/selectize.js-0.15.2/dist/js/selectize.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#BookID").selectize();
+        });
+    </script>
 }

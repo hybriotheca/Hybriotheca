@@ -109,7 +109,6 @@ namespace Hybriotheca.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            id = 2;
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null) return CategoryNotFound();
             

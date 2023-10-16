@@ -74,7 +74,7 @@
     <div class="overflow-x-auto">
         <div class="inline-block min-w-full align-middle">
             <div class="overflow-hidden shadow rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
+                <table id="example" class="datatable min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
                     <!-- TABLE HEAD -->
                     <thead class="bg-gray-200 dark:bg-gray-700">
                         <tr>
@@ -216,6 +216,11 @@
 
 @section Scripts{
     <script type="text/javascript">
+
+            new simpleDatatables.DataTable('#example');
+
+
+
         const targetEl = document.getElementById('modal-delete');
         const options = {
             backdrop: 'dynamic',

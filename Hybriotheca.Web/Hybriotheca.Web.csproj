@@ -24,6 +24,7 @@
 	<ItemGroup>
 		<UpToDateCheckBuilt Include="wwwroot/css/site.css" Set="Css" />
 		<UpToDateCheckBuilt Include="tailwind.config.js" Set="Css" />
+		<None Include="node_modules/**" />
 	</ItemGroup>
 
 	<Target Name="Tailwind" BeforeTargets="Build">
