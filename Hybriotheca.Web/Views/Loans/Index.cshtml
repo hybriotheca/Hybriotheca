@@ -13,20 +13,14 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Library</th>
-            <th>User</th>
-            <th>
-                @Html.DisplayNameFor(model => model.BookEditionTitle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th><!-- Is returned? -->Rtd</th>
-            <th><!-- Is overdue? -->Ovd</th>
-            <th><!-- ReturnBook --></th>
+            <th>@Html.DisplayNameFor(model => model.UserEmail)</th>
+            <th>@Html.DisplayNameFor(model => model.LibraryName)</th>
+            <th>@Html.DisplayNameFor(model => model.BookEditionTitle)</th>
+            <th>@Html.DisplayNameFor(model => model.StartDate)</th>
+            <th>@Html.DisplayNameFor(model => model.TermLimitDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+            <th>Ovd</th>
+            <th><!-- Hand over / Return book --></th>
             <th></th>
         </tr>
     </thead>
@@ -34,10 +28,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.LibraryName)
+                @Html.DisplayFor(modelItem => item.UserEmail)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserEmail)
+                @Html.DisplayFor(modelItem => item.LibraryName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.BookEditionTitle)
@@ -46,12 +40,20 @@
                 @Html.DisplayFor(modelItem => item.StartDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @Html.DisplayFor(modelItem => item.TermLimitDate)
             </td>
-            <td>@(item.IsReturned ? "Y" : "N")</td>
-            <td>@(item.IsOverdue ? "Y" : "N")</td>
             <td>
-                @if (!item.IsReturned)
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @(item.IsOverdue ? "Y" : "N")
+            </td>
+            <td>
+                @if (item.IsReserved)
+                {
+                    <a asp-action="HandOver" asp-route-loanId="@item.Id">Hand over</a>
+                }
+                else if (item.IsActive)
                 {
                     <a asp-action="ReturnBook" asp-route-loanId="@item.Id">Return</a>
                 }

@@ -1,0 +1,111 @@
+﻿@model Hybriotheca.Web.Data.Entities.Loan
+
+<div>
+    <div class="relative p-4 w-full max-w-xl h-full md:h-auto">
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- CLOSE BUTTON -->
+            <button type="button" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <!-- CONTENT -->
+            <div class="p-6 text-center">
+                @if (ViewBag.IsReturnable)
+                {
+                    <!-- ICON -->
+                    <svg class="mx-auto mb-8 text-orange-300 w-20 h-20 dark:text-orange-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <!-- HEADER -->
+                    <h3 class="mb-5 text-2xl font-semibold text-gray-500 dark:text-gray-100">
+                        Confirm return book:
+                    </h3>
+
+                    @*
+                <!-- BOOK INFO -->
+                <div class="mb-7 text-lg font-normal text-gray-500 dark:text-gray-400 relative overflow-x-auto">
+                <div class="flex justify-center items-center p-4 space-x-6 whitespace-normal">
+                <!-- COVER IMAGE -->
+                <img src="@Model.CoverImageFullPath" alt="Cover" class="@(string.IsNullOrEmpty(Model.CoverImageFullPath) ? "hidden " : "")w-20 h-auto" />
+
+                <div class="text-lg font-normal text-gray-500 dark:text-gray-400">
+                <!-- BOOK TITLE -->
+                <div class="text-lg font-semibold dark:text-gray-200 whitespace-normal">
+                @Model.EditionTitle
+                </div>
+                <!-- BOOK FORMAT -->
+                <div class="text-base font-normal text-gray-500 dark:text-gray-400">
+                @Model.BookFormat
+                </div>
+                <!-- Nº PAGES -->
+                <div class="text-base font-normal text-gray-500 dark:text-gray-400">
+                @(Model.ISBN ?? "ISBN n/a")
+                </div>
+                </div>
+                </div>
+                </div>
+                *@
+
+                    <!-- BUTTONS -->
+                    <form asp-action="ReturnBook" asp-route-loanId="@Model.ID">
+                        <button data-modal-hide="popup-modal" type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base inline-flex items-center px-5 py-2.5 text-center mr-2">
+                            Confirm
+                        </button>
+                        <button data-modal-hide="popup-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-base font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                            Cancel
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <!-- ICON -->
+                    <svg class="mx-auto mb-8 text-red-300 w-20 h-20 dark:text-red-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <!-- HEADER -->
+                    <h3 class="mb-7 text-lg font-normal text-gray-500 dark:text-gray-400">
+                        This book cannot be returned because the related loan is not active.
+                    </h3>
+
+                    @*
+                <!-- BOOK INFO -->
+                <div class="mb-7 text-lg font-normal text-gray-500 dark:text-gray-400 relative overflow-x-auto">
+                <div class="flex justify-center items-center p-4 space-x-6 whitespace-normal">
+                <!-- COVER IMAGE -->
+                <img src="@Model.CoverImageFullPath" alt="Cover" class="@(string.IsNullOrEmpty(Model.CoverImageFullPath) ? "hidden " : "")w-20 h-auto" />
+
+                <div class="text-lg font-normal text-gray-500 dark:text-gray-400">
+                <!-- BOOK TITLE -->
+                <div class="text-lg font-semibold dark:text-gray-200 whitespace-normal">
+                @Model.EditionTitle
+                </div>
+                <!-- BOOK FORMAT -->
+                <div class="text-base font-normal text-gray-500 dark:text-gray-400">
+                @Model.BookFormat
+                </div>
+                <!-- Nº PAGES -->
+                <div class="text-base font-normal text-gray-500 dark:text-gray-400">
+                @Model.NrPages pages
+                </div>
+                </div>
+                </div>
+                </div>
+                *@
+
+                    <!-- BUTTONS -->
+                    <button type="submit" onclick="modal.hide()" class="text-white bg-sky-600 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 dark:focus:ring-sky-800 font-medium rounded-lg text-base inline-flex items-center px-5 py-2.5 text-center mr-2">
+                        OK
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("[data-modal-hide]").click(function () {
+        modal.hide();
+    });
+</script>

@@ -1,4 +1,5 @@
-﻿using Hybriotheca.Web.Data.Entities;
+﻿using Hybriotheca.Web.Data;
+using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
@@ -41,22 +42,6 @@ namespace Hybriotheca.Web.Controllers
             var loans = await _loanRepository.SelectLastCreatedAsListViewModelsAsync(25);
 
             return View(loans);
-            //return _context.Loans != null ?
-            //            View(await _context.Loans.ToListAsync()) :
-            //            Problem("Entity set 'DataContext.Loans'  is null.");
-        }
-
-
-        // GET: Loans/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return LoanNotFound();
-
-            var model = await _loanRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return LoanNotFound();
-
-            // Success.
-            return View(model);
         }
 
 
@@ -87,6 +72,13 @@ namespace Hybriotheca.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                // Check Start date is not before today.
+                if (model.StartDate.Date < DateTime.UtcNow.Date)
+                {
+                    AddModelError("Start date cannot be previous to today.");
+                    return await ViewCreateAsync(model);
+                }
+
                 var bookStock = await _bookStockRepository
                     .GetByLibraryAndBookEditionAsync(model.LibraryId, model.BookEditionId);
 
@@ -97,29 +89,41 @@ namespace Hybriotheca.Web.Controllers
                 var user = await _userHelper.GetUserByIdAsync(model.UserId);
                 if (user == null) return UserNotFound();
 
-                var subscription = await _subscriptionRepository.GetByIdAsync(user.SubscriptionID);
-                if (subscription == null) return SubscriptionNotFound();
+                var userSubscription = await _subscriptionRepository.GetByIdAsync(user.SubscriptionID);
+                if (userSubscription == null) return SubscriptionNotFound();
 
                 var userLoans = await _loanRepository.CountUnreturnedWhereUserAsync(user.Id);
-                if (userLoans >= subscription.MaxLoans)
+                if (userLoans >= userSubscription.MaxLoans)
                 {
                     AddModelError("This user has reached the limit of loans.");
                     return await ViewCreateAsync(model);
                 }
 
                 // Create Loan.
-
-                var dateToday = DateTime.UtcNow.Date;
                 var loan = new Loan
                 {
                     UserID = model.UserId,
                     LibraryID = model.LibraryId,
                     BookEditionID = model.BookEditionId,
                     ReservationID = null,
-                    StartDate = dateToday,
-                    EndDate = dateToday.AddDays(subscription.MaxLoanDays),
-                    IsReturned = false,
+                    CreateDate = DateTime.UtcNow.Date,
+                    ReturnDate = null,
                 };
+
+                // Define Start Date and Status based on whether Check out is now or will be done later.
+                if (model.WillCheckOutLater)
+                {
+                    loan.StartDate = model.StartDate;
+                    loan.Status = BookLoanStatus.Reserved;
+                }
+                else
+                {
+                    loan.StartDate = loan.CreateDate;
+                    loan.Status = BookLoanStatus.Active;
+                }
+
+                // Define Term limit date based on user's subsciption.
+                loan.TermLimitDate = loan.StartDate.AddDays(userSubscription.MaxLoanDays);
 
                 try
                 {
@@ -179,16 +183,22 @@ namespace Hybriotheca.Web.Controllers
                 var current = await _loanRepository.GetByIdAsync(loan.ID);
                 if (current == null) return LoanNotFound();
 
+                loan.CreateDate = current.CreateDate;
+
+                if (!loan.IsReturned)
+                {
+                    loan.ReturnDate = null;
+                }
+
+                // Check count of user loans and update AvailableStocks.
                 if (!(current.IsReturned && loan.IsReturned))
                 {
-                    // Check count of user loans and update AvailableStocks.
-
-                    // If the edited Loan is not returned,
+                    // If the edited Loan's status is not "Returned",
                     // check user has reached limit of loans
                     // and decrement loan's BookStock AvailableStock.
                     if (!loan.IsReturned)
                     {
-                        // Check user has reached limit of loans.
+                        // If relevant, check user has reached limit of loans.
                         if (current.IsReturned || current.UserID != loan.UserID)
                         {
                             var user = await _userHelper.GetUserByIdAsync(loan.UserID);
@@ -247,7 +257,6 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return LoanNotFound();
                     }
-                    else throw;
                 }
                 catch (DbUpdateException ex)
                 {
@@ -273,41 +282,86 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
-        // GET: Loans/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return LoanNotFound();
 
-            var model = await _loanRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return LoanNotFound();
+            var loan = await _loanRepository.GetByIdAsync(id.Value);
+            if (loan == null) return LoanNotFound();
 
-            // Success.
-            return View(model);
+            return View("_ModalDelete", loan);
         }
 
-        // POST: Loans/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var loan = await _loanRepository.GetByIdAsync(id);
-            if (loan != null)
+            if (loan == null) return LoanNotFound();
+
+            if (!loan.IsReturned)
             {
-                if (!loan.IsReturned)
-                {
-                    var bookStock = await _bookStockRepository
-                        .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
+                var bookStock = await _bookStockRepository
+                    .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
 
-                    if (bookStock == null) return BookStockNotFound();
+                if (bookStock == null) return BookStockNotFound();
 
-                    bookStock.AvailableStock++;
-                }
-
-                // Delete Loan and update BookStock.
-                await _loanRepository.DeleteAsync(loan);
+                bookStock.AvailableStock++;
             }
 
+            // Delete Loan and update BookStock.
+            await _loanRepository.DeleteAsync(loan);
+
             return RedirectToAction(nameof(Index));
+        }
+
+
+        public async Task<IActionResult> HandOver(int? loanId)
+        {
+            if (loanId == null) return LoanNotFound();
+
+            var loan = await _loanRepository.GetByIdAsync(loanId.Value);
+            if (loan == null) return LoanNotFound();
+
+            ViewBag.IsReserved = loan.IsReserved;
+
+            return View("_ModalHandOver", loan);
+        }
+
+        [HttpPost, ActionName("HandOver")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> HandOverConfirmed(int loanId)
+        {
+            var loan = await _loanRepository.GetByIdAsync(loanId);
+            if (loan == null) return LoanNotFound();
+
+            if (!loan.IsReserved)
+            {
+                ViewBag.ErrorTitle = "No reservation";
+                ViewBag.ErrorMessage =
+                    "The handover cannot be done because there isn't a related reservation.";
+
+                return View("Error");
+            }
+
+            loan.Status = BookLoanStatus.Active;
+            loan.StartDate = DateTime.UtcNow;
+
+            try
+            {
+                await _loanRepository.UpdateAsync(loan);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _loanRepository.ExistsAsync(loan.ID))
+                {
+                    return LoanNotFound();
+                }
+            }
+            catch { }
+
+            return View("Error");
         }
 
 
@@ -315,10 +369,12 @@ namespace Hybriotheca.Web.Controllers
         {
             if (loanId == null) return LoanNotFound();
 
-            var model = await _loanRepository.SelectViewModelAsync(loanId.Value);
-            if (model == null) return LoanNotFound();
+            var loan = await _loanRepository.GetByIdAsync(loanId.Value);
+            if (loan == null) return LoanNotFound();
 
-            return View(model);
+            ViewBag.IsReturnable = loan.IsActive;
+
+            return View("_ModalReturn", loan);
         }
 
         [HttpPost, ActionName("ReturnBook")]
@@ -328,19 +384,41 @@ namespace Hybriotheca.Web.Controllers
             var loan = await _loanRepository.GetByIdAsync(loanId);
             if (loan == null) return LoanNotFound();
 
-            loan.IsReturned = true;
-            loan.EndDate = DateTime.UtcNow;
+            if (!loan.IsActive)
+            {
+                ViewBag.ErrorTitle = "Loan is not active";
+                ViewBag.ErrorMessage =
+                    "This book cannot be returned because the related loan is not active.";
+
+                return View("Error");
+            }
+
+            loan.Status = BookLoanStatus.Returned;
+            loan.ReturnDate = DateTime.UtcNow;
 
             var bookStock = await _bookStockRepository
                 .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
 
             if (bookStock == null) return BookStockNotFound();
 
-            // BookStock is updated on SaveChangesAsync() inside UpdateAsync().
-            bookStock.AvailableStock++;
-            await _loanRepository.UpdateAsync(loan);
+            try
+            {
+                // BookStock is updated on SaveChangesAsync() inside UpdateAsync().
+                bookStock.AvailableStock++;
+                await _loanRepository.UpdateAsync(loan);
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _loanRepository.ExistsAsync(loan.ID))
+                {
+                    return LoanNotFound();
+                }
+            }
+            catch { }
+
+            return View("Error");
         }
 
 
@@ -438,6 +516,7 @@ namespace Hybriotheca.Web.Controllers
         private async Task<ViewResult> ViewEditAsync(Loan loan)
         {
             ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
+            ViewBag.BookLoanStatuses = _loanRepository.GetComboBookLoanStatuses();
             ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             ViewBag.Users = await _userHelper.GetComboCustomersAsync();
 
