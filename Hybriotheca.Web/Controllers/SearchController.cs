@@ -14,6 +14,11 @@ namespace Hybriotheca.Web.Controllers
             _bookEditionRepository = bookEditionRepository;
         }
 
+        public IActionResult teste()
+        {
+            return View("IndexNew");
+        }
+
         public async Task<IActionResult> Index(SearchViewModel model)
         {
 
@@ -25,11 +30,13 @@ namespace Hybriotheca.Web.Controllers
 
             ViewBag.PubYears = _bookEditionRepository.GetCheckBoxPubYear();
 
+            ViewBag.Libraries = _bookEditionRepository.GetCheckBoxLibraries();
+
             var searchResults = await _bookEditionRepository.GetSearchResultsAsync(model);
 
             if (Request.IsHtmx())
             {
-                //Response.Headers.Add("HX-Push-Url", searchResults.SearchURL + $"&page={model.Page}");
+                //Response.Headers.Add("Vary", "HX-Request");
 
                 Response.Htmx(h =>
                 {
@@ -40,8 +47,8 @@ namespace Hybriotheca.Web.Controllers
             }
 
             return Request.IsHtmx()
-            ? PartialView("_Results", searchResults)
-            : View(searchResults);
+            ? PartialView("_ResultsNew", searchResults)
+            : View("IndexNew",searchResults);
 
         }
 

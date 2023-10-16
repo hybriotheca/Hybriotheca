@@ -16,6 +16,8 @@ public interface IBookEditionRepository : IGenericRepository<BookEdition>
 
     IEnumerable<string> GetCheckBoxLang();
 
+    IEnumerable<string> GetCheckBoxLibraries();
+
     IEnumerable<string> GetCheckBoxPubYear();
 
     Task<IEnumerable<SelectListItem>> GetComboBookEditionsAsync();
@@ -24,5 +26,9 @@ public interface IBookEditionRepository : IGenericRepository<BookEdition>
 
     Task<bool> IsConstrainedAsync(int id);
 
-    Task UpdateKeepCoverImageAsync(BookEdition bookEdition);
+    (Guid CoverID, Guid ePubID) GetCoverIDAndEpubID(int ID);
+
+    List<SelectListItem> GetComboBookFormats();
+
+    List<SelectListItem> GetComboLanguages();
 }

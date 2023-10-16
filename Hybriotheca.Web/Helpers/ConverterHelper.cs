@@ -24,8 +24,6 @@ namespace Hybriotheca.Web.Helpers
                 BookFormat = bookEdition.BookFormat,
                 NrPages = bookEdition.NrPages,
                 CoverImageFullPath = bookEdition.CoverImageFullPath,
-                EbookID = bookEdition.EbookID,
-                IsAvailableOnline = bookEdition.IsAvailableOnline,
             };
         }
 
@@ -65,9 +63,6 @@ namespace Hybriotheca.Web.Helpers
                 Awards = model.Awards,
                 BookFormat = model.BookFormat,
                 NrPages = model.NrPages,
-                
-                EbookID = model.EbookID,
-                IsAvailableOnline = model.IsAvailableOnline,
             };
         }
 

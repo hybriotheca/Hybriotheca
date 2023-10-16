@@ -4,6 +4,7 @@ using Hybriotheca.Web.Models.Search;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
 
 namespace Hybriotheca.Web.Repositories;
 
@@ -37,13 +38,6 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
                 || bookEdition.Loans.Any()
                 || bookEdition.Ratings.Any()
                 || bookEdition.Reservations.Any());
-    }
-
-    public async Task UpdateKeepCoverImageAsync(BookEdition bookEdition)
-    {
-        _dataContext.Set<BookEdition>().Update(bookEdition);
-        _dataContext.Entry(bookEdition).Property(b => b.CoverImageID).IsModified = false;
-        await _dataContext.SaveChangesAsync();
     }
 
     public async Task<CarouselEditionsViewModel> GetCarouselEditionsAsync()
@@ -89,7 +83,7 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
         int currentPage = viewModel.Page;
 
         string searchUrl = "/Search?";
-        var editionsQuery = _dataContext.BookEditions.AsQueryable();
+        var editionsQuery = _dataContext.BookEditions.Include(a => a.Book).AsSplitQuery().Include(s => s.Ratings).AsSplitQuery().AsQueryable();
 
         if (viewModel.Categories is not null && viewModel.Categories.Any())
         {
@@ -99,11 +93,11 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
             {
                 if (i == 0)
                 {
-                    searchUrl = string.Concat(searchUrl, $"categories={viewModel.Categories[0]}");
+                    searchUrl = string.Concat(searchUrl, $"categories={HttpUtility.UrlEncode(viewModel.Categories[0])}");
                 }
                 else
                 {
-                    searchUrl = string.Concat(searchUrl, $"&categories={viewModel.Categories[i]}");
+                    searchUrl = string.Concat(searchUrl, $"&categories={HttpUtility.UrlEncode(viewModel.Categories[i])}");
                 }
             }
 
@@ -112,7 +106,7 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
 
         if (viewModel.Rating is not null && viewModel.Rating.Any())
         {
-            editionsQuery = editionsQuery.Include(s => s.Ratings).AsSplitQuery().Where(x => viewModel.Rating.Contains(((int)x.Ratings.Average(w => w.BookRating))));
+            editionsQuery = editionsQuery.Where(x => viewModel.Rating.Contains(((int)x.Ratings.Average(w => w.BookRating))));
 
             //var test = editionsQuery.Include(s => s.Ratings).AsSplitQuery().FirstOrDefault(x => x.ID == 1);
 
@@ -141,11 +135,11 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
             {
                 if (i == 0 && !_hasExistingParams)
                 {
-                    searchUrl = string.Concat(searchUrl, $"formats={viewModel.Formats[0]}");
+                    searchUrl = string.Concat(searchUrl, $"formats={HttpUtility.UrlEncode(viewModel.Formats[0])}");
                 }
                 else
                 {
-                    searchUrl = string.Concat(searchUrl, $"&formats={viewModel.Formats[i]}");
+                    searchUrl = string.Concat(searchUrl, $"&formats={HttpUtility.UrlEncode(viewModel.Formats[i])}");
                 }
             }
 
@@ -160,11 +154,30 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
             {
                 if (i == 0 && !_hasExistingParams)
                 {
-                    searchUrl = string.Concat(searchUrl, $"lang={viewModel.Languages[0]}");
+                    searchUrl = string.Concat(searchUrl, $"languages={HttpUtility.UrlEncode(viewModel.Languages[0])}");
                 }
                 else
                 {
-                    searchUrl = string.Concat(searchUrl, $"&lang={viewModel.Languages[i]}");
+                    searchUrl = string.Concat(searchUrl, $"&languages={HttpUtility.UrlEncode(viewModel.Languages[i])}");
+                }
+            }
+
+            _hasExistingParams = true;
+        }
+
+        if (viewModel.Libraries is not null && viewModel.Libraries.Any())
+        {
+            editionsQuery = editionsQuery.Include(s => s.BooksInStock).AsSplitQuery().Where(x => x.BooksInStock.Any( a => viewModel.Libraries.Contains( a.Library.Name)));
+
+            for (int i = 0; i < viewModel.Libraries.Count; i++)
+            {
+                if (i == 0 && !_hasExistingParams)
+                {
+                    searchUrl = string.Concat(searchUrl, $"libraries={HttpUtility.UrlEncode(viewModel.Libraries[0])}");
+                }
+                else
+                {
+                    searchUrl = string.Concat(searchUrl, $"&libraries={HttpUtility.UrlEncode(viewModel.Libraries[i])}");
                 }
             }
 
@@ -200,11 +213,11 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
 
             if (!_hasExistingParams)
             {
-                searchUrl = string.Concat(searchUrl, $"searchTerm={viewModel.SearchTerm}");
+                searchUrl = string.Concat(searchUrl, $"searchTerm={HttpUtility.UrlEncode(viewModel.SearchTerm)}");
             }
             else
             {
-                searchUrl = string.Concat(searchUrl, $"&searchTerm={viewModel.SearchTerm}");
+                searchUrl = string.Concat(searchUrl, $"&searchTerm={HttpUtility.UrlEncode(viewModel.SearchTerm)}");
             }
 
             _hasExistingParams = true;
@@ -279,7 +292,7 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
                 }
                 break;
             case "rating":
-                editionsQuery = editionsQuery.Include(a => a.Ratings).AsSplitQuery().OrderByDescending(s => ((int)s.Ratings.Average(w => w.BookRating)));  
+                editionsQuery = editionsQuery.OrderByDescending(s => ((int)s.Ratings.Average(w => w.BookRating)));  
                 if (_hasExistingParams)
                 {
                     searchUrl = string.Concat(searchUrl, $"&sortby={viewModel.SortBy}");
@@ -332,6 +345,7 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
             Year = viewModel.Year,
             SearchURL = searchUrl,
             SortBy = viewModel.SortBy,
+            Libraries = viewModel.Libraries,
         };
         return model;
     }
@@ -372,4 +386,55 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
 
         return comboPubYear;
     }
+
+    public IEnumerable<string> GetCheckBoxLibraries()
+    {
+        var comboLibraries = _dataContext.Libraries.Select(c => c.Name)
+        .Distinct();
+
+        return comboLibraries;
+    }
+
+    public (Guid CoverID, Guid ePubID) GetCoverIDAndEpubID(int ID)
+    {
+        Guid guid1 = _dataContext.BookEditions.Where(x => x.ID == ID).Select(s => s.CoverImageID).FirstOrDefault();
+        Guid guid2 = _dataContext.BookEditions.Where(x => x.ID == ID).Select(s => s.ePubID).FirstOrDefault();
+
+        return (CoverID: guid1, ePubID: guid2);
+    }
+
+    public List<SelectListItem> GetComboLanguages()
+    {
+        return new List<SelectListItem>
+        {
+            new SelectListItem { Text = "Select a Book Format", Value = "" },
+            new SelectListItem { Text = "English", Value = "English" },
+            new SelectListItem { Text = "Chinese", Value = "Chinese" },
+            new SelectListItem { Text = "Spanish", Value = "Spanish" },
+            new SelectListItem { Text = "French", Value = "French" },
+            new SelectListItem { Text = "German", Value = "German" },
+            new SelectListItem { Text = "Portuguese", Value = "Portuguese" },
+            new SelectListItem { Text = "Italian", Value = "Italian" },
+            new SelectListItem { Text = "Russian", Value = "Russian" },
+
+        };
+    }
+
+    public List<SelectListItem> GetComboBookFormats()
+    {
+        return new List<SelectListItem>
+        {
+            new SelectListItem { Text = "Select a Language", Value = "" },
+            new SelectListItem { Text = "Paperback", Value = "Paperback" },
+            new SelectListItem { Text = "Hardcover", Value = "Hardcover" },
+            new SelectListItem { Text = "Board Book", Value = "Board Book" },
+            new SelectListItem { Text = "Wire-Bound", Value = "Wire-Bound" },
+            new SelectListItem { Text = "Leather-Bound", Value = "Leather-Bound" },
+            new SelectListItem { Text = "Cloth-Bound", Value = "Cloth-Bound" },
+            new SelectListItem { Text = "Italian", Value = "Italian" },
+            new SelectListItem { Text = "Pocket-Sized", Value = "Pocket-Sized" },
+
+        };
+    }
+
 }

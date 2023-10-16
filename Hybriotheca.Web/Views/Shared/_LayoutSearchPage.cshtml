@@ -82,9 +82,7 @@
                             </svg>
                             <span class="sr-only">Search icon</span>
                         </div>
-                        <form id="searchForm" method="post" asp-controller="Search" asp-action="Index">
-                            <input type="search" name="searchTerm" id="searchField" class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for a book..." />
-                        </form>
+                        <input type="search" name="searchTerm" id="searchTerm" hx-post hx-target="#searchResults" hx-trigger="keyup changed delay:500ms, search" hx-include="#main-form" class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for a book..."/>
                     </div>
                 </div>
 
@@ -365,23 +363,6 @@
     <script src="~/lib/flowbite/dist/flowbite.min.js"></script>
     @* <!-- CUSTOM JS --> *@
     <script src="~/js/site.js" asp-append-version="true" defer></script>
-
-    <script type="text/javascript">
-
-        const searchField = document.getElementById('searchField');
-
-        searchField.addEventListener('search', function (event) {
-            // Check if the search field is not empty
-            if (searchField.value.trim() !== "") {
-                // Call the search function when the "search" event is triggered
-                submitForm();
-            }
-        });
-
-        function submitForm() {
-            document.getElementById('searchForm').submit();
-        }
-    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

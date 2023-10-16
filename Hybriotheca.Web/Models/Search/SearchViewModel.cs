@@ -23,9 +23,11 @@ public class SearchViewModel
 
     public List<string>? Formats { get; set; }
 
+    public List<string>? Libraries { get; set; }
+
     public List<string>? Languages { get; set; }
 
-    [Display(Name = "Available for loan")]
+    [Display(Name = "Include only available")]
     public bool isAvailable { get; set; }
 
     public string? SortBy { get; set; }

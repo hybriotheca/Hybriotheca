@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Hybriotheca.Web.Helpers.Interfaces;
 
 namespace Hybriotheca.Web.Helpers
@@ -62,5 +63,43 @@ namespace Hybriotheca.Web.Helpers
 
             return guid;
         }
+
+        public async Task<Guid> UploadEPUBAsync(IFormFile file, string containerName)
+        {
+            Stream stream = file.OpenReadStream();
+
+            var guid = Guid.NewGuid();
+
+            var container = _blobClient.GetBlobContainerClient(containerName);
+
+            await container.CreateIfNotExistsAsync();
+
+            var blobClient = container.GetBlobClient(guid.ToString() + ".epub");
+
+            var blobUploadOptions = new BlobUploadOptions
+            {
+                HttpHeaders = new BlobHttpHeaders
+                {
+                    ContentType = "application/epub+zip"
+                }
+            };
+
+            await blobClient.UploadAsync(stream, blobUploadOptions);
+
+            stream.Close();
+
+            return guid;
+        }
+
+        public async Task DeleteEPUBAsync(string ePubName, string containerName)
+        {
+            var container = _blobClient.GetBlobContainerClient(containerName);
+
+            var blobClient = container.GetBlobClient(ePubName + ".epub");
+
+            await blobClient.DeleteAsync();
+        }
+
+
     }
 }

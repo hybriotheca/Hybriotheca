@@ -74,6 +74,20 @@ namespace Hybriotheca.Web.Controllers
                     }
                 }
 
+                if (model.ePubFile != null)
+                {
+                    try
+                    {
+                        bookEdition.ePubID =
+                            await _blobHelper.UploadEPUBAsync(model.ePubFile, "epub");
+                    }
+                    catch
+                    {
+                        ViewBag.ErrorTitle = "Could not save ePub file.";
+                        return View("Error");
+                    }
+                }
+
                 // Create.
                 try
                 {
@@ -108,6 +122,9 @@ namespace Hybriotheca.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(BookEditionViewModel model)
         {
+
+            (Guid CoverImageID, Guid ePubID) = _bookEditionRepository.GetCoverIDAndEpubID(model.ID);
+
             if (ModelState.IsValid)
             {
                 var bookEdition = _converterHelper.ViewModelToBookEdition(model);
@@ -122,9 +139,9 @@ namespace Hybriotheca.Web.Controllers
                         try
                         {
                             // Delete previous cover image, if existent.
-                            if (bookEdition.CoverImageID != Guid.Empty)
+                            if (CoverImageID != Guid.Empty)
                                 await _blobHelper.DeleteBlobAsync(
-                                    bookEdition.CoverImageID.ToString(), "bookcovers");
+                                    CoverImageID.ToString(), "bookcovers");
 
                             // Upload new one.
                             bookEdition.CoverImageID =
@@ -135,15 +152,41 @@ namespace Hybriotheca.Web.Controllers
                             ViewBag.ErrorTitle = "Could not save Cover Image.";
                             return View("Error");
                         }
-                        
-                        // Update BookEdition, including new CoverImageID.
-                        await _bookEditionRepository.UpdateAsync(bookEdition);
+
                     }
                     else
                     {
-                        // No new Cover Image was given, so Update Book Edition but keep CoverImageID.
-                        await _bookEditionRepository.UpdateKeepCoverImageAsync(bookEdition);
+                        bookEdition.CoverImageID = CoverImageID;
                     }
+
+
+                    if(model.ePubFile != null)
+                    {
+                        // Upload new ePub file.
+                        try
+                        {
+                            // Delete previous ePub file, if existent.
+                            if (ePubID != Guid.Empty)
+                                await _blobHelper.DeleteEPUBAsync(
+                                    ePubID.ToString(), "epub");
+
+                            // Upload new one.
+                            bookEdition.ePubID =
+                                await _blobHelper.UploadEPUBAsync(model.ePubFile, "epub");
+                        }
+                        catch
+                        {
+                            ViewBag.ErrorTitle = "Could not save ePUB File.";
+                            return View("Error");
+                        }
+                    }
+                    else
+                    {
+                        bookEdition.ePubID = ePubID;
+                    }
+
+                    // Update BookEdition, including new CoverImageID.
+                    await _bookEditionRepository.UpdateAsync(bookEdition);
 
                     // Success.
                     return RedirectToAction(nameof(Index));
@@ -267,6 +310,9 @@ namespace Hybriotheca.Web.Controllers
                     Value = "0"
                 });
 
+            ViewBag.BookFormats = _bookEditionRepository.GetComboBookFormats();
+            ViewBag.Languages = _bookEditionRepository.GetComboLanguages();
+
             return View(nameof(Create), model);
         }
 
@@ -274,6 +320,9 @@ namespace Hybriotheca.Web.Controllers
         {
             ViewBag.Books = await _bookRepository.GetComboBooksAsync();
             ViewBag.Categories = await _categoryRepository.GetComboCategoriesAsync();
+
+            ViewBag.BookFormats = _bookEditionRepository.GetComboBookFormats();
+            ViewBag.Languages = _bookEditionRepository.GetComboLanguages();
 
             return View(nameof(Edit), model);
         }
