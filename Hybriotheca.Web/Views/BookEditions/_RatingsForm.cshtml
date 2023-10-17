@@ -1,0 +1,79 @@
+﻿@model Hybriotheca.Web.Data.Entities.Rating
+
+
+<form method="post" hx-post hx-controller="Ratings" hx-action="Create" hx-swap="outerHTML" hx-target="#RatingMessage">
+    <!-- STARS -->
+    <div class="flex gap-2 mb-4">
+        <p class="font-medium text-gray-500 dark:text-gray-400">Your rating: </p>
+        <div class="cursor-pointer flex flex-row-reverse justify-end">
+            <!-- 5 stars -->
+            <input type="radio" id="star5" name="BookRating" value="5" class="hidden peer" required oninvalid="showAlert()" />
+            <label for="star5" title="5 stars" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                </svg>
+                <span class="sr-only">5 stars</span>
+            </label>
+
+            <!-- 4 stars -->
+            <input type="radio" id="star4" name="BookRating" value="4" class="hidden peer" required />
+            <label for="star4" title="4 stars" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                </svg>
+                <span class="sr-only">4 stars</span>
+            </label>
+
+            <!-- 3 stars -->
+            <input type="radio" id="star3" name="BookRating" value="3" class="hidden peer" required />
+            <label for="star3" title="3 stars" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                </svg>
+                <span class="sr-only">3 stars</span>
+            </label>
+
+            <!-- 2 stars -->
+            <input type="radio" id="star2" name="BookRating" value="2" class="hidden peer" required />
+            <label for="star2" title="2 stars" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                </svg>
+                <span class="sr-only">2 stars</span>
+            </label>
+
+            <!-- 1 star -->
+            <input type="radio" id="star1" name="BookRating" value="1" class="hidden peer" required />
+            <label for="star1" title="1 star" class="text-gray-300 dark:text-gray-500 peer peer-hover:text-yellow-300 peer-checked:text-yellow-300 hover:text-yellow-300">
+                <svg class="w-8 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                </svg>
+                <span class="sr-only">1 star</span>
+            </label>
+        </div>
+
+    </div>
+
+    <!-- REVIEW TITLE -->
+    <input asp-for="RatingTitle"
+           class="mb-4 bg-white border border-gray-300 text-gray-900 text-sm rounded focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500"
+           placeholder="Add a title (optional)">
+    <!-- REVIEW BODY -->
+    <textarea asp-for="RatingBody"
+              rows="4"
+              class="block mb-1 p-2.5 w-full text-sm text-gray-900 bg-white rounded border border-gray-300 focus:ring-sky-500 focus:border-sky-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-sky-500 dark:focus:border-sky-500"
+              placeholder="Share your thoughts... (optional)"></textarea>
+
+    <!-- GUIDELINES-->
+    <p class="ml-auto mb-2 text-xs text-gray-500 dark:text-gray-400">
+        Remember, your review must follow our <a data-modal-target="modal-guidelines" data-modal-toggle="modal-guidelines" class="cursor-pointer text-sky-600 dark:text-sky-500 hover:underline">Community Guidelines</a>.
+    </p>
+
+    <!-- SUBMIT BUTTON -->
+    <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900">
+        Submit review
+    </button>
+
+    <input type="hidden" asp-for="UserID" />
+    <input type="hidden" asp-for="BookEditionID" />
+</form>

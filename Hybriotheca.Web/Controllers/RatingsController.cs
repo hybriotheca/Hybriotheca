@@ -44,14 +44,17 @@ namespace Hybriotheca.Web.Controllers
         {
             if (!Request.IsHtmx()) { return BadRequest(); }
 
+            ModelState.Remove("User");
+            ModelState.Remove("BookEdition");
+
             if (ModelState.IsValid)
             {
                 await _ratingRepository.CreateAsync(rating);
 
-                return Content(" <div>\r\n    <span class=\"font-medium\">You Rating has been created!</span> You can acess all your ratings in your profile.\r\n  </div>", "text/html"); //Add Message here
+                return Content("<div class=\"p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400\" role=\"alert\">\r\n  <span class=\"font-medium\">You Rating has been created!</span> You can acess all your ratings in your profile.\r\n</div>", "text/html"); //Add Message here
             }
 
-            return Content("<div>\r\n    <span class=\"font-medium\">Unexpected error occurred</span> Change a few things up and try submitting again.\r\n  </div>", "text/html"); //Add Error Message here
+            return Content("<div class=\"p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400\" role=\"alert\">\r\n  <span class=\"font-medium\">Unexpected Error!</span> Change a few things up and try submitting again.\r\n</div>", "text/html"); //Add Error Message here
         }
 
         // GET: Ratings/Details/5

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NuGet.LibraryModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Hybriotheca.Web.Data.Entities;
@@ -16,7 +15,7 @@ public class Rating : IEntity
     public BookEdition BookEdition { get; set; }
 
     [Display(Name = "My rating")]
-    [Range(0, 5, ErrorMessage ="Please choose an acceptable value")]
+    [Range(1, 5, ErrorMessage = "Please choose an acceptable value")]
     public int BookRating { get; set; }
 
     [Display(Name = "Title")]
@@ -25,6 +24,6 @@ public class Rating : IEntity
     [Display(Name = "What did you think?")]
     public string? RatingBody { get; set; }
 
-    public DateTime RatingDate { get; set; } = DateTime.Now;
+    public DateTime RatingDate { get; set; } = DateTime.UtcNow;
 
 }

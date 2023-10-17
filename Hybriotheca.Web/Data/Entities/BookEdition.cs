@@ -37,7 +37,7 @@ public class BookEdition : IEntity
     public Guid CoverImageID { get; set; }
 
     public string CoverImageFullPath => CoverImageID == Guid.Empty ?
-        "" : $"https://hybriotheca.blob.core.windows.net/bookcovers/{CoverImageID}";
+        "/images/noCoverImage.png" : $"https://hybriotheca.blob.core.windows.net/bookcovers/{CoverImageID}";
 
     public double AverageRating
     {

@@ -1,5 +1,6 @@
 ﻿using Hybriotheca.Web.Data;
 using Hybriotheca.Web.Data.Entities;
+using Hybriotheca.Web.Models.Home;
 using Hybriotheca.Web.Models.Search;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -434,6 +435,55 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
             new SelectListItem { Text = "Italian", Value = "Italian" },
             new SelectListItem { Text = "Pocket-Sized", Value = "Pocket-Sized" },
 
+        };
+    }
+
+    public async Task<BookEdition> GetByIdWithRatingsAndBookAsync(int id)
+    {
+        return await _dataContext.BookEditions.Include(s => s.Ratings).Include(q => q.Book).Include(a => a.Category).AsSplitQuery().AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ID == id);
+    }
+
+
+    public async Task<(List<BookEdition> OtherEditions, List<BookEdition> BooksYouMightEnjoy, List<BookEdition> OtherBooksBySameAuthor)> GetBookDetailsCarouselAsync(BookEdition book)
+    {
+        var list1 = await _dataContext.BookEditions.Include(s => s.Book).Include(q => q.Ratings).AsSplitQuery().Where(x => x.BookID == book.BookID && x.ID != book.ID).AsNoTracking().Take(10).ToListAsync();
+        var tempList = await _dataContext.BookEditions.Include(s => s.Book).Include(q => q.Ratings).AsSplitQuery().Where(x => x.CategoryID == book.CategoryID && x.ID != book.ID).AsNoTracking().ToListAsync();
+
+        var list2 = tempList.OrderBy(s => Random.Shared.Next()).Take(10).ToList();
+
+        var list3 = await _dataContext.BookEditions.Include(s => s.Book).Include(q => q.Ratings).AsSplitQuery().Where(x => x.Book.Author == book.Book.Author && x.ID != book.ID).AsNoTracking().Take(10).ToListAsync();
+
+        return (OtherEditions: list1, BooksYouMightEnjoy: list2, OtherBooksBySameAuthor: list3);
+    }
+
+    public bool CheckIfHasStock(int bookID)
+    {
+        var value = _dataContext.BookEditions.Include(s => s.BooksInStock).AsSplitQuery().Where(x => x.ID == bookID).Any(q => q.BooksInStock.Any(a => a.AvailableStock >= 1));
+
+        return value;
+    }
+
+    public async Task<BookEdition> GetByIdWithBookAsync(int id)
+    {
+        return await _dataContext.BookEditions.Include(s => s.Book).AsSplitQuery().AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ID == id);
+    }
+
+    public async Task<HomeCarouselViewModel> GetHomeCarouselItems(int takeNr)
+    {
+
+        DateTime currentDate = DateTime.Now;
+        DateTime thirtyDaysAgo = currentDate.AddDays(-30);
+
+        var tempList = await _dataContext.BookEditions.Include(s => s.Book).Include(q => q.Ratings).AsSplitQuery().AsNoTracking().ToListAsync();
+
+        return
+        new HomeCarouselViewModel()
+        {
+            NewReleases = await _dataContext.BookEditions.Include(s => s.Book).Include(q => q.Ratings).AsSplitQuery().Where(x => x.PublishDate >= thirtyDaysAgo).OrderByDescending(e => e.PublishDate).AsNoTracking().Take(takeNr).ToListAsync(),
+            FeaturedBooks = tempList.OrderBy(s => Random.Shared.Next()).Take(takeNr).ToList(),
+            Fantasy = await _dataContext.BookEditions.Include(s => s.Book).Include(q => q.Ratings).Include(w => w.Category).AsSplitQuery().Where(x => x.Category.Name == "Fantasy").AsNoTracking().Take(takeNr).ToListAsync(),
         };
     }
 

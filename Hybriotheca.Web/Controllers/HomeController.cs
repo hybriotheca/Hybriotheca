@@ -15,17 +15,20 @@ namespace Hybriotheca.Web.Controllers
     {
         private readonly IUserHelper _userHelper;
         private readonly ILibraryRepository _libraryRepository;
+        private readonly IBookEditionRepository _bookEditionRepository;
 
-        public HomeController(IUserHelper userHelper, ILibraryRepository libraryRepository)
+        public HomeController(IUserHelper userHelper, ILibraryRepository libraryRepository, IBookEditionRepository bookEditionRepository)
         {
+            _bookEditionRepository = bookEditionRepository;
             _userHelper = userHelper;
             _libraryRepository = libraryRepository;
         }
 
-
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var model = await _bookEditionRepository.GetHomeCarouselItems(10);
+
+            return View(model);
         }
 
 
@@ -82,18 +85,6 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
-        public IActionResult BookDetails()
-        {
-            return View();
-        }
-
-
-        public IActionResult EbookReader()
-        {
-            return View();
-        }
-
-
         public IActionResult Privacy()
         {
             return View();
@@ -118,8 +109,6 @@ namespace Hybriotheca.Web.Controllers
         {
             return View("NotFound");
         }
-
-
 
 
         private async Task<UserViewModel?> GetModelForViewAsync(string id)

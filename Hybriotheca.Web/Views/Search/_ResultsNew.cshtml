@@ -22,7 +22,7 @@
                     <img class="max-h-[200px]" src=@edition.CoverImageFullPath alt=@edition.EditionTitle />
                 </a>
                 <div class="mt-4">
-                    <a href="#">
+                    <a asp-controller="Book" asp-action="Details" asp-route-id="@edition.ID">
                         <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
                             @edition.BookFormat
                         </h5>
