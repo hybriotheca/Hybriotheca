@@ -6,6 +6,7 @@ namespace Hybriotheca.Web.Repositories.Interfaces;
 
 public interface ILoanRepository : IGenericRepository<Loan>
 {
+    Task<bool> AnyWhereLibraryAndBookEditionAsync(int libraryId, int bookEditionId);
     Task<int> CountBookEditionLoanedFromLibraryAsync(int libraryId, int bookEditionId);
     Task<int> CountUnreturnedWhereUserAsync(string userId);
     IEnumerable<SelectListItem> GetComboBookLoanStatuses();

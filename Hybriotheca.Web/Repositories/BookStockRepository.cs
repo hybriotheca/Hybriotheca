@@ -25,14 +25,16 @@ public class BookStockRepository : GenericRepository<BookStock>, IBookStockRepos
     public async Task<bool> ExistsAsync(int libraryId, int bookEditionId)
     {
         return await _dataContext.BooksInStock.AnyAsync(bookStock =>
-            bookStock.LibraryID == libraryId && bookStock.BookEditionID == bookEditionId);
+            bookStock.LibraryID == libraryId
+            && bookStock.BookEditionID == bookEditionId);
     }
 
     public async Task<int> GetUsedBookStockAsync(int libraryId, int bookEditionId)
     {
         return await _dataContext.BooksInStock
             .Where(bookStock =>
-                bookStock.LibraryID == libraryId && bookStock.BookEditionID == bookEditionId)
+                bookStock.LibraryID == libraryId
+                && bookStock.BookEditionID == bookEditionId)
             .Select(bookStock => bookStock.TotalStock - bookStock.AvailableStock)
             .SingleOrDefaultAsync();
     }
@@ -41,7 +43,8 @@ public class BookStockRepository : GenericRepository<BookStock>, IBookStockRepos
     {
         return await _dataContext.BooksInStock
             .Where(bookStock =>
-                bookStock.LibraryID == libraryId && bookStock.BookEditionID == bookEditionId)
+                bookStock.LibraryID == libraryId
+                && bookStock.BookEditionID == bookEditionId)
             .SingleOrDefaultAsync();
     }
 
@@ -56,41 +59,7 @@ public class BookStockRepository : GenericRepository<BookStock>, IBookStockRepos
     }
 
     public async Task<IEnumerable<BookStockViewModel>>
-        SelectByLibraryAndBookEditionAsListViewModelAsync(int libraryId, int bookEditionId)
-    {
-        var bookStocks = QueryByLibraryAndBookEdition(libraryId, bookEditionId);
-
-        return await SelectListViewModelAsync(bookStocks);
-    }
-
-    public async Task<IEnumerable<BookStockViewModel>> SelectTop25AsListViewModelAsync()
-    {
-        var bookStocks = _dataContext.BooksInStock
-            .OrderByDescending(bookStock => bookStock.ID)
-            .Take(25);
-
-        return await SelectListViewModelAsync(bookStocks);
-    }
-
-    public async Task<BookStockViewModel?> SelectViewModelAsync(int id)
-    {
-        return await _dataContext.BooksInStock
-            .Where(bookStock => bookStock.ID == id)
-            .Select(bookStock => new BookStockViewModel
-            {
-                Id = bookStock.ID,
-                LibraryName = bookStock.Library.Name,
-                BookEditionTitle = bookStock.BookEdition.EditionTitle,
-                TotalStock = bookStock.TotalStock,
-                AvailableStock = bookStock.AvailableStock,
-                IsDeletable = bookStock.TotalStock == bookStock.AvailableStock,
-            })
-            .SingleOrDefaultAsync();
-    }
-
-    #region private methods
-
-    private IQueryable<BookStock> QueryByLibraryAndBookEdition(int libraryId, int bookEditionId)
+        SelectByLibraryAndBookEditionAsync(int libraryId, int bookEditionId)
     {
         // Get IQueryable.
         var bookStocks = _dataContext.BooksInStock.AsQueryable();
@@ -103,22 +72,25 @@ public class BookStockRepository : GenericRepository<BookStock>, IBookStockRepos
         if (bookEditionId > 0)
             bookStocks = bookStocks.Where(bookStock => bookStock.BookEditionID == bookEditionId);
 
-        return bookStocks;
+        return await bookStocks
+            .SelectBookStockViewModel()
+            .ToListAsync();
     }
 
-    private async Task<IEnumerable<BookStockViewModel>>
-        SelectListViewModelAsync(IQueryable<BookStock> bookStocks)
+    public async Task<IEnumerable<BookStockViewModel>> SelectLastCreatedAsync(int rows)
     {
-        return await bookStocks.Select(bookStock => new BookStockViewModel
-        {
-            Id = bookStock.ID,
-            LibraryName = bookStock.Library.Name,
-            BookEditionTitle = bookStock.BookEdition.EditionTitle,
-            TotalStock = bookStock.TotalStock,
-            AvailableStock = bookStock.AvailableStock,
-            IsDeletable = bookStock.TotalStock == bookStock.AvailableStock,
-        }).ToListAsync();
+        return await _dataContext.BooksInStock
+            .OrderByDescending(bookStock => bookStock.ID)
+            .Take(rows)
+            .SelectBookStockViewModel()
+            .ToListAsync();
     }
 
-    #endregion
+    public async Task<BookStockViewModel?> SelectViewModelAsync(int id)
+    {
+        return await _dataContext.BooksInStock
+            .Where(bookStock => bookStock.ID == id)
+            .SelectBookStockViewModel()
+            .SingleOrDefaultAsync();
+    }
 }

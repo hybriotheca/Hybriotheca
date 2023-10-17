@@ -15,5 +15,5 @@
 
 @if (Model.BookStocks != null)
 {
-    <partial name="_IndexTable" for="BookStocks" />
+    <partial name="_IndexTable@(ViewBag.Role)" for="BookStocks" />
 }

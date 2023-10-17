@@ -17,6 +17,13 @@ public class LoanRepository : GenericRepository<Loan>, ILoanRepository
     }
 
 
+    public async Task<bool> AnyWhereLibraryAndBookEditionAsync(int libraryId, int bookEditionId)
+    {
+        return await _dataContext.Loans
+            .AnyAsync(loan => loan.LibraryID == libraryId && loan.BookEditionID == bookEditionId);
+
+    }
+
     public async Task<int> CountBookEditionLoanedFromLibraryAsync(int libraryId, int bookEditionId)
     {
         return await _dataContext.Loans

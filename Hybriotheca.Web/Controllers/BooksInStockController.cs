@@ -1,6 +1,8 @@
 ﻿using Hybriotheca.Web.Data.Entities;
+using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -9,17 +11,21 @@ namespace Hybriotheca.Web.Controllers
 {
     public class BooksInStockController : Controller
     {
+        private readonly IUserHelper _userHelper;
+
         private readonly IBookEditionRepository _bookEditionRepository;
         private readonly IBookStockRepository _bookStockRepository;
         private readonly ILibraryRepository _libraryRepository;
         private readonly ILoanRepository _loanRepository;
 
         public BooksInStockController(
+            IUserHelper userHelper,
             IBookEditionRepository bookEditionRepository,
             IBookStockRepository bookStockRepository,
             ILibraryRepository libraryRepository,
             ILoanRepository loanRepository)
         {
+            _userHelper = userHelper;
             _bookEditionRepository = bookEditionRepository;
             _bookStockRepository = bookStockRepository;
             _libraryRepository = libraryRepository;
@@ -27,6 +33,7 @@ namespace Hybriotheca.Web.Controllers
         }
 
         // GET: BooksInStock
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Index(BookStockViewModel? searchModel)
         {
             var model = new BookStockIndexViewModel
@@ -38,35 +45,38 @@ namespace Hybriotheca.Web.Controllers
             if (searchModel != null && (searchModel.LibraryID > 0 || searchModel.BookEditionID > 0))
             {
                 model.BookStocks = await _bookStockRepository
-                    .SelectByLibraryAndBookEditionAsListViewModelAsync(
-                        searchModel.LibraryID, searchModel.BookEditionID);
+                    .SelectByLibraryAndBookEditionAsync(searchModel.LibraryID, searchModel.BookEditionID);
             }
             else
             {
-                model.BookStocks = await _bookStockRepository.SelectTop25AsListViewModelAsync();
+                model.BookStocks = await _bookStockRepository.SelectLastCreatedAsync(25);
             }
 
             ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
 
-            return View(model);
-        }
+            if (User.IsInRole("Librarian"))
+            {
+                var libraryId = await _userHelper.GetMainLibraryIdOfUserAsync(GetCurrentUserName());
+                if (libraryId == null)
+                {
+                    ViewBag.ErrorTitle = "Library not found";
+                    ViewBag.ErrorMessage = "The main Library of the logged Librarian was not found.";
+                    
+                    return View("Error");
+                }
 
+                ViewBag.MainLibraryId = libraryId;
+            }
 
-        // GET: BooksInStock/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return BookStockNotFound();
+            ViewBag.Role = await _userHelper.GetUserRoleAsync(GetCurrentUserName());
 
-            var model = await _bookStockRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return BookStockNotFound();
-
-            // Success.
             return View(model);
         }
 
 
         // GET: BooksInStock/Create
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Create()
         {
             return await ViewCreateAsync(null);
@@ -75,8 +85,30 @@ namespace Hybriotheca.Web.Controllers
         // POST: BooksInStock/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Create(BookStock bookStock)
         {
+            if (User.IsInRole("Librarian"))
+            {
+                var libraryId = await _userHelper.GetMainLibraryIdOfUserAsync(GetCurrentUserName());
+                if (libraryId == null)
+                {
+                    ViewBag.ErrorTitle = "Library not found";
+                    ViewBag.ErrorMessage = "The main Library of the logged Librarian was not found.";
+
+                    return View("Error");
+                }
+
+                if (libraryId != bookStock.LibraryID)
+                {
+                    ViewBag.ErrorTitle = "Not authorized";
+                    ViewBag.ErrorMessage =
+                        "The Librarian is not allowed to create or edit Book Stocks from other Libraries.";
+
+                    return View("Error");
+                }
+            }
+
             ModelState.Remove(nameof(bookStock.Library));
             ModelState.Remove(nameof(bookStock.BookEdition));
             ModelState.Remove(nameof(bookStock.AvailableStock));
@@ -118,6 +150,7 @@ namespace Hybriotheca.Web.Controllers
 
 
         // GET: BooksInStock/Edit/5
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return BookStockNotFound();
@@ -129,10 +162,32 @@ namespace Hybriotheca.Web.Controllers
         }
 
         // POST: BooksInStock/Edit/5
+        [Authorize(Roles = "Admin,Librarian")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(BookStock bookStock)
         {
+            if (User.IsInRole("Librarian"))
+            {
+                var libraryId = await _userHelper.GetMainLibraryIdOfUserAsync(GetCurrentUserName());
+                if (libraryId == null)
+                {
+                    ViewBag.ErrorTitle = "Library not found";
+                    ViewBag.ErrorMessage = "The main Library of the logged Librarian was not found.";
+
+                    return View("Error");
+                }
+
+                if (libraryId != bookStock.LibraryID)
+                {
+                    ViewBag.ErrorTitle = "Not authorized";
+                    ViewBag.ErrorMessage =
+                        "The Librarian is not allowed to create or edit Book Stocks from other Libraries.";
+
+                    return View("Error");
+                }
+            }
+
             ModelState.Remove(nameof(bookStock.Library));
             ModelState.Remove(nameof(bookStock.BookEdition));
             ModelState.Remove(nameof(bookStock.AvailableStock));
@@ -167,7 +222,6 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return BookStockNotFound();
                     }
-                    else throw;
                 }
                 catch (DbUpdateException ex)
                 {
@@ -194,6 +248,7 @@ namespace Hybriotheca.Web.Controllers
 
 
         // GET: BooksInStock/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return BookStockNotFound();
@@ -201,11 +256,15 @@ namespace Hybriotheca.Web.Controllers
             var model = await _bookStockRepository.SelectViewModelAsync(id.Value);
             if (model == null) return BookStockNotFound();
 
+            ViewBag.IsDeletable = ! await _loanRepository
+                .AnyWhereLibraryAndBookEditionAsync(model.LibraryID, model.BookEditionID);
+
             // Success.
-            return View(model);
+            return View("_ModalDelete", model);
         }
 
         // POST: BooksInStock/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -219,9 +278,28 @@ namespace Hybriotheca.Web.Controllers
                 return await Delete(id);
             }
 
-            await _bookStockRepository.DeleteAsync(bookStock);
+            var anyLoan = await _loanRepository
+                .AnyWhereLibraryAndBookEditionAsync(bookStock.LibraryID, bookStock.BookEditionID);
 
-            return RedirectToAction(nameof(Index));
+            if (anyLoan)
+            {
+                ViewBag.ErrorTitle = "Cannot delete this Book Stock";
+                ViewBag.ErrorMessage =
+                    "You cannot delete this Book Stock because there are Loans associated with it.";
+                
+                return View("Error");
+            }
+
+            try
+            {
+                await _bookStockRepository.DeleteAsync(bookStock);
+
+                // Success.
+                return RedirectToAction(nameof(Index));
+            }
+            catch { }
+
+            return View("Error");
         }
 
 
@@ -236,6 +314,7 @@ namespace Hybriotheca.Web.Controllers
                 await _bookStockRepository.IsBookAvailableInLibraryAsync(libraryId, bookEditionId));
         }
 
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Decrement(int bookStockId)
         {
             var bookStock = await _bookStockRepository.GetByIdAsync(bookStockId);
@@ -264,12 +343,14 @@ namespace Hybriotheca.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> GetMinBookStock(int libraryId, int bookEditionId)
         {
             return Json(
                 await _bookStockRepository.GetUsedBookStockAsync(libraryId, bookEditionId));
         }
 
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Increment(int bookStockId)
         {
             var bookStock = await _bookStockRepository.GetByIdAsync(bookStockId);
@@ -285,6 +366,8 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
+        #region private helper methods
+
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
@@ -297,6 +380,11 @@ namespace Hybriotheca.Web.Controllers
 
             Response.StatusCode = StatusCodes.Status404NotFound;
             return View("NotFound");
+        }
+
+        private string GetCurrentUserName()
+        {
+            return User.Identity?.Name ?? "";
         }
 
         private async Task<ViewResult> ViewCreateAsync(BookStock? bookStock)
@@ -314,5 +402,7 @@ namespace Hybriotheca.Web.Controllers
 
             return View(bookStock);
         }
+
+        #endregion private helper methods
     }
 }
