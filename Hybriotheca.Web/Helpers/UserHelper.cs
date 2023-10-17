@@ -115,6 +115,16 @@ namespace Hybriotheca.Web.Helpers
             return await _userManager.FindByIdAsync(id);
         }
 
+        public async Task<AppUser?> GetUserByIdForProfileAsync(string id)
+        {
+            return await _userManager.Users
+                .Include(user => user.Subscription)
+                .Include(user => user.Ratings)
+                .ThenInclude(rating => rating.BookEdition)
+                .ThenInclude(bookEdition => bookEdition.Book)
+                .SingleOrDefaultAsync(user => user.Id == id);
+        }
+
         public async Task<string?> GetUserRoleAsync(string userEmail)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);

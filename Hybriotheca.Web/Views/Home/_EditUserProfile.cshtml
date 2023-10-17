@@ -1,0 +1,132 @@
+﻿@model Hybriotheca.Web.Models.Account.UpdateUserViewModel
+
+@{
+    string HideElement(bool hideElement)
+    {
+        if (hideElement)
+        {
+            return "hidden";
+        }
+        return string.Empty;
+    }
+}
+
+<div class="hidden p-4" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    <form asp-controller="Account" asp-action="UpdateUser" enctype="multipart/form-data">
+        <div class="flex gap-6 sm:gap-0 max-sm:flex-col mb-4">
+
+            <!-- PERSONAL INFO -->
+            <div class="flex flex-col grow gap-4 max-sm:order-2">
+                @* <!-- FIRST NAME --> *@
+                <div class="flex items-center">
+                    <label asp-for="FirstName" class="w-28 md:w-40 text-sm font-medium text-gray-900 dark:text-white"></label>
+                    <input asp-for="FirstName" name="FirstName" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Jon" required />
+                    @* <span asp-validation-for="FirstName" class="mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span> *@
+
+                </div>
+
+                @* <!-- LAST NAME --> *@
+                <div class="flex items-center">
+                    <label asp-for="LastName" class="w-28 md:w-40 text-sm font-medium text-gray-900 dark:text-white"></label>
+                    <input asp-for="LastName" name="LastName" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Doe" required />
+                    @* <span asp-validation-for="LastName" class="mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span> *@
+
+                </div>
+
+                @* <!-- EMAIL -->
+                <div class="flex items-center">
+                <label asp-for="" class="w-28 md:w-40 text-sm font-medium text-gray-900 dark:text-white"></label>
+                <div class="flex flex-col grow items-center">
+                <input asp-for="Email" type="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="name@@company.com" required="" />
+                <span asp-validation-for="Email" class="mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
+                </div>
+                </div> *@
+
+                @* <!-- PHONE NUMBER --> *@
+                <div class="flex items-center">
+                    <label asp-for="PhoneNumber" class="w-28 md:w-40 text-sm font-medium text-gray-900 dark:text-white"></label>
+                    <input asp-for="PhoneNumber" name="PhoneNumber" type="tel" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="987654321" required />
+                    @* <span asp-validation-for="PhoneNumber" class="mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span> *@
+
+                </div>
+
+                @* <!-- PREFERRED LIBRARY --> *@
+                <div class="flex items-center">
+                    <label asp-for="MainLibraryID" class="w-28 md:w-40 text-sm font-medium text-gray-900 dark:text-white"></label>
+                    <select asp-for="MainLibraryID" name="MainLibraryID" asp-items="ViewBag.Libraries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></select>
+                    @* <span asp-validation-for="MainLibraryID" class="mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span> *@
+
+                </div>
+            </div>
+
+            @* <!-- PROFILE PICTURE --> *@
+            <div class="flex flex-col items-center mx-6 lg:mx-20 max-sm:order-1">
+                <!-- CONTAINER -->
+                <div class="flex flex-col items-center justify-center w-full mb-4 select-none">
+
+                    <span id="filetype-validation" class="hidden p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400">File type not allowed</span>
+
+                    <label asp-for="PhotoFile" name="PhotoFile" class="flex flex-col items-center justify-center text-center sm:w-48 sm:h-48 w-36 h-36 border-2 border-gray-300 rounded-full cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+
+                        <!-- PICTURE -->
+                        <img src="@Model?.PhotoFullPath"
+                             alt="Profile pitcure preview"
+                             id="profile-picture"
+                             class="@HideElement(!Model?.HasPhoto ?? true) w-full h-full rounded-full object-cover hover:brightness-75" />
+
+                        <!-- INPUT -->
+                        <div id="profile-picture-input" class="@HideElement(Model?.HasPhoto ?? false) flex flex-col items-center justify-center w-full h-full py-6 overflow-hidden rounded-full">
+                            <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+                            </svg>
+
+                            <p class="px-4 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload picture</span> or drag and drop</p>
+                        </div>
+                        <input type="file" asp-for="PhotoFile" name="PhotoFile" accept=".jpeg,.jpg,.png,.tiff,.tif, image/jpeg,image/png,image/tiff" class="hidden" onchange="uploadPhoto(event)" />
+                    </label>
+                </div>
+
+                <div class="flex gap-2">
+                    <!-- BUTTON DELETE -->
+                    <a href="#PhotoFile" onclick="deletePhoto()" id="deleteButton" class="@HideElement(!Model?.HasPhoto ?? true) text-red-700 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center border border-red-700 hover:text-white hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500">
+                        <svg class="w-3 h-3 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                            <path d="M17 4h-4V2a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2H1a1 1 0 0 0 0 2h1v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1a1 1 0 1 0 0-2ZM7 2h4v2H7V2Zm1 14a1 1 0 1 1-2 0V8a1 1 0 0 1 2 0v8Zm4 0a1 1 0 0 1-2 0V8a1 1 0 0 1 2 0v8Z" />
+                        </svg>
+                        Remove
+                        <input type="hidden" asp-for="DeletePhoto" name="DeletePhoto" />
+                    </a>
+
+                    <!-- BUTTON RESET -->
+                    @if (Model?.HasPhoto ?? false)
+                    {
+                        <a href="#PhotoFile" onclick="resetPhoto('@Model?.PhotoFullPath')" id="resetPhoto" class="hidden text-blue-700 font-medium rounded-lg text-sm px-3 py-2 text-center inline-flex items-center border border-blue-700 hover:text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500">
+                            <svg class="w-3 h-3 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                <path d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z" />
+                                <path d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z" />
+                            </svg>
+                            Reset
+                        </a>
+                    }
+                </div>
+                @* <span asp-validation-for="PhotoFile" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span> *@
+
+                <script>
+                    var deleteButton = document.getElementById('deleteButton');
+                    var resetButton = document.getElementById('resetPhoto');
+                    var deleteInput = document.getElementById('UserViewModel_DeletePhoto');
+                    var profilePicture = document.getElementById('profile-picture');
+                    var photoFile = document.getElementById('UserViewModel_PhotoFile');
+                    var profilePictureInput = document.getElementById('profile-picture-input');
+                    var fileTypeValidation = document.getElementById('filetype-validation');
+                </script>
+            </div>
+        </div>
+
+        @* <!-- BUTTON SAVE CHANGES --> *@
+        <div class="flex justify-center w-full space-x-4 md:px-4 sm:col-span-2">
+            <button type="submit" class="text-white justify-center bg-sky-700 hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>

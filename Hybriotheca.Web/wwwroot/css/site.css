@@ -6,25 +6,3 @@
 .selectize-input.full {
     @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500;
 }
-
-
-.slick-slider {
-    @apply flex items-center;
-}
-
-.slick-prev {
-    @apply flex items-center !top-0 !left-0 !rotate-180 hover:!bg-gray-400/25;
-}
-
-.slick-next {
-    @apply flex items-center !right-0 hover:!bg-gray-400/25;
-}
-
-.slick-arrow {
-    @apply !bg-[url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEzLjE3MTQgMTIuMDAwN0w4LjIyMTY4IDcuMDUwOTNMOS42MzU4OSA1LjYzNjcyTDE1Ljk5OTkgMTIuMDAwN0w5LjYzNTg5IDE4LjM2NDZMOC4yMjE2OCAxNi45NTA0TDEzLjE3MTQgMTIuMDAwN1oiPjwvcGF0aD48L3N2Zz4=")];
-}
-
-.slick-prev,
-.slick-next {
-    @apply before:!text-gray-800 before:dark:!text-gray-100 !h-full !bg-no-repeat !bg-center;
-}

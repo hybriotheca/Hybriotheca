@@ -14,7 +14,7 @@ namespace Hybriotheca.Web.Models.Account
         [Display(Name = "Phone number")]
         public string? PhoneNumber { get; set; }
 
-
+        [Display(Name = "Prefered Library")]
         public int MainLibraryID { get; set; }
 
 

@@ -54,14 +54,14 @@ namespace Hybriotheca.Web.Controllers
 
                     if (changePassword.Succeeded)
                     {
-                        ViewBag.UserMessage = "Password updated!";
-                        return View();
+                        TempData["UserMessage"] = "Password updated!";
+                        return RedirectToAction(nameof(HomeController.UserSettings), "Home");
                     }
                 }
             }
 
-            ModelState.AddModelError(string.Empty, "Could not update password.");
-            return View();
+            TempData["ModelError"] = "Could not update password.";
+            return RedirectToAction(nameof(HomeController.UserSettings), "Home");
         }
 
 
@@ -363,15 +363,15 @@ namespace Hybriotheca.Web.Controllers
                     var updateUser = await _userHelper.UpdateUserAsync(user);
                     if (updateUser.Succeeded)
                     {
-                        TempData["Message"] = "The account details were updated.";
-                        return RedirectToAction(nameof(Index));
+                        TempData["UserMessage"] = "The account details were updated.";
+                        return RedirectToAction(nameof(HomeController.UserSettings), "Home", User.Identity.Name);
                     }
                 }
             }
 
-            ModelState.AddModelError(string.Empty, "Could not update account details.");
+            TempData["ModelError"] = "Could not update account details.";
             ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
-            return View(nameof(Index), model);
+            return RedirectToAction(nameof(HomeController.UserSettings), "Home", User.Identity.Name);
         }
 
 

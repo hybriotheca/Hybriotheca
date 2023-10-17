@@ -1,8 +1,12 @@
-﻿using Hybriotheca.Web.Helpers.Interfaces;
+﻿using Hybriotheca.Web.Data;
+using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models;
+using Hybriotheca.Web.Models.Account;
 using Hybriotheca.Web.Models.Entities;
+using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace Hybriotheca.Web.Controllers
@@ -10,16 +14,20 @@ namespace Hybriotheca.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IUserHelper _userHelper;
+        private readonly ILibraryRepository _libraryRepository;
 
-        public HomeController(IUserHelper _userHelper)
+        public HomeController(IUserHelper userHelper, ILibraryRepository libraryRepository)
         {
-            this._userHelper = _userHelper;
+            _userHelper = userHelper;
+            _libraryRepository = libraryRepository;
         }
+
 
         public IActionResult Index()
         {
             return View();
         }
+
 
         [Authorize(Roles = "Admin,Librarian")]
         public IActionResult AdminPanel()
@@ -30,8 +38,8 @@ namespace Hybriotheca.Web.Controllers
 
         public async Task<IActionResult> UserProfile(string id)
         {
-            var user = await _userHelper.GetUserByIdAsync(id);
-            
+            var user = await _userHelper.GetUserByIdForProfileAsync(id);
+                        
             if (user == null)
             {
                 return RedirectToAction("Index");
@@ -40,15 +48,39 @@ namespace Hybriotheca.Web.Controllers
             return View(user);
         }
 
+
         public IActionResult UserLoans()
         {
             return View();
         }
 
-        public IActionResult UserSettings()
+
+        public async Task<IActionResult> UserSettings()
         {
-            return View();
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new UserSettingsViewModel();
+
+            model.UserViewModel = new UpdateUserViewModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                HasPhoto = user.PhotoId != Guid.Empty,
+                PhotoFullPath = user.PhotoFullPath,
+                MainLibraryID = user.MainLibraryID ?? 0,
+            };
+
+            ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
+
+            return View(model);
         }
+
 
         public IActionResult BookDetails()
         {
@@ -74,15 +106,28 @@ namespace Hybriotheca.Web.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+
         public IActionResult AccessDenied()
         {
             return View();
         }
 
+
         [Route("/Error/404")]
         public IActionResult NotFoundView()
         {
             return View("NotFound");
+        }
+
+
+
+
+        private async Task<UserViewModel?> GetModelForViewAsync(string id)
+        {
+            return await _userHelper.GetAllUsers()
+                .Where(user => user.Id == id)
+                .SelectUserViewModel()
+                .SingleOrDefaultAsync();
         }
     }
 }
