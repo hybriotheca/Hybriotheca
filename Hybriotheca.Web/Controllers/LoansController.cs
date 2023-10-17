@@ -246,7 +246,7 @@ namespace Hybriotheca.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                if (DateTime.Compare(loan.TermLimitDate.Date, DateTime.UtcNow.Date) > 0)
+                if (DateTime.Compare(loan.TermLimitDate.Date, loan.StartDate.Date) < 0)
                 {
                     AddModelError("The term limit date cannot be previous than the start date.");
                     return await ViewEditAsync(loan);
@@ -414,10 +414,23 @@ namespace Hybriotheca.Web.Controllers
                 bookStock.AvailableStock++;
             }
 
-            // Delete Loan and update BookStock.
-            await _loanRepository.DeleteAsync(loan);
+            try
+            {
+                // Delete Loan and update BookStock.
+                await _loanRepository.DeleteAsync(loan);
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _loanRepository.ExistsAsync(loan.ID))
+                {
+                    return LoanNotFound();
+                }
+            }
+            catch { }
+
+            return View("Error");
         }
 
 
@@ -532,8 +545,12 @@ namespace Hybriotheca.Web.Controllers
 
 
         [Authorize(Roles = "Customer")]
+        [HttpPost]
         public async Task<IActionResult> CreateLoanReservation(CreateLoanViewModel model)
         {
+            ModelState.Remove(nameof(model.UserId));
+            ModelState.Remove(nameof(model.WillCheckOutLater));
+
             if (ModelState.IsValid)
             {
                 var bookStock = await _bookStockRepository
@@ -577,7 +594,7 @@ namespace Hybriotheca.Web.Controllers
                 if (userLoans >= userSubscription.MaxLoans)
                 {
                     AddModelError("This user has reached the limit of loans.");
-                    return await ViewCreateAsync(model);
+                    //return await ViewCreateAsync(model);
                 }
 
                 var newLoan = new Loan
