@@ -20,10 +20,23 @@ public class Loan : IEntity
     public Fine? Fine { get; set; }
 
 
+    public DateTime CreateDate { get; set; }
+
     public DateTime StartDate { get; set; }
 
-    public DateTime EndDate { get; set; }
+    public DateTime TermLimitDate { get; set; }
 
-    public bool IsReturned { get; set; }
+    public DateTime? ReturnDate { get; set; }
 
+
+    public string Status { get; set; }
+
+    public bool IsReserved => Status == BookLoanStatus.Reserved;
+
+    public bool IsActive => Status == BookLoanStatus.Active;
+
+    public bool IsReturned => Status == BookLoanStatus.Returned;
+
+    public bool IsOverdue =>
+        !IsReturned &&  DateTime.Compare(DateTime.UtcNow.Date, TermLimitDate.Date) < 0;
 }

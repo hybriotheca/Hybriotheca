@@ -25,11 +25,14 @@ public class BookEdition : IEntity
 
     public string? Awards { get; set; }
 
-    public bool IsAvailableOnline { get; set; }
+    public bool IsAvailableOnline => ePubID != Guid.Empty;
 
     public string Synopsis { get; set; }
 
-    public Guid? EbookID { get; set; }
+    public Guid ePubID { get; set; }
+
+    public string ePubFullPath => ePubID == Guid.Empty ?
+       "" : $"https://hybriotheca.blob.core.windows.net/epub/{ePubID}.epub";
 
     public Guid CoverImageID { get; set; }
 

@@ -4,6 +4,7 @@ using Hybriotheca.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hybriotheca.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231016120218_ChangeBookEdition")]
+    partial class ChangeBookEdition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -311,8 +314,11 @@ namespace Hybriotheca.Web.Migrations
                     b.Property<int>("BookEditionID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsReturned")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LibraryID")
                         .HasColumnType("int");
@@ -320,17 +326,7 @@ namespace Hybriotheca.Web.Migrations
                     b.Property<int?>("ReservationID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("ReturnDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("TermLimitDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserID")

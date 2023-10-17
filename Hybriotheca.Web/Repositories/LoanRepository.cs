@@ -2,6 +2,7 @@
 using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Repositories;
@@ -22,28 +23,28 @@ public class LoanRepository : GenericRepository<Loan>, ILoanRepository
             .CountAsync(loan =>
                 loan.LibraryID == libraryId
                 && loan.BookEditionID == bookEditionId
-                && !loan.IsReturned);
+                && loan.Status != BookLoanStatus.Returned);
     }
 
     public async Task<int> CountUnreturnedWhereUserAsync(string userId)
     {
-        return await _dataContext.Loans.CountAsync(loan => loan.UserID == userId && !loan.IsReturned);
+        return await _dataContext.Loans
+            .CountAsync(loan => loan.UserID == userId && loan.Status != BookLoanStatus.Returned);
+    }
+
+    public IEnumerable<SelectListItem> GetComboBookLoanStatuses()
+    {
+        return BookLoanStatus.All.Select(status => new SelectListItem
+        {
+            Text = status,
+            Value = status
+        });
     }
 
     public async Task<IEnumerable<LoanViewModel>> SelectLastCreatedAsListViewModelsAsync(int rows)
     {
         return await _dataContext.Loans
-            .Select(loan => new LoanViewModel
-            {
-                Id = loan.ID,
-                LibraryName = loan.Library.Name,
-                UserEmail = loan.User.Email ?? "n/a",
-                BookEditionTitle = loan.BookEdition.EditionTitle,
-                StartDate = loan.StartDate.Date,
-                EndDate = loan.EndDate.Date,
-                IsReturned = loan.IsReturned,
-                IsOverdue = EF.Functions.DateDiffDay(DateTime.UtcNow, loan.EndDate) < 0,
-            })
+            .SelectLoanViewModel()
             .OrderByDescending(loan => loan.Id)
             .Take(rows)
             .ToListAsync();
@@ -53,16 +54,7 @@ public class LoanRepository : GenericRepository<Loan>, ILoanRepository
     {
         return await _dataContext.Loans
             .Where(loan => loan.ID == id)
-            .Select(loan => new LoanViewModel
-            {
-                Id = loan.ID,
-                LibraryName = loan.Library.Name,
-                UserEmail = loan.User.Email ?? "n/a",
-                BookEditionTitle = loan.BookEdition.EditionTitle,
-                StartDate = loan.StartDate.Date,
-                EndDate = loan.EndDate.Date,
-                IsReturned = loan.IsReturned,
-                IsOverdue = EF.Functions.DateDiffDay(DateTime.UtcNow, loan.EndDate) < 0,
-            }).SingleOrDefaultAsync();
+            .SelectLoanViewModel()
+            .SingleOrDefaultAsync();
     }
 }

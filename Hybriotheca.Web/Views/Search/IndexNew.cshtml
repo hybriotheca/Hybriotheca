@@ -1,0 +1,615 @@
+﻿@model Hybriotheca.Web.Models.Search.SearchViewModel
+
+
+<div hx-history="false" class="p-4 grow">
+    <main role="main" class="flex gap-4 max-w-screen-xl justify-between mx-auto dark:text-white">
+
+        <!-- SIDEBAR -->
+        <div class="flex flex-col gap-2 justify-start w-1/4 min-w-min">
+
+            <form id="main-form" hx-post hx-target="#searchResults" hx-trigger="submitForm" hx-include="#searchTerm">
+
+                <!-- FILTERS -->
+                <div id="filters-accordion" data-accordion="open" data-active-classes="bg-white dark:bg-gray-900 text-gray-900 dark:text-white" data-inactive-classes="border-b hover:text-gray-900 text-gray-500 dark:text-gray-400">
+
+                    <!-- CATEGORIES -->
+                    <div>
+                        <h2 id="accordion-categories-heading">
+                            <button type="button" data-accordion-target="#accordion-categories-body" aria-expanded="true" aria-controls="accordion-categories-body" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                                <span>Categories</span>
+                                <svg data-accordion-icon class="transition-all w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-categories-body" class="hidden" aria-labelledby="accordion-categories-heading">
+                            <div class="px-5 pb-5 border-b border-gray-200 dark:border-gray-700">
+
+                                @foreach (var name in ViewBag.Categories)
+                                {
+                                    <div class="flex items-center mb-4">
+                                        <input id="@name-checkbox" name="Categories" type="checkbox" value="@name" checked="@PreCheckCategory(name)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="@name-checkbox" class="grow ml-2 text-sm text-gray-900 dark:text-gray-300">
+                                            @name
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LANGUAGE -->
+                    <div>
+                        <h2 id="accordion-language-heading">
+                            <button type="button" data-accordion-target="#accordion-language-body" aria-expanded="true" aria-controls="accordion-flush-body-3" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                                <span>Language</span>
+                                <svg data-accordion-icon class="transition-all w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-language-body" class="hidden" aria-labelledby="accordion-language-heading">
+                            <div class="px-5 pb-5 border-b border-gray-200 dark:border-gray-700">
+
+                                @foreach (var name in ViewBag.Languages)
+                                {
+                                    <div class="flex items-center mb-4">
+                                        <input id="@name-checkbox" type="checkbox" value="@name" name="Languages" checked="@PreChecklang(name)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="@name-checkbox" class="grow ml-2 text-sm text-gray-900 dark:text-gray-300">
+                                            @name
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORMAT -->
+                    <div>
+                        <h2 id="accordion-format-heading">
+                            <button type="button" data-accordion-target="#accordion-format-body" aria-expanded="true" aria-controls="accordion-flush-body-3" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                                <span>Format</span>
+                                <svg data-accordion-icon class="transition-all w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-format-body" class="hidden" aria-labelledby="accordion-format-heading">
+
+                            <div class="px-5 pb-5 border-b border-gray-200 dark:border-gray-700">
+
+                                @foreach (var name in ViewBag.Formats)
+                                {
+
+                                    <div class="flex items-center mb-4">
+                                        <input id="@name-checkbox" type="checkbox" value="@name" name="Formats" checked="@PreCheckFormat(name)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="@name-checkbox" class="grow ml-2 text-sm text-gray-900 dark:text-gray-300">
+                                            @name
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- BY RATING -->
+                    <div>
+                        <h2 id="accordion-rating-heading">
+                            <button type="button" data-accordion-target="#accordion-rating-body" aria-expanded="true" aria-controls="accordion-flush-body-3" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                                <span>By rating</span>
+                                <svg data-accordion-icon class="transition-all w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-rating-body" class="hidden" aria-labelledby="accordion-rating-heading">
+                            <div class="px-5 pb-5 border-b border-gray-200 dark:border-gray-700">
+                                <!-- 5 STARS -->
+                                <div class="flex items-center mb-4">
+                                    <input id="five-stars" type="checkbox" value="5" name="Rating" checked="@PreCheckRating(5)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="five-stars" class="grow ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        <div class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- 4 STARS -->
+                                <div class="flex items-center mb-4">
+                                    <input id="four-stars" type="checkbox" value="4" name="Rating" checked="@PreCheckRating(4)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="four-stars" class="grow ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        <div class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- 3 STARS -->
+                                <div class="flex items-center mb-4">
+                                    <input id="three-stars" type="checkbox" value="3" name="Rating" checked="@PreCheckRating(3)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="three-stars" class="grow ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        <div class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- 2 STARS -->
+                                <div class="flex items-center mb-4">
+                                    <input id="two-stars" type="checkbox" value="2" name="Rating" checked="@PreCheckRating(2)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="two-stars" class="grow ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        <div class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- 1 STAR -->
+                                <div class="flex items-center mb-4">
+                                    <input id="one-star" type="checkbox" value="1" name="Rating" checked="@PreCheckRating(1)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="one-star" class="grow ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        <div class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- 0 STARS -->
+                                <div class="flex items-center">
+                                    <input id="two-stars" type="checkbox" value="0" name="Rating" checked="@PreCheckRating(0)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="two-stars" class="grow ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                        <div class="flex items-center space-x-1">
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AVAILABILITY -->
+                    <div>
+                        <h2 id="accordion-availability-heading">
+                            <button type="button" data-accordion-target="#accordion-availability-body" aria-expanded="true" aria-controls="accordion-flush-body-3" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                                <span>Availability</span>
+                                <svg data-accordion-icon class="transition-all w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-availability-body" class="hidden" aria-labelledby="accordion-availability-heading">
+                            <div class="px-5 pb-5 border-b border-gray-200 dark:border-gray-700">
+
+                                <div class="flex items-center">
+                                    <input asp-for="isAvailable" type="checkbox" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label asp-for="isAvailable" class="grow ml-2 text-sm text-gray-900 dark:text-gray-300">
+                                        @Html.DisplayNameFor(model => model.isAvailable)
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LIBRARY -->
+                    <div>
+                        <h2 id="accordion-library-heading">
+                            <button type="button" data-accordion-target="#accordion-library-body" aria-expanded="true" aria-controls="accordion-flush-body-2" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                                <span>Library</span>
+                                <svg data-accordion-icon class="transition-all w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-library-body" class="hidden" aria-labelledby="accordion-library-heading">
+                            <div class="px-5 pb-5 border-b border-gray-200 dark:border-gray-700">
+
+                                @foreach (var name in ViewBag.Libraries)
+                                {
+
+                                    <div class="flex items-center mb-4">
+                                        <input id="@name-checkbox" type="checkbox" value="@name" name="Libraries" checked="@PreCheckLibraries(name)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="@name-checkbox" class="grow ml-2 text-sm text-gray-900 dark:text-gray-300">
+                                            @name
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PUB YEAR -->
+                    <div>
+                        <h2 id="accordion-pubyear-heading">
+                            <button type="button" data-accordion-target="#accordion-pubyear-body" aria-expanded="false" aria-controls="accordion-flush-body-3" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                                <span>Publish Year</span>
+                                <svg data-accordion-icon class="transition-all w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
+                        </h2>
+                        <div id="accordion-pubyear-body" class="hidden" aria-labelledby="accordion-pubyear-heading">
+                            <div class="px-5 pb-5 border-b border-gray-200 dark:border-gray-700">
+
+                                @foreach (var name in ViewBag.PubYears)
+                                {
+                                    <div class="flex items-center mb-4">
+                                        <input id="@name-checkbox" type="checkbox" value="@name" name="Year" checked="@PreCheckPubYear(name)" class="w-4 h-4 text-sky-500 bg-gray-100 border-gray-300 rounded focus:ring-sky-400 dark:focus:ring-sky-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="@name-checkbox" class="grow ml-2 text-sm text-gray-900 dark:text-gray-300">
+                                            @name
+                                        </label>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+            
+        </div>
+
+        <!-- MAIN CONTAINER -->
+        <div>
+            <!-- CONTAINER HEADER -->
+            <div class="flex justify-between items-center mb-4 text-base">
+                
+                <button id="clearAllBtn" type="button" class="invisible transition-all duration-200 ease-in-out relative inline-flex justify-center items-center mx-4 my-2 p-0.5 overflow-hidden font-medium rounded-full group bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 group-hover:from-cyan-500 group-hover:to-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-900">
+                    <span class="grow relative px-5 py-1.5 bg-gray-50 dark:bg-gray-900 rounded-full text-gray-900 dark:text-white">
+                        Clear all filters
+                    </span>
+                </button>
+
+                <div class="flex justify-end gap-4">
+                    
+                    <!-- PAGESIZE -->
+
+                    <div class="flex justify-end gap-4">
+                        <label for="pageSize" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Page size:</label>
+                        <select form="main-form" id="pageSize" name="pageSize" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option selected="@CheckPageSizeSelected(6)" value="6">6</option>
+                            <option selected="@CheckPageSizeSelected(12)" value="12">12</option>
+                            <option selected="@CheckPageSizeSelected(24)" value="24">24</option>
+                        </select>
+                    </div>
+
+                    <!-- SORT BY -->
+
+                    <div class="flex justify-end gap-4">
+                        <label for="SortBy" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sort by:</label>
+                        <select form="main-form" id="SortBy" name="SortBy" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option selected="@CheckRelevanceSelected("relevance")" value="relevance">Relevance</option>
+                            <option selected="@CheckTitleA_ZSelected("title_A_Z")" value="title_A_Z">Title A-Z</option>
+                            <option selected="@CheckTitleZ_ASelected("title_Z_A")" value="title_Z_A">Title Z-A</option>
+                            <option selected="@CheckRatingSelected("rating")" value="rating">Rating desc</option>
+                            <option selected="@CheckPubDateSelected("pub_date")" value="pub_date">Publish Date</option>
+                        </select>
+                    </div>
+                   
+                </div>
+
+            </div>
+
+            <div id="searchResults">
+                @await Html.PartialAsync("_ResultsNew", Model)
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+@{
+
+    Layout = "_LayoutSearchPage";
+
+    bool PreCheckCategory(string value)
+    {
+        if (Model.Categories is not null && Model.Categories.Any())
+        {
+            if (Model.Categories.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreCheckRating(int value)
+    {
+        if (Model.Rating is not null && Model.Rating.Any())
+        {
+            if (Model.Rating.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreCheckFormat(string value)
+    {
+        if (Model.Formats is not null && Model.Formats.Any())
+        {
+            if (Model.Formats.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreChecklang(string value)
+    {
+        if (Model.Languages is not null && Model.Languages.Any())
+        {
+            if (Model.Languages.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreCheckLibraries(string value)
+    {
+        if (Model.Libraries is not null && Model.Libraries.Any())
+        {
+            if (Model.Libraries.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PreCheckPubYear(string value)
+    {
+        if (Model.Year is not null && Model.Year.Any())
+        {
+            if (Model.Year.Contains(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool CheckPageSizeSelected(int value)
+    {
+        if (value == Model.PageSize)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckRelevanceSelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckTitleA_ZSelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckTitleZ_ASelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckRatingSelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CheckPubDateSelected(string value)
+    {
+        if (value == Model.SortBy)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+}
+
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const BooksPerPage = document.getElementById('pageSize');
+        const SortBy = document.getElementById('SortBy');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const searchBox = document.getElementById('searchTerm');
+
+        searchBox.value = "@Html.Raw(Model.SearchTerm)";
+        console.log("@Html.Raw(Model.SearchTerm)");
+
+        document.body.addEventListener('htmx:afterSettle', () => {
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+        });
+
+        // Function to handle form submission
+        function submitForm() {
+            htmx.trigger("#main-form", "submitForm");
+        }
+
+        function HideShowBtnClear() {
+
+            var anyChecked = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+
+                    anyChecked = true;
+
+                }
+            });
+
+            if (anyChecked) {
+
+                clearAllBtn.classList.remove("invisible");
+
+            }
+            else {
+
+                if (!clearAllBtn.classList.contains("invisible")) {
+                    clearAllBtn.classList.add("invisible");
+                }
+            }
+        }
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", submitForm);
+            checkbox.addEventListener("change", HideShowBtnClear);
+        });
+
+        BooksPerPage.addEventListener("change", submitForm);
+
+        SortBy.addEventListener("change", submitForm);
+
+        clearAllBtn.addEventListener("click", () => {
+
+            checkboxes.forEach(checkbox => {
+
+                checkbox.checked = false;
+
+            });
+
+            submitForm();
+
+            HideShowBtnClear();
+
+        });
+
+        HideShowBtnClear()
+
+    </script>
+}

@@ -1,13 +1,16 @@
-﻿using Hybriotheca.Web.Data.Entities;
+﻿using Hybriotheca.Web.Data;
+using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hybriotheca.Web.Controllers
 {
+    [Authorize]
     public class LoansController : Controller
     {
         private readonly IUserHelper _userHelper;
@@ -36,31 +39,29 @@ namespace Hybriotheca.Web.Controllers
 
 
         // GET: Loans
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Index()
         {
             var loans = await _loanRepository.SelectLastCreatedAsListViewModelsAsync(25);
 
-            return View(loans);
-            //return _context.Loans != null ?
-            //            View(await _context.Loans.ToListAsync()) :
-            //            Problem("Entity set 'DataContext.Loans'  is null.");
-        }
+            if (User.IsInRole("Admin"))
+            {
+                ViewBag.Role = "Admin";
+                return View(loans);
+            }
 
+            if (User.IsInRole("Librarian"))
+            {
+                ViewBag.Role = "Librarian";
+                return View(loans);
+            }
 
-        // GET: Loans/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return LoanNotFound();
-
-            var model = await _loanRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return LoanNotFound();
-
-            // Success.
-            return View(model);
+            return View("Error");
         }
 
 
         // GET: Loans/Create
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Create(int? bookEditionId)
         {
             var model = new CreateLoanViewModel
@@ -73,6 +74,7 @@ namespace Hybriotheca.Web.Controllers
         }
 
         // POST: Loans/Create
+        [Authorize(Roles = "Admin,Librarian")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateLoanViewModel model)
@@ -87,6 +89,13 @@ namespace Hybriotheca.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                // Check Start date is not before today.
+                if (model.StartDate.Date < DateTime.UtcNow.Date)
+                {
+                    AddModelError("Start date cannot be previous to today.");
+                    return await ViewCreateAsync(model);
+                }
+
                 var bookStock = await _bookStockRepository
                     .GetByLibraryAndBookEditionAsync(model.LibraryId, model.BookEditionId);
 
@@ -97,29 +106,57 @@ namespace Hybriotheca.Web.Controllers
                 var user = await _userHelper.GetUserByIdAsync(model.UserId);
                 if (user == null) return UserNotFound();
 
-                var subscription = await _subscriptionRepository.GetByIdAsync(user.SubscriptionID);
-                if (subscription == null) return SubscriptionNotFound();
+                var userSubscription = await _subscriptionRepository.GetByIdAsync(user.SubscriptionID);
+                if (userSubscription == null)
+                {
+                    ViewBag.ErrorTitle = "User subscription not found";
+                    ViewBag.ErrorMessage =
+                        "The user subscription was not found," +
+                        " hence it's not possible to define the term limit date.";
+
+                    return View("Error");
+                }
 
                 var userLoans = await _loanRepository.CountUnreturnedWhereUserAsync(user.Id);
-                if (userLoans >= subscription.MaxLoans)
+                if (userLoans >= userSubscription.MaxLoans)
                 {
                     AddModelError("This user has reached the limit of loans.");
                     return await ViewCreateAsync(model);
                 }
 
                 // Create Loan.
-
-                var dateToday = DateTime.UtcNow.Date;
+                var dateTimeUtcNowDate = DateTime.UtcNow.Date;
                 var loan = new Loan
                 {
                     UserID = model.UserId,
                     LibraryID = model.LibraryId,
                     BookEditionID = model.BookEditionId,
                     ReservationID = null,
-                    StartDate = dateToday,
-                    EndDate = dateToday.AddDays(subscription.MaxLoanDays),
-                    IsReturned = false,
+                    CreateDate = dateTimeUtcNowDate,
+                    ReturnDate = null,
                 };
+
+                // Define Start Date and Status based on whether Check out is now or will be done later.
+                if (model.WillCheckOutLater)
+                {
+                    // Check reservation time limit.
+                    if (DateTime.Compare(model.StartDate, dateTimeUtcNowDate.AddDays(7)) > 0)
+                    {
+                        AddModelError("The limit for reservations is 7 days.");
+                        return await ViewCreateAsync(model);
+                    }
+
+                    loan.Status = BookLoanStatus.Reserved;
+                    loan.StartDate = model.StartDate;
+                }
+                else
+                {
+                    loan.Status = BookLoanStatus.Active;
+                    loan.StartDate = loan.CreateDate;
+                }
+
+                // Define Term limit date based on user's subsciption.
+                loan.TermLimitDate = loan.StartDate.AddDays(userSubscription.MaxLoanDays);
 
                 try
                 {
@@ -134,14 +171,45 @@ namespace Hybriotheca.Web.Controllers
                 {
                     if (ex.InnerException is SqlException innerEx)
                     {
-                        string constraintName =
-                            $"CK_{nameof(bookStock.AvailableStock)}_GreaterOrEqualZero";
+                        // Placeholder for each check.
+                        string constraintName;
 
+                        // Check AvailableStock not enough.
+                        constraintName = $"CK_{nameof(BookStock.AvailableStock)}_GreaterOrEqualZero";
                         if (innerEx.Message.Contains(constraintName))
                         {
                             AddModelError(
                                 "There isn't available Book Stock at this Library for this Loan.");
                             return await ViewCreateAsync(model);
+                        }
+
+                        // Check BookEdition reference.
+                        constraintName =
+                            $"FK_{nameof(DataContext.Loans)}" +
+                            $"_{nameof(DataContext.BookEditions)}" +
+                            $"_{nameof(Loan.BookEditionID)}.";
+
+                        if (innerEx.Message.Contains(constraintName))
+                        {
+                            return BookEditionNotFound();
+                        }
+
+                        // Check Library reference.
+                        constraintName =
+                            $"FK_{nameof(DataContext.Loans)}" +
+                            $"_{nameof(DataContext.Libraries)}" +
+                            $"_{nameof(Loan.LibraryID)}.";
+
+                        if (innerEx.Message.Contains(constraintName))
+                        {
+                            return LibraryNotFound();
+                        }
+
+                        // Check User reference.
+                        if (innerEx.Message.Contains("FOREIGN KEY")
+                            && innerEx.Message.Contains(nameof(Loan.UserID)))
+                        {
+                            return UserNotFound();
                         }
                     }
                 }
@@ -154,6 +222,7 @@ namespace Hybriotheca.Web.Controllers
 
 
         // GET: Loans/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return LoanNotFound();
@@ -165,6 +234,7 @@ namespace Hybriotheca.Web.Controllers
         }
 
         // POST: Loans/Edit/5
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Loan loan)
@@ -176,19 +246,31 @@ namespace Hybriotheca.Web.Controllers
 
             if (ModelState.IsValid)
             {
+                if (DateTime.Compare(loan.TermLimitDate.Date, DateTime.UtcNow.Date) > 0)
+                {
+                    AddModelError("The term limit date cannot be previous than the start date.");
+                    return await ViewEditAsync(loan);
+                }
+
                 var current = await _loanRepository.GetByIdAsync(loan.ID);
                 if (current == null) return LoanNotFound();
 
+                loan.CreateDate = current.CreateDate;
+
+                if (!loan.IsReturned)
+                {
+                    loan.ReturnDate = null;
+                }
+
+                // Check count of user loans and update AvailableStocks.
                 if (!(current.IsReturned && loan.IsReturned))
                 {
-                    // Check count of user loans and update AvailableStocks.
-
-                    // If the edited Loan is not returned,
+                    // If the edited Loan's status is not "Returned",
                     // check user has reached limit of loans
                     // and decrement loan's BookStock AvailableStock.
                     if (!loan.IsReturned)
                     {
-                        // Check user has reached limit of loans.
+                        // If relevant, check user has reached limit of loans.
                         if (current.IsReturned || current.UserID != loan.UserID)
                         {
                             var user = await _userHelper.GetUserByIdAsync(loan.UserID);
@@ -247,21 +329,51 @@ namespace Hybriotheca.Web.Controllers
                     {
                         return LoanNotFound();
                     }
-                    else throw;
                 }
                 catch (DbUpdateException ex)
                 {
                     if (ex.InnerException is SqlException innerEx)
                     {
-                        string constraintName =
-                            $"CK_{nameof(BookStock.AvailableStock)}_GreaterOrEqualZero";
+                        // Placeholder for each check.
+                        string constraintName;
 
+                        // Check AvailableStock not enough.
+                        constraintName = $"CK_{nameof(BookStock.AvailableStock)}_GreaterOrEqualZero";
                         if (innerEx.Message.Contains(constraintName))
                         {
                             AddModelError(
                                 "There isn't enough available stock at this Library" +
                                 " to save the intended changes.");
                             return await ViewEditAsync(loan);
+                        }
+
+                        // Check BookEdition reference.
+                        constraintName =
+                            $"FK_{nameof(DataContext.Loans)}" +
+                            $"_{nameof(DataContext.BookEditions)}" +
+                            $"_{nameof(Loan.BookEditionID)}.";
+
+                        if (innerEx.Message.Contains(constraintName))
+                        {
+                            return BookEditionNotFound();
+                        }
+
+                        // Check Library reference.
+                        constraintName =
+                            $"FK_{nameof(DataContext.Loans)}" +
+                            $"_{nameof(DataContext.Libraries)}" +
+                            $"_{nameof(Loan.LibraryID)}.";
+
+                        if (innerEx.Message.Contains(constraintName))
+                        {
+                            return LibraryNotFound();
+                        }
+
+                        // Check User reference.
+                        if (innerEx.Message.Contains("FOREIGN KEY")
+                            && innerEx.Message.Contains(nameof(Loan.UserID)))
+                        {
+                            return UserNotFound();
                         }
                     }
                 }
@@ -273,54 +385,107 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
-        // GET: Loans/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return LoanNotFound();
 
-            var model = await _loanRepository.SelectViewModelAsync(id.Value);
-            if (model == null) return LoanNotFound();
+            var loan = await _loanRepository.GetByIdAsync(id.Value);
+            if (loan == null) return LoanNotFound();
 
-            // Success.
-            return View(model);
+            return View("_ModalDelete", loan);
         }
 
-        // POST: Loans/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var loan = await _loanRepository.GetByIdAsync(id);
-            if (loan != null)
+            if (loan == null) return LoanNotFound();
+
+            if (!loan.IsReturned)
             {
-                if (!loan.IsReturned)
-                {
-                    var bookStock = await _bookStockRepository
-                        .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
+                var bookStock = await _bookStockRepository
+                    .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
 
-                    if (bookStock == null) return BookStockNotFound();
+                if (bookStock == null) return BookStockNotFound();
 
-                    bookStock.AvailableStock++;
-                }
-
-                // Delete Loan and update BookStock.
-                await _loanRepository.DeleteAsync(loan);
+                bookStock.AvailableStock++;
             }
+
+            // Delete Loan and update BookStock.
+            await _loanRepository.DeleteAsync(loan);
 
             return RedirectToAction(nameof(Index));
         }
 
 
+        [Authorize(Roles = "Admin,Librarian")]
+        public async Task<IActionResult> HandOver(int? loanId)
+        {
+            if (loanId == null) return LoanNotFound();
+
+            var loan = await _loanRepository.GetByIdAsync(loanId.Value);
+            if (loan == null) return LoanNotFound();
+
+            ViewBag.IsReserved = loan.IsReserved;
+
+            return View("_ModalHandOver", loan);
+        }
+
+        [Authorize(Roles = "Admin,Librarian")]
+        [HttpPost, ActionName("HandOver")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> HandOverConfirmed(int loanId)
+        {
+            var loan = await _loanRepository.GetByIdAsync(loanId);
+            if (loan == null) return LoanNotFound();
+
+            if (!loan.IsReserved)
+            {
+                ViewBag.ErrorTitle = "No reservation";
+                ViewBag.ErrorMessage =
+                    "The handover cannot be done because there isn't a related reservation.";
+
+                return View("Error");
+            }
+
+            loan.Status = BookLoanStatus.Active;
+            loan.StartDate = DateTime.UtcNow;
+
+            try
+            {
+                await _loanRepository.UpdateAsync(loan);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _loanRepository.ExistsAsync(loan.ID))
+                {
+                    return LoanNotFound();
+                }
+            }
+            catch { }
+
+            return View("Error");
+        }
+
+
+        [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> ReturnBook(int? loanId)
         {
             if (loanId == null) return LoanNotFound();
 
-            var model = await _loanRepository.SelectViewModelAsync(loanId.Value);
-            if (model == null) return LoanNotFound();
+            var loan = await _loanRepository.GetByIdAsync(loanId.Value);
+            if (loan == null) return LoanNotFound();
 
-            return View(model);
+            ViewBag.IsReturnable = loan.IsActive;
+
+            return View("_ModalReturn", loan);
         }
 
+        [Authorize(Roles = "Admin,Librarian")]
         [HttpPost, ActionName("ReturnBook")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReturnBookConfirmed(int loanId)
@@ -328,22 +493,167 @@ namespace Hybriotheca.Web.Controllers
             var loan = await _loanRepository.GetByIdAsync(loanId);
             if (loan == null) return LoanNotFound();
 
-            loan.IsReturned = true;
-            loan.EndDate = DateTime.UtcNow;
+            if (!loan.IsActive)
+            {
+                ViewBag.ErrorTitle = "Loan is not active";
+                ViewBag.ErrorMessage =
+                    "This book cannot be returned because the related loan is not active.";
+
+                return View("Error");
+            }
+
+            loan.Status = BookLoanStatus.Returned;
+            loan.ReturnDate = DateTime.UtcNow;
 
             var bookStock = await _bookStockRepository
                 .GetByLibraryAndBookEditionAsync(loan.LibraryID, loan.BookEditionID);
 
             if (bookStock == null) return BookStockNotFound();
 
-            // BookStock is updated on SaveChangesAsync() inside UpdateAsync().
-            bookStock.AvailableStock++;
-            await _loanRepository.UpdateAsync(loan);
+            try
+            {
+                // BookStock is updated on SaveChangesAsync() inside UpdateAsync().
+                bookStock.AvailableStock++;
+                await _loanRepository.UpdateAsync(loan);
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _loanRepository.ExistsAsync(loan.ID))
+                {
+                    return LoanNotFound();
+                }
+            }
+            catch { }
+
+            return View("Error");
         }
 
 
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> CreateLoanReservation(CreateLoanViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var bookStock = await _bookStockRepository
+                    .GetByLibraryAndBookEditionAsync(model.LibraryId, model.BookEditionId);
+
+                if (bookStock == null) return BookStockNotFound();
+
+                var dateTimeUtcNowDate = DateTime.UtcNow.Date;
+
+                // Check Start date is not before today.
+                if (model.StartDate.Date < dateTimeUtcNowDate)
+                {
+                    AddModelError("Start date cannot be previous to today.");
+                    //return await ViewCreateAsync(model);
+                }
+
+                // Check reservation time limit.
+                if (DateTime.Compare(model.StartDate, dateTimeUtcNowDate.AddDays(7)) > 0)
+                {
+                    AddModelError("The limit for reservations is 7 days.");
+                    //return await ViewCreateAsync(model);
+                }
+
+                // Check user has reached limit of loans.
+
+                var user = await _userHelper.GetUserByEmailAsync(GetCurrentUserName());
+                if (user == null) return UserNotFound();
+
+                var userSubscription = await _subscriptionRepository.GetByIdAsync(user.SubscriptionID);
+                if (userSubscription == null)
+                {
+                    ViewBag.ErrorTitle = "User subscription not found";
+                    ViewBag.ErrorMessage =
+                        "The user subscription was not found," +
+                        " hence it's not possible to define the term limit date.";
+
+                    return View("Error");
+                }
+
+                var userLoans = await _loanRepository.CountUnreturnedWhereUserAsync(user.Id);
+                if (userLoans >= userSubscription.MaxLoans)
+                {
+                    AddModelError("This user has reached the limit of loans.");
+                    return await ViewCreateAsync(model);
+                }
+
+                var newLoan = new Loan
+                {
+                    UserID = user.Id,
+                    LibraryID = model.LibraryId,
+                    BookEditionID = model.BookEditionId,
+                    ReservationID = null,
+                    Status = BookLoanStatus.Reserved,
+                    CreateDate = DateTime.UtcNow.Date,
+                    StartDate = model.StartDate.Date,
+                    TermLimitDate = model.StartDate.Date.AddDays(userSubscription.MaxLoanDays),
+                    ReturnDate = null,
+                };
+
+                try
+                {
+                    // BookStock is updated on SaveChangesAsync() inside CreateAsync().
+                    bookStock.AvailableStock--;
+                    await _loanRepository.CreateAsync(newLoan);
+
+                    return Ok("Loan reservation was created.");
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException is SqlException innerEx)
+                    {
+                        // Placeholder for each check.
+                        string constraintName;
+                        
+                        // Check AvailableStock not enough.
+                        constraintName = $"CK_{nameof(BookStock.AvailableStock)}_GreaterOrEqualZero";
+                        if (innerEx.Message.Contains(constraintName))
+                        {
+                            AddModelError("This book is currently not available at this Library.");
+                            //return await ViewEditAsync(loan);
+                        }
+
+                        // Check BookEdition reference.
+                        constraintName =
+                            $"FK_{nameof(DataContext.Loans)}" +
+                            $"_{nameof(DataContext.BookEditions)}" +
+                            $"_{nameof(Loan.BookEditionID)}.";
+
+                        if (innerEx.Message.Contains(constraintName))
+                        {
+                            return BookEditionNotFound();
+                        }
+
+                        // Check Library reference.
+                        constraintName =
+                            $"FK_{nameof(DataContext.Loans)}" +
+                            $"_{nameof(DataContext.Libraries)}" +
+                            $"_{nameof(Loan.LibraryID)}.";
+
+                        if (innerEx.Message.Contains(constraintName))
+                        {
+                            return LibraryNotFound();
+                        }
+
+                        // Check User reference.
+                        if (innerEx.Message.Contains("FOREIGN KEY")
+                            && innerEx.Message.Contains(nameof(Loan.UserID)))
+                        {
+                            return UserNotFound();
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            // Temporary.
+            return Json("Could not create Loan.");
+        }
+
+        
         public async Task<IActionResult> HasUserReachedLoanLimit(string userId)
         {
             var user = await _userHelper.GetUserByIdAsync(userId);
@@ -368,6 +678,15 @@ namespace Hybriotheca.Web.Controllers
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
+        }
+
+        private ViewResult BookEditionNotFound()
+        {
+            ViewBag.Title = "Book Edition not found";
+            ViewBag.ItemNotFound = "Book Edition";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
 
         private ViewResult BookStockNotFound()
@@ -438,6 +757,7 @@ namespace Hybriotheca.Web.Controllers
         private async Task<ViewResult> ViewEditAsync(Loan loan)
         {
             ViewBag.BookEditions = await _bookEditionRepository.GetComboBookEditionsAsync();
+            ViewBag.BookLoanStatuses = _loanRepository.GetComboBookLoanStatuses();
             ViewBag.Libraries = await _libraryRepository.GetComboLibrariesAsync();
             ViewBag.Users = await _userHelper.GetComboCustomersAsync();
 
