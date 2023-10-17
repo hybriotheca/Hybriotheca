@@ -7,7 +7,7 @@
     <div class="mb-3">
         <label asp-for="LibraryID" class="form-label"></label>
         <select asp-for="LibraryID" class="form-control" asp-items="ViewBag.Libraries">
-            <option disabled selected>Select library</option>
+            <option>Select library</option>
         </select>
         <span asp-validation-for="LibraryID" class="text-danger"></span>
     </div>
@@ -15,7 +15,7 @@
     <div class="mb-3">
         <label asp-for="BookEditionID" class="form-label"></label>
         <select asp-for="BookEditionID" class="form-control" asp-items="ViewBag.BookEditions">
-            <option disabled selected>Select book</option>
+            <option>Select book</option>
         </select>
         <span asp-validation-for="BookEditionID" class="text-danger"></span>
     </div>
@@ -23,7 +23,7 @@
     <div class="mb-3">
         <label asp-for="UserID" class="form-label"></label>
         <select asp-for="UserID" class="form-control" asp-items="ViewBag.Users">
-            <option disabled selected>Select user</option>
+            <option>Select user</option>
         </select>
         <span asp-validation-for="UserID" class="text-danger"></span>
     </div>

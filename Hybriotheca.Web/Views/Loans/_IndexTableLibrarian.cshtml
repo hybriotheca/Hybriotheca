@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Hybriotheca.Web.Models.Entities.LoanViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.UserEmail)</th>
+            <th>@Html.DisplayNameFor(model => model.LibraryName)</th>
+            <th>@Html.DisplayNameFor(model => model.BookEditionTitle)</th>
+            <th>@Html.DisplayNameFor(model => model.StartDate)</th>
+            <th>@Html.DisplayNameFor(model => model.TermLimitDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+            <th><!-- Hand over / Return book --></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserEmail)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LibraryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookEditionTitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TermLimitDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @if (item.IsReserved)
+                    {
+                        <a asp-action="HandOver" asp-route-loanId="@item.Id">Hand over</a>
+                    }
+                    else if (item.IsActive)
+                    {
+                        <a asp-action="ReturnBook" asp-route-loanId="@item.Id">Return</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
