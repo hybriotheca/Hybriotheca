@@ -13,10 +13,10 @@ namespace Hybriotheca.Web.Data
                 Id = bookStock.ID,
                 LibraryID = bookStock.LibraryID,
                 LibraryName = bookStock.Library.Name,
+                BookEditionID = bookStock.BookEditionID,
                 BookEditionTitle = bookStock.BookEdition.EditionTitle,
                 TotalStock = bookStock.TotalStock,
                 AvailableStock = bookStock.AvailableStock,
-                IsDeletable = bookStock.TotalStock == bookStock.AvailableStock,
             });
         }
 

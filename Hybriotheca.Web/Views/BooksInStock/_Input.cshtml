@@ -1,12 +1,22 @@
 ﻿@model Hybriotheca.Web.Data.Entities.BookStock
 
-<div class="mb-3">
-    <label asp-for="LibraryID" class="form-label"></label>
-    <select asp-for="LibraryID" class="form-control" asp-items="ViewBag.Libraries" oninput="checkBookStock()">
-        <option value="" disabled selected>Select library</option>
-    </select>
-    <span asp-validation-for="LibraryID" class="text-danger"></span>
-</div>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="mb-3">
+        <label asp-for="LibraryID" class="form-label"></label>
+        <select asp-for="LibraryID" class="form-control" asp-items="ViewBag.Libraries" oninput="checkBookStock()">
+            <option value="" disabled selected>Select library</option>
+        </select>
+        <span asp-validation-for="LibraryID" class="text-danger"></span>
+    </div>
+}
+else
+{
+    <input type="hidden" asp-for="LibraryID" >
+}
+
 <div class="mb-3">
     <label asp-for="BookEditionID" class="form-label"></label>
     <select asp-for="BookEditionID" class="form-control" asp-items="ViewBag.BookEditions" oninput="checkBookStock()">

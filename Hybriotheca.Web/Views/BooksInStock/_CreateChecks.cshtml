@@ -13,18 +13,18 @@
         }
 
         $.ajax({
-            url: '@Url.Action("CheckBookStockExists", "BooksInStock")',
+            url: '@Url.Action("GetBookStockId", "BooksInStock")',
             type: 'POST',
             dataType: 'JSON',
             data: { libraryId: libraryId, bookEditionId: bookEditionId },
             success: function (response) {
-                if (response) {
+                if (response > 0) {
                     $('#BookStockExists').show();
-                    $('#btnSave').hide();
+                    $('#UpdateIfExists').attr('href', '@Url.Action("Edit")/' + response);
+                    $('#btnSave').attr('disabled', true);
                 }
                 else {
                     $('#btnSave').attr('disabled', false);
-                    $('#btnSave').show();
                 }
             },
             error: function () {

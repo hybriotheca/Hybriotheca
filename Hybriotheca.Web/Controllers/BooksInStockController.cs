@@ -79,7 +79,17 @@ namespace Hybriotheca.Web.Controllers
         [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Create()
         {
-            return await ViewCreateAsync(null);
+            var bookStock = new BookStock();
+
+            if (User.IsInRole("Librarian"))
+            {
+                var libraryId = await _userHelper.GetMainLibraryIdOfUserAsync(GetCurrentUserName());
+                if (libraryId == null) return LibraryNotFound();
+
+                bookStock.LibraryID = libraryId.Value;
+            }
+
+            return await ViewCreateAsync(bookStock);
         }
 
         // POST: BooksInStock/Create
@@ -91,21 +101,11 @@ namespace Hybriotheca.Web.Controllers
             if (User.IsInRole("Librarian"))
             {
                 var libraryId = await _userHelper.GetMainLibraryIdOfUserAsync(GetCurrentUserName());
-                if (libraryId == null)
+                if (libraryId == null) return LibraryNotFound();
+
+                if (bookStock.LibraryID != libraryId)
                 {
-                    ViewBag.ErrorTitle = "Library not found";
-                    ViewBag.ErrorMessage = "The main Library of the logged Librarian was not found.";
-
-                    return View("Error");
-                }
-
-                if (libraryId != bookStock.LibraryID)
-                {
-                    ViewBag.ErrorTitle = "Not authorized";
-                    ViewBag.ErrorMessage =
-                        "The Librarian is not allowed to create or edit Book Stocks from other Libraries.";
-
-                    return View("Error");
+                    return View("Access Denied");
                 }
             }
 
@@ -158,6 +158,17 @@ namespace Hybriotheca.Web.Controllers
             var bookStock = await _bookStockRepository.GetByIdAsync(id.Value);
             if (bookStock == null) return BookStockNotFound();
 
+            if (User.IsInRole("Librarian"))
+            {
+                var libraryId = await _userHelper.GetMainLibraryIdOfUserAsync(GetCurrentUserName());
+                if (libraryId == null) return LibraryNotFound();
+
+                if (bookStock.LibraryID != libraryId)
+                {
+                    return View("Access Denied");
+                }
+            }
+
             return await ViewEditAsync(bookStock);
         }
 
@@ -170,21 +181,11 @@ namespace Hybriotheca.Web.Controllers
             if (User.IsInRole("Librarian"))
             {
                 var libraryId = await _userHelper.GetMainLibraryIdOfUserAsync(GetCurrentUserName());
-                if (libraryId == null)
+                if (libraryId == null) return LibraryNotFound();
+
+                if (bookStock.LibraryID != libraryId)
                 {
-                    ViewBag.ErrorTitle = "Library not found";
-                    ViewBag.ErrorMessage = "The main Library of the logged Librarian was not found.";
-
-                    return View("Error");
-                }
-
-                if (libraryId != bookStock.LibraryID)
-                {
-                    ViewBag.ErrorTitle = "Not authorized";
-                    ViewBag.ErrorMessage =
-                        "The Librarian is not allowed to create or edit Book Stocks from other Libraries.";
-
-                    return View("Error");
+                    return View("Access Denied");
                 }
             }
 
@@ -303,6 +304,11 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
+        public async Task<IActionResult> GetBookStockId(int libraryId, int bookEditionId)
+        {
+            return Json(await _bookStockRepository.GetBookStockIdAsync(libraryId, bookEditionId));
+        }
+
         public async Task<IActionResult> CheckBookStockExists(int libraryId, int bookEditionId)
         {
             return Json(await _bookStockRepository.ExistsAsync(libraryId, bookEditionId));
@@ -385,6 +391,15 @@ namespace Hybriotheca.Web.Controllers
         private string GetCurrentUserName()
         {
             return User.Identity?.Name ?? "";
+        }
+
+        private ViewResult LibraryNotFound()
+        {
+            ViewBag.Title = "Library not found";
+            ViewBag.ItemNotFound = "Library";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
         }
 
         private async Task<ViewResult> ViewCreateAsync(BookStock? bookStock)

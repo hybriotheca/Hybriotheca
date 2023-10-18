@@ -29,6 +29,16 @@ public class BookStockRepository : GenericRepository<BookStock>, IBookStockRepos
             && bookStock.BookEditionID == bookEditionId);
     }
 
+    public async Task<int> GetBookStockIdAsync(int libraryId, int bookEditionId)
+    {
+        return await _dataContext.BooksInStock
+            .Where(bookStock =>
+                bookStock.LibraryID == libraryId
+                && bookStock.BookEditionID == bookEditionId)
+            .Select(bookStock => bookStock.ID)
+            .SingleOrDefaultAsync();
+    }
+
     public async Task<int> GetUsedBookStockAsync(int libraryId, int bookEditionId)
     {
         return await _dataContext.BooksInStock

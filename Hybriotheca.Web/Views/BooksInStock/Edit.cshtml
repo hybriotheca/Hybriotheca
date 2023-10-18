@@ -12,8 +12,9 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit" id="formEdit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <input type="hidden" asp-for="ID" />
+
             <partial name="_Input" />
             
             <p id="DoesntExistCreateIt" style="display: none;">This Book Stock doesn't exist. Create it?</p>
@@ -22,6 +23,7 @@
             <div class="mb-3">
                 <button id="btnSave" class="btn btn-primary" disabled="true">Save</button>
             </div>
+
         </form>
     </div>
 </div>

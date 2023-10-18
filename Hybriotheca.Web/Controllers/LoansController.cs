@@ -464,8 +464,22 @@ namespace Hybriotheca.Web.Controllers
                 return View("Error");
             }
 
+            var user = await _userHelper.GetUserByIdAsync(loan.UserID);
+            if (user == null) return UserNotFound();
+
+            var userSubscription = await _subscriptionRepository.GetByIdAsync(user.SubscriptionID);
+            if (userSubscription == null)
+            {
+                ViewBag.ErrorTitle = "User subscription not found";
+                ViewBag.ErrorMessage =
+                    "The handover cannot be done because user's subscription was not found.";
+
+                return View("Error");
+            }
+
             loan.Status = BookLoanStatus.Active;
-            loan.StartDate = DateTime.UtcNow;
+            loan.StartDate = DateTime.UtcNow.Date;
+            loan.TermLimitDate = loan.StartDate.AddDays(userSubscription.MaxLoanDays);
 
             try
             {

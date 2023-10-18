@@ -12,14 +12,15 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <partial name="_Input" />
             
-            <p id="BookStockExists" class="text-danger" style="display: none;">This Book Stock already exists.</p>
+            <p id="BookStockExists" style="display: none;">This Book Stock already exists. <a id="UpdateIfExists">Update</a> it?</p>
 
             <div class="mb-3">
                 <button id="btnSave" class="btn btn-primary" disabled="true">Save</button>
             </div>
+
         </form>
     </div>
 </div>
