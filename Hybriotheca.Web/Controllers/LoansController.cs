@@ -173,6 +173,7 @@ namespace Hybriotheca.Web.Controllers
                     // Success.
                     TempData["Message"] =
                         $"An email was sent to <i>{user.Email}</i> regarding the Loan.";
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException ex)

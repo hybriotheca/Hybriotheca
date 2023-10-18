@@ -1,13 +1,10 @@
-﻿using Hybriotheca.Web.Data;
+﻿using System.Diagnostics;
 using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models;
 using Hybriotheca.Web.Models.Account;
-using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace Hybriotheca.Web.Controllers
 {
@@ -42,7 +39,7 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> UserProfile(string id)
         {
             var user = await _userHelper.GetUserByIdForProfileAsync(id);
-                        
+
             if (user == null)
             {
                 return RedirectToAction("Index");
@@ -133,15 +130,6 @@ namespace Hybriotheca.Web.Controllers
         public IActionResult NotFoundView()
         {
             return View("NotFound");
-        }
-
-
-        private async Task<UserViewModel?> GetModelForViewAsync(string id)
-        {
-            return await _userHelper.GetAllUsers()
-                .Where(user => user.Id == id)
-                .SelectUserViewModel()
-                .SingleOrDefaultAsync();
         }
     }
 }

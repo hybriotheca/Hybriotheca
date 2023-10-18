@@ -229,8 +229,7 @@ namespace Hybriotheca.Web.Controllers
                     " Possible entities:" +
                     $" {nameof(BookStock)}," +
                     $" {nameof(Loan)}," +
-                    $" {nameof(Rating)}," +
-                    $" {nameof(Reservation)}.";
+                    $" {nameof(Rating)}.";
             }
             else
             {
@@ -344,7 +343,6 @@ namespace Hybriotheca.Web.Controllers
 
             return View();
         }
-
 
 
         #region private helper methods
