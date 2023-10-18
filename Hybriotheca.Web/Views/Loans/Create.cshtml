@@ -1,24 +1,22 @@
 ﻿@model Hybriotheca.Web.Models.Entities.CreateLoanViewModel
 
 @{
-    ViewData["Title"] = "Create";
-    Layout = "_Layout-BACKUP";
+    ViewData["Title"] = "Create Loan";
+    Layout = "_LayoutAdminPanel";
 }
 
-<h1>Create</h1>
+<div class="w-full lg:w-8/12 p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 
-<h4>Loan</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <partial name="_CreateForm" />
-    </div>
-</div>
+    <h1 class="mb-4 text-xl font-semibold dark:text-white">
+        @ViewData["Title"]
+    </h1>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <partial name="_CreateForm" />
+
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

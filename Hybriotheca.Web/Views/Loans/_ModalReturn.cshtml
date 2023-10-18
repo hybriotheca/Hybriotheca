@@ -1,4 +1,8 @@
-﻿@model Hybriotheca.Web.Data.Entities.Loan
+﻿@model Hybriotheca.Web.Models.Entities.LoanViewModel
+
+@{
+    Layout = null;
+}
 
 <div>
     <div class="relative p-4 w-full max-w-xl h-full md:h-auto">
@@ -23,33 +27,32 @@
                         Confirm return book:
                     </h3>
 
-                    @*
-                <!-- BOOK INFO -->
-                <div class="mb-7 text-lg font-normal text-gray-500 dark:text-gray-400 relative overflow-x-auto">
-                <div class="flex justify-center items-center p-4 space-x-6 whitespace-normal">
-                <!-- COVER IMAGE -->
-                <img src="@Model.CoverImageFullPath" alt="Cover" class="@(string.IsNullOrEmpty(Model.CoverImageFullPath) ? "hidden " : "")w-20 h-auto" />
+                    <!-- BOOK INFO -->
+                    <div class="mb-7 text-lg font-normal text-gray-500 dark:text-gray-400 relative overflow-x-auto">
+                        <div class="flex justify-center items-start p-4 space-x-6 whitespace-normal">
+                            <!-- COVER IMAGE -->
+                            <img src="@Model.CoverImageFullPath" alt="Cover" class="@(string.IsNullOrEmpty(Model.CoverImageFullPath) ? "hidden " : "")w-20 h-auto" />
 
-                <div class="text-lg font-normal text-gray-500 dark:text-gray-400">
-                <!-- BOOK TITLE -->
-                <div class="text-lg font-semibold dark:text-gray-200 whitespace-normal">
-                @Model.EditionTitle
-                </div>
-                <!-- BOOK FORMAT -->
-                <div class="text-base font-normal text-gray-500 dark:text-gray-400">
-                @Model.BookFormat
-                </div>
-                <!-- Nº PAGES -->
-                <div class="text-base font-normal text-gray-500 dark:text-gray-400">
-                @(Model.ISBN ?? "ISBN n/a")
-                </div>
-                </div>
-                </div>
-                </div>
-                *@
+                            <div class="text-lg font-normal text-gray-500 dark:text-gray-400">
+                                <!-- BOOK TITLE -->
+                                <div class="text-lg font-semibold dark:text-gray-200 whitespace-normal">
+                                    @Model.BookEditionTitle
+                                </div>
+                                <!-- BOOK FORMAT -->
+                                <div class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                    @Model.BookFormat
+                                </div>
+                                <!-- Nº PAGES -->
+                                <div class="text-base font-normal text-gray-500 dark:text-gray-400">
+                                    ISBN @(Model.ISBN ?? "n/a")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     <!-- BUTTONS -->
-                    <form asp-action="ReturnBook" asp-route-loanId="@Model.ID">
+                    <form asp-action="ReturnBook" asp-route-loanId="@Model.Id">
                         <button data-modal-hide="popup-modal" type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base inline-flex items-center px-5 py-2.5 text-center mr-2">
                             Confirm
                         </button>

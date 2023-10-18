@@ -447,7 +447,7 @@ namespace Hybriotheca.Web.Controllers
         {
             if (loanId == null) return LoanNotFound();
 
-            var loan = await _loanRepository.GetByIdAsync(loanId.Value);
+            var loan = await _loanRepository.SelectViewModelAsync(loanId.Value);
             if (loan == null) return LoanNotFound();
 
             ViewBag.IsReserved = loan.IsReserved;
@@ -519,7 +519,7 @@ namespace Hybriotheca.Web.Controllers
         {
             if (loanId == null) return LoanNotFound();
 
-            var loan = await _loanRepository.GetByIdAsync(loanId.Value);
+            var loan = await _loanRepository.SelectViewModelAsync(loanId.Value);
             if (loan == null) return LoanNotFound();
 
             ViewBag.IsReturnable = loan.IsActive;

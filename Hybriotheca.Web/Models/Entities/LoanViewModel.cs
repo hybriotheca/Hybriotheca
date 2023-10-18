@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Hybriotheca.Web.Data.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Hybriotheca.Web.Models.Entities
 {
@@ -34,5 +35,12 @@ namespace Hybriotheca.Web.Models.Entities
         public bool IsActive { get; set; }
 
         public bool IsOverdue { get; set; }
+
+
+        public string CoverImageFullPath { get; set; }
+
+        public string BookFormat { get; set; }
+
+        public string? ISBN { get; set; }
     }
 }

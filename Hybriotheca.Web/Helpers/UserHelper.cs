@@ -132,7 +132,8 @@ namespace Hybriotheca.Web.Helpers
                 .Include(user => user.Loans)
                 .ThenInclude(loan => loan.BookEdition)
                 .ThenInclude(bookEdition => bookEdition.Book)
-                .Include(loan => loan.MainLibrary)
+                .Include(user => user.Loans)
+                .ThenInclude(loan => loan.Library)
                 .AsSplitQuery()
                 .SingleOrDefaultAsync(user => user.Id == id);
         }

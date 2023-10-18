@@ -1,168 +1,227 @@
 ﻿@model Hybriotheca.Web.Models.Entities.CreateLoanViewModel
 
 <form asp-action="Create">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="space-y-8">
 
-    @if (User.IsInRole("Admin"))
-    {
-        <!-- Library -->
-        <div class="mb-3">
-            <label asp-for="LibraryId" class="form-label"></label>
-            <select asp-for="LibraryId" class="form-control" asp-items="ViewBag.Libraries" oninput="checkLoan()">
-                <option disabled selected>Select library</option>
-            </select>
-            <span asp-validation-for="LibraryId" class="text-danger"></span>
-        </div>
-    }
-    else
-    {
-        <input type="hidden" asp-for="LibraryId" />
-    }
+        <div asp-validation-summary="ModelOnly" class="p-4 mb-4 text-sm font-medium text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert"></div>
 
-    <!-- Book Edition -->
-    <div class="mb-3">
-        <label asp-for="BookEditionId" class="form-label"></label>
-        <select asp-for="BookEditionId" class="form-control" asp-items="ViewBag.BookEditions" oninput="checkLoan()">
-            <option disabled selected>Select book</option>
-        </select>
-        <span asp-validation-for="BookEditionId" class="text-danger"></span>
-    </div>
-
-    <!-- User -->
-    <div class="mb-3">
-        <label asp-for="UserId" class="form-label"></label>
-        <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users" oninput="checkLoan()">
-            <option disabled selected>Select user</option>
-        </select>
-        <span asp-validation-for="UserId" class="text-danger"></span>
-    </div>
-
-    <!-- Will check out later? -->
-    <div class="mb-3 form-check">
-        <label class="form-check-label">
-            <input asp-for="WillCheckOutLater" class="form-check-input" oninput="toggleStartDate()" /> @Html.DisplayNameFor(model => model.WillCheckOutLater)
-        </label>
-    </div>
-
-    @{
-        var dateTimeUtcNow = DateTime.UtcNow.ToString("yyyy-MM-dd");
-    }
-    <!-- Start Date -->
-    <div class="mb-3" id="divStartDate" style="@(Model.WillCheckOutLater ? "" : "display: none;")">
-        <label asp-for="StartDate" class="form-label"></label>
-        <input asp-for="StartDate" min="@dateTimeUtcNow" value="@dateTimeUtcNow" class="form-control" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
-    </div>
-
-    <!-- p elements with feedback messages from ajax request checkLoan -->
-    <p id="CheckingIsBookAvailable" class="text-secondary" style="display: none">Checking availabilty...</p>
-    <p id="ErrorCheckingAvailability" class="text-warning" style="display: none">Error while checking availabilty...</p>
-    <p id="BookIsAvailable" class="text-success" style="display: none">This book is available at this Library.</p>
-    <p id="BookIsntAvailable" class="text-danger" style="display: none">This book is not available at this Library.</p>
-    <p id="LoanIsAllowed" class="text-success" style="display: none">This loan is allowed.</p>
-    <p id="LoanLimit" class="text-danger" style="display: none">This user has reached the limit of loans.</p>
-
-    <div class="mb-3">
-        <input type="submit" value="Save" id="btnSave" class="btn btn-primary" disabled="true" />
-    </div>
-
-    <script type="text/javascript">
-        const toggleStartDate = () => {
-            if ($('#WillCheckOutLater').is(':checked')) {
-                $('#divStartDate').show();
-            }
-            else {
-                $('#divStartDate').hide();
-            }
+        @if (User.IsInRole("Admin"))
+        {
+            <!-- LIBRARY -->
+            <div>
+                <label asp-for="LibraryId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+                <select asp-for="LibraryId" asp-items="ViewBag.Libraries" oninput="checkLoan()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option disabled selected>Select library</option>
+                </select>
+                <span asp-validation-for="LibraryId" class="text-red-800 dark:text-red-400 font-medium"></span>
+            </div>
         }
-        
-        const checkLoan = () => {
-            
-            $('#btnSave').attr('disabled', true);
+        else
+        {
+            <input type="hidden" asp-for="LibraryId" />
+        }
 
-            $('#ErrorCheckingAvailability').hide();
-            $('#BookIsAvailable').hide();
-            $('#BookIsntAvailable').hide();
-            $('#LoanIsAllowed').hide();
-            $('#LoanLimit').hide();
+        <!-- BOOK EDITION -->
+        <div>
+            <label asp-for="BookEditionId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+            <select asp-for="BookEditionId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" asp-items="ViewBag.BookEditions" oninput="checkLoan()">
+                <option disabled selected>Select book</option>
+            </select>
+            <span asp-validation-for="BookEditionId" class="text-red-800 dark:text-red-400 font-medium"></span>
+        </div>
 
-            var libraryId = $('#LibraryId').val();
-            var bookEditionId = $('#BookEditionId').val();
+        <!-- USER -->
+        <div>
+            <label asp-for="UserId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+            <select asp-for="UserId" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" asp-items="ViewBag.Users" oninput="checkLoan()">
+                <option disabled selected>Select user</option>
+            </select>
+            <span asp-validation-for="UserId" class="text-red-800 dark:text-red-400 font-medium"></span>
+        </div>
 
-            if (libraryId < 1 || bookEditionId < 1) {
-                var userId = $('#UserId').val() ?? '';
-                if (userId.length == 36) {
-                    $('#CheckingIsBookAvailable').show();
-                    hasUserReachedLoanLimit(userId, false);
+        <!-- WILL CHECKOUT LATER? -->
+        <div class="flex items-center pl-4 border border-gray-200 rounded dark:border-gray-700">
+            <input asp-for="WillCheckOutLater" oninput="toggleStartDate()" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            <label asp-for="WillCheckOutLater" class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                @Html.DisplayNameFor(model => model.WillCheckOutLater)
+            </label>
+        </div>
+
+
+        <!-- START DATE -->
+        @{
+            var dateTimeUtcNow = DateTime.UtcNow.ToString("yyyy-MM-dd");
+        }
+        <style>
+            input#start-date {
+                display: inline-block;
+                position: relative;
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                background: transparent;
+                bottom: 0;
+                color: transparent;
+                cursor: pointer;
+                height: auto;
+                left: 0;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: auto;
+            }
+        </style>
+
+        <div id="divStartDate" class="@(Model.WillCheckOutLater ? "" : "hidden")">
+            <label asp-for="StartDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a date to pick up the book</label>
+            <div class="relative max-w-sm">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none z-10">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                    </svg>
+                </div>
+                <input asp-for="StartDate" type="date" id="start-date" name="StartDate" min="@dateTimeUtcNow" value="@dateTimeUtcNow" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                <span asp-validation-for="StartDate" class="text-red-800 dark:text-red-400"></span>
+            </div>
+        </div>
+
+        <!-- AJAX FEEDBACK MESSAGE ELEMENTS -->
+
+        <!-- INFO -->
+        <div id="CheckingIsBookAvailable" class="p-4 mb-4 text-sm font-medium text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" style="display: none" role="alert">
+            Checking availabilty...
+        </div>
+
+        <!-- WARNING -->
+        <div id="ErrorCheckingAvailability" class="p-4 mb-4 text-sm font-medium text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800" style="display: none" role="alert">
+            Error while checking availabilty...
+        </div>
+
+        <!-- SUCCESS -->
+        <div id="BookIsAvailable" class="p-4 mb-4 text-sm font-medium text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" style="display: none" role="alert">
+            This book is available at this Library.
+        </div>
+        <div id="LoanIsAllowed" class="p-4 mb-4 text-sm font-medium text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" style="display: none" role="alert">
+            This loan is allowed.
+        </div>
+
+        <!-- DANGER -->
+        <div id="BookIsntAvailable" class="p-4 mb-4 text-sm font-medium text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" style="display: none" role="alert">
+            This book is not available at this Library.
+        </div>
+        <div id="LoanLimit" class="p-4 mb-4 text-sm font-medium text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" style="display: none" role="alert">
+            This user has reached the limit of loans.
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="bottom-0 left-0 flex justify-center w-full pb-4 space-x-4 md:px-4">
+            <!-- SAVE -->
+            <input type="submit" value="Save" id="btnSave" class="cursor-pointer disabled:bg-blue-400 disabled:dark:bg-blue-500 disabled:cursor-not-allowed text-white w-full justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" disabled="true" />
+
+            <!-- CANCEL -->
+            <a asp-action="Index" class="inline-flex w-full justify-center text-gray-500 items-center bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                <svg aria-hidden="true" class="w-5 h-5 -ml-1 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                Cancel
+            </a>
+        </div>
+
+        <script type="text/javascript">
+            const toggleStartDate = () => {
+                if ($('#WillCheckOutLater').is(':checked')) {
+                    $('#divStartDate').show();
                 }
                 else {
-                    $('#CheckingIsBookAvailable').hide();
+                    $('#divStartDate').hide();
                 }
-                return;
-            }
-            else {
-                $('#CheckingIsBookAvailable').show();
             }
 
-            isBookAvailable(libraryId, bookEditionId);
-        }
+            const checkLoan = () => {
 
-        function isBookAvailable(libraryId, bookEditionId) {
-            $.ajax({
-                url: '@Url.Action("CheckIsBookAvailable", "BooksInStock")',
-                type: 'POST',
-                dataType: 'JSON',
-                data: { libraryId: libraryId, bookEditionId: bookEditionId },
-                success: function (response) {
-                    $('#CheckingIsBookAvailable').hide();
-                    if (response) {
-                        var userId = $('#UserId').val() ?? '';
-                        if (userId.length == 36) {
-                            hasUserReachedLoanLimit(userId, true);
-                        }
-                        else{
-                            $('#BookIsAvailable').show();
-                        }
+                $('#btnSave').attr('disabled', true);
+
+                $('#ErrorCheckingAvailability').hide();
+                $('#BookIsAvailable').hide();
+                $('#BookIsntAvailable').hide();
+                $('#LoanIsAllowed').hide();
+                $('#LoanLimit').hide();
+
+                var libraryId = $('#LibraryId').val();
+                var bookEditionId = $('#BookEditionId').val();
+
+                if (libraryId < 1 || bookEditionId < 1) {
+                    var userId = $('#UserId').val() ?? '';
+                    if (userId.length == 36) {
+                        $('#CheckingIsBookAvailable').show();
+                        hasUserReachedLoanLimit(userId, false);
                     }
                     else {
-                        $('#BookIsntAvailable').show();
+                        $('#CheckingIsBookAvailable').hide();
                     }
-                },
-                error: function () {
-                    $('#CheckingIsBookAvailable').hide();
-                    $('#ErrorCheckingAvailability').show();
+                    return;
                 }
-            });
-        }
+                else {
+                    $('#CheckingIsBookAvailable').show();
+                }
 
-        function hasUserReachedLoanLimit(userId, enableSave) {
-            $.ajax({
-                url: '@Url.Action("HasUserReachedLoanLimit", "Loans")',
-                type: 'POST',
-                dataType: 'JSON',
-                data: { userId: userId },
-                success: function (response) {
-                    $('#CheckingIsBookAvailable').hide();
-                    if (response == false) {
-                        if (enableSave) {
-                            $('#btnSave').attr('disabled', false);
+                isBookAvailable(libraryId, bookEditionId);
+            }
 
-                            $('#LoanIsAllowed').show();
+            function isBookAvailable(libraryId, bookEditionId) {
+                $.ajax({
+                    url: '@Url.Action("CheckIsBookAvailable", "BooksInStock")',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: { libraryId: libraryId, bookEditionId: bookEditionId },
+                    success: function (response) {
+                        $('#CheckingIsBookAvailable').hide();
+                        if (response) {
+                            var userId = $('#UserId').val() ?? '';
+                            if (userId.length == 36) {
+                                hasUserReachedLoanLimit(userId, true);
+                            }
+                            else {
+                                $('#BookIsAvailable').show();
+                            }
                         }
+                        else {
+                            $('#BookIsntAvailable').show();
+                        }
+                    },
+                    error: function () {
+                        $('#CheckingIsBookAvailable').hide();
+                        $('#ErrorCheckingAvailability').show();
                     }
-                    else if (response == true) {
-                        $('#LoanLimit').show();
-                    }
-                    else {
-                        alert(response);
-                    }
-                },
-                error: function () {
-                    $('#CheckingIsBookAvailable').hide();
-                    $('#ErrorCheckingAvailability').show();
-                }
-            });
-        }
-    </script>
+                });
+            }
 
+            function hasUserReachedLoanLimit(userId, enableSave) {
+                $.ajax({
+                    url: '@Url.Action("HasUserReachedLoanLimit", "Loans")',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: { userId: userId },
+                    success: function (response) {
+                        $('#CheckingIsBookAvailable').hide();
+                        if (response == false) {
+                            if (enableSave) {
+                                $('#btnSave').attr('disabled', false);
+
+                                $('#LoanIsAllowed').show();
+                            }
+                        }
+                        else if (response == true) {
+                            $('#LoanLimit').show();
+                        }
+                        else {
+                            alert(response);
+                        }
+                    },
+                    error: function () {
+                        $('#CheckingIsBookAvailable').hide();
+                        $('#ErrorCheckingAvailability').show();
+                    }
+                });
+            }
+        </script>
+    </div>
 </form>

@@ -2,13 +2,103 @@
 
 @{
     ViewData["Title"] = "Loans";
-    Layout = "_Layout-BACKUP";
+    Layout = "_LayoutAdminPanel";
 }
 
-<h1>Loans</h1>
-<p>@Html.Raw(TempData["Message"])</p>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<!-- HEADER -->
+<div class=" pb-4 block sm:flex items-center justify-between">
+    <div class="w-full mb-1">
+        <div class="mb-4">
+            <!-- BREADCRUMB -->
+            <nav class="flex mb-5" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
+                    <li class="inline-flex items-center">
+                        <a href="/AdminPanel" class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                            <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                            </svg>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                        <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page">
+                            Loans
+                        </span>
+                    </li>
+                </ol>
+            </nav>
+            <!-- SECTION -->
+            <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
+                @ViewData["Title"]
+            </h1>
+        </div>
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+                <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                </svg>
+                <span class="sr-only">Info</span>
+                <div>
+                    @Html.Raw(TempData["Message"])
+                </div>
+            </div>
+        }
+
+        <div class="items-end justify-between gap-4 block sm:flex md:divide-x md:divide-gray-100 dark:divide-gray-700">
+            <div class="flex items-center mb-4 sm:mb-0">
+            </div>
+            <!-- ADD NEW BUTTON -->
+            <a asp-action="Create" class="inline-flex items-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                </svg>
+                Create New Loan
+            </a>
+        </div>
+    </div>
+</div>
 
 <partial name="_IndexTable@(ViewBag.Role)" />
+
+@section Scripts{
+    @if (ViewBag.Role == "Admin")
+    {
+        <script type="text/javascript">
+            const targetEl = document.getElementById('modal-delete');
+            const options = {
+                backdrop: 'dynamic',
+                backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-50',
+                closable: true
+            }
+            var modal = new Modal(targetEl, options);
+
+            htmx.on('htmx:afterSwap', () => {
+
+                modal.show();
+
+            });
+        </script>
+    }
+    else if (ViewBag.Role == "Librarian")
+    {
+        <script type="text/javascript">
+            const targetEl = document.getElementById('modal-actions');
+            const options = {
+                backdrop: 'dynamic',
+                backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-50',
+                closable: true
+            }
+            var modal = new Modal(targetEl, options);
+
+            htmx.on('htmx:afterSwap', () => {
+
+                modal.show();
+
+            });
+        </script>
+    }
+}

@@ -51,6 +51,10 @@ namespace Hybriotheca.Web.Data
                 IsOverdue =
                     loan.Status == "Active"
                     && EF.Functions.DateDiffDay(DateTime.UtcNow, loan.ReturnDate) < 0,
+                CoverImageFullPath = loan.BookEdition.CoverImageFullPath,
+                BookFormat = loan.BookEdition.BookFormat,
+                ISBN = loan.BookEdition.ISBN,
+
             });
         }
 

@@ -1,22 +1,18 @@
 ﻿@model Hybriotheca.Web.Data.Entities.Loan
 
 @{
-    ViewData["Title"] = "Edit";
-    Layout = "_Layout-BACKUP";
+    ViewData["Title"] = "Edit Loan";
+    Layout = "_LayoutAdminPanel";
 }
 
-<h1>Edit</h1>
+<div class="w-full lg:w-8/12 p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
 
-<h4>Loan</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <partial name="_EditForm" />
-    </div>
-</div>
+    <h1 class="mb-4 text-xl font-semibold dark:text-white">
+        @ViewData["Title"]
+    </h1>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <partial name="_EditForm" />
+
 </div>
 
 @section Scripts {

@@ -102,7 +102,7 @@
                             <th scope="col" class="whitespace-nowrap w-[1%] p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 E-pub@*@Html.DisplayNameFor(model => model.IsAvailableOnline)*@
                             </th>
-                            <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                            <th scope="col" class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-400">
                                 Actions
                             </th>
                         </tr>
@@ -121,7 +121,7 @@
                                     </div>
                                 </td>
                                 <!-- ISBN -->
-                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <td class="w-30 p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     @(book.ISBN ?? "ISBN n/a")
                                 </td>
                                 <!-- BOOK -->
@@ -178,7 +178,7 @@
                                     </div>
                                 </td>
                                 <!-- ACTIONS -->
-                                <td class="p-4 space-x-2 whitespace-nowrap">
+                                <td class="text-center p-4 space-x-2 whitespace-nowrap">
                                     <a asp-action="Edit"
                                        asp-route-id="@book.ID"
                                        data-tooltip-target="tooltip-edit"
@@ -217,15 +217,13 @@
 </div>
 
 <!-- MODAL DELETE-->
-<div id="modal-delete" class="hidden absolute h-full w-full inset-0 z-[100]"></div>
+<div id="modal-delete" class="hidden fixed h-full w-full inset-0 z-[100]"></div>
 
 
 @section Scripts{
     <script type="text/javascript">
 
         //new DataTable('#example');
-
-
 
         const targetEl = document.getElementById('modal-delete');
         const options = {

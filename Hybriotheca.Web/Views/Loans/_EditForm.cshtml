@@ -1,59 +1,121 @@
 ﻿@model Hybriotheca.Web.Data.Entities.Loan
 
 <form asp-action="Edit">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input asp-for="ID" type="hidden" />
-    
-    <div class="mb-3">
-        <label asp-for="LibraryID" class="form-label"></label>
-        <select asp-for="LibraryID" class="form-control" asp-items="ViewBag.Libraries">
-            <option>Select library</option>
-        </select>
-        <span asp-validation-for="LibraryID" class="text-danger"></span>
-    </div>
+    <div class="space-y-8">
 
-    <div class="mb-3">
-        <label asp-for="BookEditionID" class="form-label"></label>
-        <select asp-for="BookEditionID" class="form-control" asp-items="ViewBag.BookEditions">
-            <option>Select book</option>
-        </select>
-        <span asp-validation-for="BookEditionID" class="text-danger"></span>
-    </div>
+        <div asp-validation-summary="ModelOnly" class="p-4 mb-4 text-sm font-medium text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert"></div>
 
-    <div class="mb-3">
-        <label asp-for="UserID" class="form-label"></label>
-        <select asp-for="UserID" class="form-control" asp-items="ViewBag.Users">
-            <option>Select user</option>
-        </select>
-        <span asp-validation-for="UserID" class="text-danger"></span>
-    </div>
+        <input asp-for="ID" type="hidden" />
 
-    <div class="mb-3">
-        <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status" asp-items="ViewBag.BookLoanStatuses" class="form-control" oninput="toggleReturnDate()"></select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
+        <!-- LIBRARY -->
+        <div>
+            <label asp-for="LibraryID" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+            <select asp-for="LibraryID" asp-items="ViewBag.Libraries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option disabled selected>Select library</option>
+            </select>
+            <span asp-validation-for="LibraryID" class="text-red-800 dark:text-red-400 font-medium"></span>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="StartDate" class="form-label"></label>
-        <input asp-for="StartDate" type="date" class="form-control" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
-    </div>
+        <!-- BOOK EDITION -->
+        <div>
+            <label asp-for="BookEditionID" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+            <select asp-for="BookEditionID" asp-items="ViewBag.BookEditions" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option disabled selected>Select book</option>
+            </select>
+            <span asp-validation-for="BookEditionID" class="text-red-800 dark:text-red-400 font-medium"></span>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="TermLimitDate" class="form-label"></label>
-        <input asp-for="TermLimitDate" type="date" class="form-control" />
-        <span asp-validation-for="TermLimitDate" class="text-danger"></span>
-    </div>
+        <!-- USER -->
+        <div>
+            <label asp-for="UserID" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+            <select asp-for="UserID" asp-items="ViewBag.Users" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option disabled selected>Select user</option>
+            </select>
+            <span asp-validation-for="UserID" class="text-red-800 dark:text-red-400 font-medium"></span>
+        </div>
 
-    <div class="mb-3" id="divReturnDate" style="@(Model.IsReturned ? "" : "display: none;")">
-        <label asp-for="ReturnDate" class="form-label"></label>
-        <input asp-for="ReturnDate" type="date" class="form-control" />
-        <span asp-validation-for="ReturnDate" class="text-danger"></span>
-    </div>
-    
-    <div class="mb-3">
-        <input type="submit" value="Save" class="btn btn-primary" />
+        <!-- STATUS -->
+        <div>
+            <label asp-for="Status" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"></label>
+            <select asp-for="Status" asp-items="ViewBag.BookLoanStatuses" oninput="toggleReturnDate()" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></select>
+            <span asp-validation-for="Status" class="text-red-800 dark:text-red-400"></span>
+        </div>
+
+        <!-- DATEPICKERS -->
+        <style>
+            input#start-date {
+                display: inline-block;
+                position: relative;
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                background: transparent;
+                bottom: 0;
+                color: transparent;
+                cursor: pointer;
+                height: auto;
+                left: 0;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: auto;
+            }
+        </style>
+
+        <!-- START DATE -->
+        <div>
+            <label asp-for="StartDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start date</label>
+            <div class="relative max-w-sm">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none z-10">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                    </svg>
+                </div>
+                <input asp-for="StartDate" type="date" id="start-date" name="StartDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                <span asp-validation-for="StartDate" class="text-red-800 dark:text-red-400"></span>
+            </div>
+        </div>
+
+        <!-- TERM LIMIT DATE -->
+        <div>
+            <label asp-for="TermLimitDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Term limit date</label>
+            <div class="relative max-w-sm">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none z-10">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                    </svg>
+                </div>
+                <input asp-for="TermLimitDate" type="date" id="term-limit-date" name="TermLimitDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                <span asp-validation-for="TermLimitDate" class="text-red-800 dark:text-red-400"></span>
+            </div>
+        </div>
+
+        <!-- RETURN DATE -->
+        <div id="divReturnDate" class="@(Model.IsReturned ? "" : "hidden")">
+            <label asp-for="ReturnDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Returned date</label>
+            <div class="relative max-w-sm">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none z-10">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                    </svg>
+                </div>
+                <input asp-for="ReturnDate" type="date" id="term-limit-date" name="ReturnDate" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                <span asp-validation-for="ReturnDate" class="text-red-800 dark:text-red-400"></span>
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="bottom-0 left-0 flex justify-center w-full pb-4 space-x-4 md:px-4">
+            <!-- SAVE -->
+            <input type="submit" value="Save" class="cursor-pointer disabled:bg-blue-400 disabled:dark:bg-blue-500 disabled:cursor-not-allowed text-white w-full justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" />
+
+            <!-- CANCEL -->
+            <a asp-action="Index" class="inline-flex w-full justify-center text-gray-500 items-center bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                <svg aria-hidden="true" class="w-5 h-5 -ml-1 sm:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                Cancel
+            </a>
+        </div>
+
     </div>
 </form>
 

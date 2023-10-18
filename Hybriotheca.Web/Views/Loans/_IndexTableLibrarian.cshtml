@@ -1,50 +1,141 @@
 ﻿@model IEnumerable<Hybriotheca.Web.Models.Entities.LoanViewModel>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.UserEmail)</th>
-            <th>@Html.DisplayNameFor(model => model.LibraryName)</th>
-            <th>@Html.DisplayNameFor(model => model.BookEditionTitle)</th>
-            <th>@Html.DisplayNameFor(model => model.StartDate)</th>
-            <th>@Html.DisplayNameFor(model => model.TermLimitDate)</th>
-            <th>@Html.DisplayNameFor(model => model.Status)</th>
-            <th><!-- Hand over / Return book --></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserEmail)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LibraryName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BookEditionTitle)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TermLimitDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status)
-                </td>
-                <td>
-                    @if (item.IsReserved)
-                    {
-                        <a asp-action="HandOver" asp-route-loanId="@item.Id">Hand over</a>
-                    }
-                    else if (item.IsActive)
-                    {
-                        <a asp-action="ReturnBook" asp-route-loanId="@item.Id">Return</a>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- CONTAINERS -->
+<div class="flex flex-col shadow-md">
+    <div class="overflow-x-auto">
+        <div class="inline-block min-w-full align-middle">
+            <div class="overflow-hidden shadow rounded-lg">
+
+                <!-- TABLE -->
+                <table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
+
+                    <!-- TABLE HEAD -->
+                    <thead class="bg-gray-200 dark:bg-gray-700">
+                        <tr>
+                            <!-- USER EMAIL -->
+                            <th class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                @Html.DisplayNameFor(model => model.UserEmail)
+                            </th>
+                            <!-- LIBRARY NAME -->
+                            <th class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                @Html.DisplayNameFor(model => model.LibraryName)
+                            </th>
+                            <!-- BOOK TITLE -->
+                            <th class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                @Html.DisplayNameFor(model => model.BookEditionTitle)
+                            </th>
+                            <!-- START DATE -->
+                            <th class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                @Html.DisplayNameFor(model => model.StartDate)
+                            </th>
+                            <!-- TERM LIMIT DATE -->
+                            <th class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                @Html.DisplayNameFor(model => model.TermLimitDate)
+                            </th>
+                            <!-- STATUS -->
+                            <th class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                @Html.DisplayNameFor(model => model.Status)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <!-- TABLE BODY -->
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        @foreach (var item in Model)
+                        {
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <!-- USER EMAIL -->
+                                <td class="p-4 text-base text-gray-900 dark:text-white">
+                                    @Html.DisplayFor(modelItem => item.UserEmail)
+                                </td>
+                                <!-- LIBRARY -->
+                                <td class="max-w-xs p-4 text-base font-medium text-gray-900 dark:text-white">
+                                    @Html.DisplayFor(modelItem => item.LibraryName)
+                                </td>
+                                <!-- BOOK TITLE -->
+                                <td class="p-4 text-base font-medium text-gray-900 dark:text-white">
+                                    @Html.DisplayFor(modelItem => item.BookEditionTitle)
+                                </td>
+                                <!-- START DATE -->
+                                <td class="p-4 text-base text-gray-900 dark:text-white">
+                                    @Html.DisplayFor(modelItem => item.StartDate)
+                                </td>
+                                <!-- TERM LIMIT DATE -->
+                                <td class="p-4 text-base text-gray-900 dark:text-white">
+                                    @Html.DisplayFor(modelItem => item.TermLimitDate)
+                                </td>
+                                <!-- STATUS -->
+                                @if (item.Status == "Active")
+                                {
+                                    <td class="p-4 text-base font-medium text-gray-900 dark:text-white">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </span>
+                                    </td>
+                                }
+                                @if (item.Status == "Reserved")
+                                {
+                                    <td class="p-4 text-base font-medium text-gray-900 dark:text-white">
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </span>
+                                    </td>
+                                }
+                                @if (item.Status == "Returned")
+                                {
+                                    <td class="p-4 text-base font-medium text-gray-900 dark:text-white">
+                                        <span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </span>
+                                    </td>
+                                }
+                                @if (item.Status == "Overdue")
+                                {
+                                    <td class="p-4 text-base font-medium text-gray-900 dark:text-white">
+                                        <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </span>
+                                    </td>
+                                }
+                                <!-- ACTIONS -->
+                                <td class="text-center whitespace-nowrap">
+                                    @if (item.IsReserved)
+                                    {
+                                        <a hx-get
+                                           hx-action="HandOver"
+                                           hx-route-loanId="@item.Id"
+                                           hx-target="#modal-actions"
+                                           class="cursor-pointer inline-flex items-center px-5 py-2.5 mr-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                            Hand over
+                                        </a>
+                                        @* <a asp-action="HandOver" asp-route-loanId="@item.Id" class="cursor-pointer inline-flex items-center px-5 py-2.5 mr-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                            Hand over
+                                        </a> *@
+                                    }
+                                    else if (item.IsActive)
+                                    {
+                                        <a hx-get
+                                           hx-action="ReturnBook"
+                                           hx-route-loanId="@item.Id"
+                                           hx-target="#modal-actions"
+                                           class="cursor-pointer focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                            Return Book
+                                        </a>
+                                        @* <a asp-action="ReturnBook" asp-route-loanId="@item.Id" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                            Return Book
+                                        </a> *@
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ACTIONS-->
+<div id="modal-actions" class="hidden fixed h-full w-full inset-0 z-[100]"></div>

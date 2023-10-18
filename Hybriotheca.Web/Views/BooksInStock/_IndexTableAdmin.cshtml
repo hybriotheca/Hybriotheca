@@ -1,47 +1,96 @@
 ﻿@model IEnumerable<Hybriotheca.Web.Models.Entities.BookStockViewModel>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Library</th>
-            <th>Book edition</th>
-            <!--<th> Decrement </th>-->
-            <th colspan="3" style="text-align: center;">Quantity</th>
-            <!--<th> Increment </th>-->
-            <th>Available</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LibraryName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BookEditionTitle)
-                </td>
-                <td>
-                    <a title="decrement" class="btn btn-warning" onclick="crement('dec', @item.Id)">-</a>
-                </td>
-                <td>
-                    <span id="quantity-@(item.Id)">@Html.DisplayFor(modelItem => item.TotalStock)</span>
-                </td>
-                <td>
-                    <a title="increment" class="btn btn-success" onclick="crement('inc', @item.Id)">+</a>
-                </td>
-                <td>
-                    <span id="available-@(item.Id)">@Html.DisplayFor(modelItem => item.AvailableStock)</span>
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- CONTAINERS -->
+<div class="flex flex-col shadow-md">
+    <div class="overflow-x-auto">
+        <div class="inline-block min-w-full align-middle">
+            <div class="overflow-hidden shadow rounded-lg">
+
+                <!-- TABLE -->
+                <table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-600">
+
+                    <!-- TABLE HEAD -->
+                    <thead class="bg-gray-200 dark:bg-gray-700">
+                        <tr>
+                            <!-- LIBRARY -->
+                            <th class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                Library
+                            </th>
+                            <!-- BOOK EDITION -->
+                            <th class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                Book edition
+                            </th>
+                            <!-- TOTAL STOCK -->
+                            <th class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-400">
+                                Total Stock
+                            </th>
+                            <!-- AVAILABLE -->
+                            <th class="p-4 text-xs font-medium text-center text-gray-500 uppercase dark:text-gray-400">
+                                Available
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <!-- TABLE BODY -->
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        @foreach (var item in Model)
+                        {
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                <!-- LIBRARY -->
+                                <td class="w-80 p-4 text-base font-medium text-gray-900 dark:text-white">
+                                    @Html.DisplayFor(modelItem => item.LibraryName)
+                                </td>
+                                <!-- BOOK -->
+                                <td class="p-4 text-base font-medium text-gray-900 dark:text-white">
+                                    @Html.DisplayFor(modelItem => item.BookEditionTitle)
+                                </td>
+                                <!-- TOTAL STOCK -->
+                                <td>
+                                    <div class="flex justify-center justify-items-center items-center text-base font-medium text-gray-900 whitespace-nowrap dark:text-white select-none">
+                                        <!-- DECREMENT -->
+                                        <a title="decrement" class="cursor-pointer py-2 px-4 text-lg font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" onclick="crement('dec', @item.Id)">-</a>
+                                        <!-- QUANTITY -->
+                                        <span id="quantity-@(item.Id)" class="block w-20 text-center py-2.5 px-5">
+                                            @Html.DisplayFor(modelItem => item.TotalStock)
+                                        </span>
+                                        <!-- INCREMENT -->
+                                        <a title="increment" class="cursor-pointer py-2 px-4 text-lg font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" onclick="crement('inc', @item.Id)">+</a>
+                                    </div>
+                                </td>
+                                <!-- AVAILABLE STOCK -->
+                                <td class="p-4 text-base text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <span id="available-@(item.Id)">@Html.DisplayFor(modelItem => item.AvailableStock)</span>
+                                </td>
+                                <!-- ACTIONS -->
+                                <td class="text-center">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="cursor-pointer inline-flex items-center px-3 py-3 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+                                    </a>
+                                    @* <a asp-action="Delete" asp-route-id="@item.Id" class="cursor-pointer inline-flex items-center px-3 py-3 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                    </a> *@
+                                    <a hx-get
+                                       hx-action="Delete"
+                                       hx-route-id="@item.Id"
+                                       hx-target="#modal-delete"
+                                       class="cursor-pointer inline-flex items-center px-3 py-3 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                    </a>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DELETE-->
+<div id="modal-delete" class="hidden fixed h-full w-full inset-0 z-[100]"></div>
 
 <script type="text/javascript">
     const crement = (action, id) => {
@@ -71,10 +120,10 @@
             data: { bookStockId: bookStockId },
             success: function (response) {
                 if (response.succeded) {
-                    
+
                     // Update current total stock.
                     $('#quantity-' + bookStockId).text(response.totalStock);
-                    
+
                     // Update current available stock.
                     $('#available-' + bookStockId).text(response.availableStock);
 

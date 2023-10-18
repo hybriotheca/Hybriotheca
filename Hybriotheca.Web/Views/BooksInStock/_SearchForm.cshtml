@@ -1,24 +1,24 @@
 ﻿@model Hybriotheca.Web.Models.Entities.BookStockViewModel
 
 <form asp-action="Index" method="GET">
-    <div class="row" style="margin: 8px; border: 4px solid gray; padding: 16px;">
+    <div class="grid grid-cols-2 gap-4">
         
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Library</label>
-            <select asp-for="LibraryID" name="LibraryID" asp-items="ViewBag.Libraries" class="form-control">
-                <option value="">Search library</option>
+        <div class="">
+            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Library</label>
+            <select asp-for="LibraryID" name="LibraryID" asp-items="ViewBag.Libraries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option value="">All libraries</option>
             </select>
         </div>
 
-        <div class="col-md-6 mb-3">
-            <label class="form-label">BookEdition</label>
-            <select asp-for="BookEditionID" name="BookEditionID" asp-items="ViewBag.BookEditions" class="form-control">
-                <option value="">Search book title</option>
+        <div class="">
+            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">BookEdition</label>
+            <select asp-for="BookEditionID" name="BookEditionID" asp-items="ViewBag.BookEditions" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option value="">All book titles</option>
             </select>
         </div>
 
-        <div class="mb-3">
-            <button class="btn btn-primary">Search</button>
+        <div class="col-span-2">
+            <button class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Search</button>
         </div>
 
     </div>
