@@ -22,6 +22,7 @@ namespace Hybriotheca.Web.Helpers.Interfaces
         Task<AppUser?> GetUserByEmailAsync(string email);
         Task<AppUser?> GetUserByIdAsync(string id);
         Task<AppUser?> GetUserByIdForProfileAsync(string id);
+        Task<AppUser?> GetUserByIdForLoanAsync(string id);
         Task<string?> GetUserRoleAsync(string userEmail);
         Task<bool> IsConstrainedAsync(string id);
         Task<bool> IsThereAnyOtherAdminAsync(string id);

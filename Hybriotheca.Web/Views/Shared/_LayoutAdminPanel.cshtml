@@ -38,7 +38,7 @@
     </script>
 
 </head>
-<body class="flex flex-col h-full bg-white dark:bg-gray-900">
+<body class="flex flex-col h-full bg-white dark:bg-gray-900 overflow-x-hidden">
 
     <div class="grow antialiased bg-gray-50 dark:bg-gray-900">
 
@@ -127,46 +127,19 @@
                             </span>
                             <span class="block text-sm text-gray-500 truncate dark:text-gray-400">@this.User.Identity.Name</span>
                         </div>
-                        @if (this.User.IsInRole("Admin"))
-                        {
-                            <div class="py-2">
-                                <ul class="" aria-labelledby="user-menu-button">
-                                    <li>
-                                        <a asp-area="" asp-controller="Home" asp-action="Index" class="group flex items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                            <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18" >
-                                                <path d="M16.555 5.412a8.028 8.028 0 00-3.503-2.81 14.899 14.899 0 011.663 4.472 8.547 8.547 0 001.84-1.662zM13.326 7.825a13.43 13.43 0 00-2.413-5.773 8.087 8.087 0 00-1.826 0 13.43 13.43 0 00-2.413 5.773A8.473 8.473 0 0010 8.5c1.18 0 2.304-.24 3.326-.675zM6.514 9.376A9.98 9.98 0 0010 10c1.226 0 2.4-.22 3.486-.624a13.54 13.54 0 01-.351 3.759A13.54 13.54 0 0110 13.5c-1.079 0-2.128-.127-3.134-.366a13.538 13.538 0 01-.352-3.758zM5.285 7.074a14.9 14.9 0 011.663-4.471 8.028 8.028 0 00-3.503 2.81c.529.638 1.149 1.199 1.84 1.66zM17.334 6.798a7.973 7.973 0 01.614 4.115 13.47 13.47 0 01-3.178 1.72 15.093 15.093 0 00.174-3.939 10.043 10.043 0 002.39-1.896zM2.666 6.798a10.042 10.042 0 002.39 1.896 15.196 15.196 0 00.174 3.94 13.472 13.472 0 01-3.178-1.72 7.973 7.973 0 01.615-4.115zM10 15c.898 0 1.778-.079 2.633-.23a13.473 13.473 0 01-1.72 3.178 8.099 8.099 0 01-1.826 0 13.47 13.47 0 01-1.72-3.178c.855.151 1.735.23 2.633.23zM14.357 14.357a14.912 14.912 0 01-1.305 3.04 8.027 8.027 0 004.345-4.345c-.953.542-1.971.981-3.04 1.305zM6.948 17.397a8.027 8.027 0 01-4.345-4.345c.953.542 1.971.981 3.04 1.305a14.912 14.912 0 001.305 3.04z" />
-                                            </svg>
-                                            Website
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        }
+                        <div class="py-2">
+                            <ul class="" aria-labelledby="user-menu-button">
+                                <li>
+                                    <a asp-area="" asp-controller="Home" asp-action="Index" class="group flex items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                        <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
+                                            <path d="M16.555 5.412a8.028 8.028 0 00-3.503-2.81 14.899 14.899 0 011.663 4.472 8.547 8.547 0 001.84-1.662zM13.326 7.825a13.43 13.43 0 00-2.413-5.773 8.087 8.087 0 00-1.826 0 13.43 13.43 0 00-2.413 5.773A8.473 8.473 0 0010 8.5c1.18 0 2.304-.24 3.326-.675zM6.514 9.376A9.98 9.98 0 0010 10c1.226 0 2.4-.22 3.486-.624a13.54 13.54 0 01-.351 3.759A13.54 13.54 0 0110 13.5c-1.079 0-2.128-.127-3.134-.366a13.538 13.538 0 01-.352-3.758zM5.285 7.074a14.9 14.9 0 011.663-4.471 8.028 8.028 0 00-3.503 2.81c.529.638 1.149 1.199 1.84 1.66zM17.334 6.798a7.973 7.973 0 01.614 4.115 13.47 13.47 0 01-3.178 1.72 15.093 15.093 0 00.174-3.939 10.043 10.043 0 002.39-1.896zM2.666 6.798a10.042 10.042 0 002.39 1.896 15.196 15.196 0 00.174 3.94 13.472 13.472 0 01-3.178-1.72 7.973 7.973 0 01.615-4.115zM10 15c.898 0 1.778-.079 2.633-.23a13.473 13.473 0 01-1.72 3.178 8.099 8.099 0 01-1.826 0 13.47 13.47 0 01-1.72-3.178c.855.151 1.735.23 2.633.23zM14.357 14.357a14.912 14.912 0 01-1.305 3.04 8.027 8.027 0 004.345-4.345c-.953.542-1.971.981-3.04 1.305zM6.948 17.397a8.027 8.027 0 01-4.345-4.345c.953.542 1.971.981 3.04 1.305a14.912 14.912 0 001.305 3.04z" />
+                                        </svg>
+                                        Website
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                         <ul class="py-2" aria-labelledby="user-menu-button">
-                            <li>
-                                <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                    <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 18">
-                                        <path d="M7 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm2 1H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-                                    </svg>
-                                    My Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                    <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
-                                        <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z" />
-                                    </svg>
-                                    My Loans
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                    <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.75 4H19M7.75 4a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 4h2.25m13.5 6H19m-2.25 0a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 10h11.25m-4.5 6H19M7.75 16a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 16h2.25" />
-                                    </svg>
-                                    Settings
-                                </a>
-                            </li>
                             <li>
                                 <a asp-area="" asp-controller="Account" asp-action="Logout" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                                     <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 16">
@@ -177,18 +150,18 @@
                             </li>
                         </ul>
 
-                    </div>                    
+                    </div>
                 </div>
 
             </div>
         </nav>
 
-        @* <!-- Sidebar --> *@
+        @* <!-- SIDEBAR --> *@
         <aside class="fixed top-0 left-0 z-40 w-64 h-screen pt-14 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
                aria-label="Sidenav"
                id="drawer-navigation">
-            <div class="overflow-y-auto py-5 px-3 h-full bg-white dark:bg-gray-800">
-                
+            <div class="overflow-y-auto pt-5 pb-20 px-3 h-full bg-white dark:bg-gray-800">
+
                 <ul class="space-y-2">
                     @* <!-- Admin Panel --> *@
                     <li>
@@ -265,9 +238,7 @@
                         <li>
                             <a asp-area="" asp-controller="Libraries" asp-action="Index"
                                class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                                <svg class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
-                                    <path d="M17 16h-1V2a1 1 0 1 0 0-2H2a1 1 0 0 0 0 2v14H1a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM5 4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4Zm0 5V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1Zm6 7H7v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3Zm2-7a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1Zm0-4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1Z" />
-                                </svg>
+                                <svg class="flex-shrink-0 w-6 h-6 fill-gray-500 transition duration-75 group-hover:fill-gray-900 dark:fill-gray-400 dark:group-hover:fill-white" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M243.4 2.6l-224 96c-14 6-21.8 21-18.7 35.8S16.8 160 32 160v8c0 13.3 10.7 24 24 24H456c13.3 0 24-10.7 24-24v-8c15.2 0 28.3-10.7 31.3-25.6s-4.8-29.9-18.7-35.8l-224-96c-8-3.4-17.2-3.4-25.2 0zM128 224H64V420.3c-.6 .3-1.2 .7-1.8 1.1l-48 32c-11.7 7.8-17 22.4-12.9 35.9S17.9 512 32 512H480c14.1 0 26.5-9.2 30.6-22.7s-1.1-28.1-12.9-35.9l-48-32c-.6-.4-1.2-.7-1.8-1.1V224H384V416H344V224H280V416H232V224H168V416H128V224zM256 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" /></svg>
                                 <span class="ml-3">Libraries</span>
                             </a>
                         </li>
@@ -345,10 +316,7 @@
                     <li>
                         <a asp-area="" asp-controller="BooksInStock" asp-action="Index"
                            class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
-                            <svg class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 14">
-                                <path d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM2 12V6h16v6H2Z" />
-                                <path d="M6 8H4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2Zm8 0H9a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2Z" />
-                            </svg>
+                            <svg class="flex-shrink-0 w-6 h-6 fill-gray-500 transition duration-75 group-hover:fill-gray-900 dark:fill-gray-400 dark:group-hover:fill-white" xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><path d="M192 64v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32V64c0-17.7-14.3-32-32-32H224c-17.7 0-32 14.3-32 32zM82.7 207c-15.3 8.8-20.5 28.4-11.7 43.7l32 55.4c8.8 15.3 28.4 20.5 43.7 11.7l55.4-32c15.3-8.8 20.5-28.4 11.7-43.7l-32-55.4c-8.8-15.3-28.4-20.5-43.7-11.7L82.7 207zM288 192c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32H288zm64 160c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32V384c0-17.7-14.3-32-32-32H352zM160 384v64c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32V384c0-17.7-14.3-32-32-32H192c-17.7 0-32 14.3-32 32zM32 352c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32H96c17.7 0 32-14.3 32-32V384c0-17.7-14.3-32-32-32H32z" /></svg>                            
                             <span class="ml-3">Books in Stock</span>
                         </a>
                     </li>
@@ -357,10 +325,7 @@
                     <li>
                         <a asp-area="" asp-controller="Loans" asp-action="Index"
                            class="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
-                            <svg class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 14">
-                                <path d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM2 12V6h16v6H2Z" />
-                                <path d="M6 8H4a1 1 0 0 0 0 2h2a1 1 0 0 0 0-2Zm8 0H9a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2Z" />
-                            </svg>
+                            <svg class="flex-shrink-0 w-6 h-6 fill-gray-500 transition duration-75 group-hover:fill-gray-900 dark:fill-gray-400 dark:group-hover:fill-white" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 491.524 491.524" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M485.581,403.519c1.7-1.72,2.929-3.707,3.912-5.796c0.287-0.614,0.451-1.27,0.676-1.925 c0.635-1.761,0.983-3.563,1.106-5.448c0.02-0.43,0.246-0.799,0.246-1.229V20.482c0-11.305-9.155-20.48-20.48-20.48H194.929 c-28.447,0-51.569,23.122-51.569,51.548v133.059c-5.714,1.638-10.895,3.154-14.746,4.26c-13.23,3.85-25.477,10.097-36.332,18.555 c-3.441,2.683-7.127,5.018-10.957,6.963c-15.688,7.946-27.423,21.463-33.137,38.093l-34.12,11.264 C5.652,266.529,0,274.352,0,283.199v85.443c0,11.305,9.155,20.48,20.48,20.48h10.301c14.09,0,39.281,7.598,55.951,12.636 l10.158,3.031c10.977,3.195,22.344,4.813,33.833,4.813h12.636v20.48c0,33.874,27.566,61.44,61.44,61.44h266.24 c8.274,0,15.749-4.997,18.924-12.636c3.174-7.66,1.413-16.466-4.444-22.323c-19.292-19.292-19.292-33.649,0-52.941 C485.54,403.581,485.56,403.54,485.581,403.519z M266.24,81.922h102.4c11.325,0,20.48,9.175,20.48,20.48 c0,11.305-9.155,20.48-20.48,20.48h-102.4c-11.325,0-20.48-9.175-20.48-20.48C245.76,91.097,254.915,81.922,266.24,81.922z M146.289,271.198c-1.925,6.574-2.929,13.681-2.929,21.176v0.02v76.247h-12.636c-7.598,0-15.114-1.065-22.385-3.195l-9.748-2.908 c-17.838-5.366-39.281-11.837-57.631-13.804v-50.749l26.706-8.806c12.964-4.26,16.22-14.193,19.087-22.958 c2.171-6.615,6.943-12.186,13.066-15.299c6.185-3.113,12.104-6.881,17.633-11.182c6.758-5.263,14.357-9.155,22.589-11.53 c6.881-2.007,17.49-5.059,29.368-8.438c0.021-0.02,0.041,0,0.061-0.02c10.22-2.908,21.053-5.96,31.396-8.806 c1.27-0.348,2.499-0.676,3.727-1.024c3.748-1.024,7.332-1.987,10.813-2.908c1.393-0.369,2.806-0.758,4.137-1.106 c4.485-1.188,8.745-2.294,12.452-3.215c0.348-0.102,0.614,0.041,0.942,0.021c1.413-0.061,2.703,0.389,3.645,1.72 c1.597,2.273,0.532,3.912,0.143,4.506c-3.215,4.854-8.028,8.479-13.537,10.179l-37.827,11.633 c-3.236,1.004-6.328,2.232-9.236,3.707C161.526,241.789,151.06,254.794,146.289,271.198z M433.603,450.562H204.8 c-11.305,0-20.48-9.195-20.48-20.48s9.175-20.48,20.48-20.48h228.803C428.974,423.18,428.974,436.984,433.603,450.562z"></path> </g> </g> </g></svg>
                             <span class="ml-3">Loans</span>
                         </a>
                     </li>
@@ -569,11 +534,17 @@
     <script src="~/lib/flowbite/dist/flowbite.min.js"></script>
     @* <!-- CUSTOM JS --> *@
     <script src="~/js/site.js" asp-append-version="true" defer></script>
-    <!-- SIMPLE DATATABLE -->
-    <script src="~/lib/simple-datatables/simple-datatables.js"></script>
+    @* <!-- SIMPLE DATATABLE --> *@
+    @* <script src="~/lib/simple-datatables/simple-datatables.js"></script> *@
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" asp-append-version="true" />
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.tailwindcss.min.js"></script>
 
 
-    <script src="https://unpkg.com/cropperjs@next"></script>
+
+
+    @* <script src="https://unpkg.com/cropperjs@next"></script> *@
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

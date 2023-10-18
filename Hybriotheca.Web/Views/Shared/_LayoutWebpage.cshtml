@@ -137,7 +137,7 @@
                                 </span>
                                 <span class="block text-sm text-gray-500 truncate dark:text-gray-400">@this.User.Identity.Name</span>
                             </div>
-                            @if (this.User.IsInRole("Admin"))
+                            @if (this.User.IsInRole("Admin") || User.IsInRole("Librarian"))
                             {
                                 <div class="py-2">
                                     <ul class="" aria-labelledby="user-menu-button">
@@ -162,7 +162,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a asp-controller="Home" asp-action="UserLoans" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                    <a asp-controller="Home" asp-action="UserLoans" asp-route-id="@loggedUser.Id" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                                         <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
                                             <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z" />
                                         </svg>
@@ -315,7 +315,7 @@
 
 
     @* <!-- MAIN CONTENT --> *@
-    <div class="mt-[72px] max-sm:mt-[132px]">
+    <div class="basis-full mt-[72px] max-sm:mt-[132px]">
         @RenderBody()
     </div>
 

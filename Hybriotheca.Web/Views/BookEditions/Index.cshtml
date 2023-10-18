@@ -85,6 +85,9 @@
                                 </div>
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
+                                ISBN
+                            </th>
+                            <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 Book
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
@@ -117,24 +120,30 @@
                                         <label for="checkbox-194556" class="sr-only">checkbox</label>
                                     </div>
                                 </td>
+                                <!-- ISBN -->
+                                <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    @(book.ISBN ?? "ISBN n/a")
+                                </td>
                                 <!-- BOOK -->
-                                <td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
+                                <td class="p-4">
                                     <a asp-action="Edit" asp-route-id="@book.ID">
-                                        <!-- COVER IMAGE -->
-                                        <img src="@Html.DisplayFor(modelItem => book.CoverImageFullPath)" alt="Cover" class="@(string.IsNullOrEmpty(book.CoverImageFullPath) ? "hidden " : "")w-20 h-auto" />
+                                        <div class="flex mr-12 space-x-6 whitespace-nowrap">
+                                            <!-- COVER IMAGE -->
+                                            <img src="@Html.DisplayFor(modelItem => book.CoverImageFullPath)" alt="Cover" class="@(string.IsNullOrEmpty(book.CoverImageFullPath) ? "hidden " : "")w-20 h-auto" />
 
-                                        <div class="mr-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-                                            <!-- BOOK TITLE -->
-                                            <div class="text-base font-semibold text-gray-900 dark:text-white">
-                                                @Html.DisplayFor(modelItem => book.EditionTitle)
-                                            </div>
-                                            <!-- BOOK FORMAT -->
-                                            <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                                @Html.DisplayFor(modelItem => book.BookFormat)
-                                            </div>
-                                            <!-- ISBN -->
-                                            <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                                @(book.ISBN ?? "ISBN n/a")
+                                            <div class="mr-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+                                                <!-- BOOK TITLE -->
+                                                <div class="text-base font-semibold text-gray-900 dark:text-white">
+                                                    @Html.DisplayFor(modelItem => book.EditionTitle)
+                                                </div>
+                                                <!-- BOOK FORMAT -->
+                                                <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                                    @Html.DisplayFor(modelItem => book.BookFormat)
+                                                </div>
+                                                <!-- NR PAGES -->
+                                                <div class="text-sm font-normal text-gray-500 dark:text-gray-400">
+                                                    @Html.DisplayFor(modelItem => book.NrPages) pages
+                                                </div>
                                             </div>
                                         </div>
                                     </a>
@@ -152,9 +161,6 @@
                                     @book.PublishDate.Year
                                 </td>
                                 <!-- IS AVAILABLE -->
-                                @* <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => book.IsAvailableOnline)
-                                </td> *@
                                 <td class="p-4">
                                     <div class="flex justify-center">
                                         @if (book.IsAvailableOnline)
@@ -217,7 +223,7 @@
 @section Scripts{
     <script type="text/javascript">
 
-            new simpleDatatables.DataTable('#example');
+        //new DataTable('#example');
 
 
 

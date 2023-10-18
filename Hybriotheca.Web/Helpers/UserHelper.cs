@@ -122,6 +122,18 @@ namespace Hybriotheca.Web.Helpers
                 .Include(user => user.Ratings)
                 .ThenInclude(rating => rating.BookEdition)
                 .ThenInclude(bookEdition => bookEdition.Book)
+                .AsSplitQuery()
+                .SingleOrDefaultAsync(user => user.Id == id);
+        }
+
+        public async Task<AppUser?> GetUserByIdForLoanAsync(string id)
+        {
+            return await _userManager.Users
+                .Include(user => user.Loans)
+                .ThenInclude(loan => loan.BookEdition)
+                .ThenInclude(bookEdition => bookEdition.Book)
+                .Include(loan => loan.MainLibrary)
+                .AsSplitQuery()
                 .SingleOrDefaultAsync(user => user.Id == id);
         }
 

@@ -49,9 +49,16 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
-        public IActionResult UserLoans()
+        public async Task<IActionResult> UserLoans(string id)
         {
-            return View();
+            var user = await _userHelper.GetUserByIdForLoanAsync(id);
+
+            if (user == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(user);
         }
 
 
@@ -88,6 +95,12 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
+        public IActionResult Checkout()
+        {
+            return View();
+        }
+
+
         public IActionResult EbookReader()
         {
             return View();
@@ -118,8 +131,6 @@ namespace Hybriotheca.Web.Controllers
         {
             return View("NotFound");
         }
-
-
 
 
         private async Task<UserViewModel?> GetModelForViewAsync(string id)

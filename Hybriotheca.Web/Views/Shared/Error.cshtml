@@ -3,13 +3,17 @@
     ViewData["Title"] = "Error";
 }
 
-@if (string.IsNullOrEmpty(ViewBag.ErrorTitle))
-{
-    <h4>Error</h4>
-    <p>An error occured while processing your request.</p>
-}
-else
-{
-    <h4>@ViewBag.ErrorTitle</h4>
-    <p>@ViewBag.ErrorMessage</p>
-}
+<div class="flex justify-center items-center h-full text-center">
+    <div>
+        @if (string.IsNullOrEmpty(ViewBag.ErrorTitle))
+        {
+            <h4 class="mb-4 text-6xl font-semibold text-sky-500">Error</h4>
+            <p class="mb-4 text-lg text-gray-600 dark:text-gray-300">An error occured while processing your request.</p>
+        }
+        else
+        {
+            <h4 class="mb-4 text-6xl font-semibold text-sky-500">@ViewBag.ErrorTitle</h4>
+            <p class="mb-4 text-lg text-gray-600 dark:text-gray-300">@ViewBag.ErrorMessage</p>
+        }
+    </div>
+</div>

@@ -131,7 +131,6 @@
 
     @* <!-- COVER --> *@
     <div>
-        <img src="@Model.CoverImageFullPath" alt="Preview" id="CoverImage" class="@(string.IsNullOrEmpty(Model.CoverImageFullPath) ? "hidden " : "")w-30 h-auto" />
         <script>
             const showPreview = event => {
                 var imagePreview = document.getElementById('CoverImage');
@@ -143,6 +142,7 @@
 
         <label asp-for="CoverImageFile" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input"></label>
         <input asp-for="CoverImageFile" type="file" accept=".jpeg,.jpg,.png,.tiff,.tif, image/jpeg,image/png,image/tiff" onchange="showPreview(event)" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+        <img src="@Model.CoverImageFullPath" alt="Preview" id="CoverImage" class="@(string.IsNullOrEmpty(Model.CoverImageFullPath) ? "hidden " : "")h-auto max-w-[200px] mt-2" />
         <span asp-validation-for="CoverImageFile" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
     </div>
 

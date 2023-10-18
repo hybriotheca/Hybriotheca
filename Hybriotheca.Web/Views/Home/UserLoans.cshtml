@@ -1,10 +1,26 @@
 ﻿@model Hybriotheca.Web.Data.Entities.AppUser
 
+@{
+    var activeLoans = 0;
+    var reservedLoans = 0;
+    var returnedLoans = 0;
+    var overdueLoans = 0;
+
+    foreach (var loan in Model.Loans)
+    {
+        if (loan.IsActive) { activeLoans++; }
+        if (loan.IsReserved) { reservedLoans++; }
+        if (loan.IsReturned) { returnedLoans++; }
+        if (loan.IsOverdue) { overdueLoans++; }
+    }
+}
+
 <div class="p-4 grow">
     <main role="main" class="max-w-screen-xl justify-between mx-auto dark:text-white">
 
-        <div class="mb-4">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">My Loans</h2>
+        <!-- PAGE TITLE -->
+        <div class="mt-2 mb-6">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">My Loans</h2>
         </div>
 
         <!-- MAIN CONTAINER -->
@@ -38,246 +54,142 @@
             <!-- TABS CONTENTS -->
             <div id="tab-contents">
                 <!-- ACTIVE LOANS -->
-                <div class="hidden p-4 gap-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3" id="active-loans" role="tabpanel" aria-labelledby="active-tab">
-                    <!-- BOOK 1 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                <div class="hidden" id="active-loans" role="tabpanel" aria-labelledby="active-tab">
+                    @if (activeLoans == 0)
+                    {
+                        <div class="px-4 my-8" id="reviews">
+                            <h2 class="text-2xl text-center font-bold text-gray-900 dark:text-white">You don't have any borrowed books</h2>
                         </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
+                    }
+                    else
+                    {
+                        <!-- BOOKS -->
+                        <div class="p-4 gap-2 grid grid-cols-1 md:grid-cols-2">
+                            @foreach (var loan in Model.Loans)
+                            {
+                                if (loan.IsActive)
+                                {
+                                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
+                                        <div class="flex flex-col justify-center items-center w-fit">
+                                            <img src="@loan.BookEdition.CoverImageFullPath" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                                        </div>
+                                        <article class="flex flex-col justify-between">
+                                            <!-- BOOK TITLE -->
+                                            <div>
+                                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">@loan.BookEdition.EditionTitle</h2>
+                                                <h3 class="text-base text-gray-400 line-clamp-1">@loan.BookEdition.Book.Author</h3>
+                                            </div>
 
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
+                                            <!-- LOAN DATES -->
+                                            <div>
+                                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Due date</h3>
+                                                <h3 class="text-gray-500 dark:text-gray-400">@loan.TermLimitDate.ToShortDateString()</h3>
+                                            </div>
 
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
-
-                    <!-- BOOK 2 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                                            <!-- LIBRARY -->
+                                            <div>
+                                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
+                                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-2">@loan.Library.Name</h3>
+                                            </div>
+                                        </article>
+                                    </div>
+                                }
+                            }
                         </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
-
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
-
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
-
-                    <!-- BOOK 3 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
-                        </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
-
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
-
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
+                    }
                 </div>
-                
+
                 <!-- RESERVED LOANS -->
-                <div class="hidden p-4 gap-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3" id="reserved-loans" role="tabpanel" aria-labelledby="reserved-tab">
-                    <!-- BOOK 1 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                <div class="hidden" id="reserved-loans" role="tabpanel" aria-labelledby="reserved-tab">
+
+                    @if (reservedLoans == 0)
+                    {
+                        <div class="px-4 my-8" id="reviews">
+                            <h2 class="text-2xl text-center font-bold text-gray-900 dark:text-white">You don't have any reserved books</h2>
                         </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
+                    }
+                    else
+                    {
+                        <!-- BOOKS -->
+                        <div class="hidden p-4 gap-2 grid grid-cols-1 md:grid-cols-2">
+                            @foreach (var loan in Model.Loans)
+                            {
+                                if (loan.IsReserved)
+                                {
+                                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
+                                        <div class="flex flex-col justify-center items-center w-fit">
+                                            <img src="@loan.BookEdition.CoverImageFullPath" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                                        </div>
+                                        <article class="flex flex-col justify-between">
+                                            <!-- BOOK TITLE -->
+                                            <div>
+                                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">@loan.BookEdition.EditionTitle</h2>
+                                                <h3 class="text-base text-gray-400 line-clamp-1">@loan.BookEdition.Book.Author</h3>
+                                            </div>
 
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
+                                            <!-- LOAN DATES -->
+                                            <div>
+                                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Due date</h3>
+                                                <h3 class="text-gray-500 dark:text-gray-400">@loan.TermLimitDate.ToShortDateString()</h3>
+                                            </div>
 
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
-
-                    <!-- BOOK 2 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                                            <!-- LIBRARY -->
+                                            <div>
+                                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
+                                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-2">@loan.Library.Name</h3>
+                                            </div>
+                                        </article>
+                                    </div>
+                                }
+                            }
                         </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
-
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
-
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
-
-                    <!-- BOOK 3 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
-                        </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
-
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
-
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
+                    }
                 </div>
 
                 <!-- RETURNED LOANS-->
-                <div class="hidden p-4 gap-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3" id="returned-loans" role="tabpanel" aria-labelledby="returned-tab">
-                    <!-- BOOK 1 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                <div class="hidden" id="returned-loans" role="tabpanel" aria-labelledby="returned-tab">
+                    @if (returnedLoans == 0)
+                    {
+                        <div class="px-4 my-8" id="reviews">
+                            <h2 class="text-2xl text-center font-bold text-gray-900 dark:text-white">You haven't returned any books</h2>
                         </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
+                    }
+                    else
+                    {
+                        <!-- BOOKS -->
+                        <div class="hidden p-4 gap-2 grid grid-cols-1 md:grid-cols-2">
+                            @foreach (var loan in Model.Loans)
+                            {
+                                if (loan.IsReturned)
+                                {
+                                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
+                                        <div class="flex flex-col justify-center items-center w-fit">
+                                            <img src="@loan.BookEdition.CoverImageFullPath" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                                        </div>
+                                        <article class="flex flex-col justify-between">
+                                            <!-- BOOK TITLE -->
+                                            <div>
+                                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">@loan.BookEdition.EditionTitle</h2>
+                                                <h3 class="text-base text-gray-400 line-clamp-1">@loan.BookEdition.Book.Author</h3>
+                                            </div>
 
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
+                                            <!-- LOAN DATES -->
+                                            <div>
+                                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Due date</h3>
+                                                <h3 class="text-gray-500 dark:text-gray-400">@loan.TermLimitDate.ToShortDateString()</h3>
+                                            </div>
 
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
-
-                    <!-- BOOK 2 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
+                                            <!-- LIBRARY -->
+                                            <div>
+                                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
+                                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-2">@loan.Library.Name</h3>
+                                            </div>
+                                        </article>
+                                    </div>
+                                }
+                            }
                         </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
-
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
-
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
-
-                    <!-- BOOK 3 -->
-                    <div class="flex gap-6 p-2 rounded hover:bg-gray-50 hover:dark:bg-gray-800">
-                        <div class="flex flex-col justify-center items-center w-fit">
-                            <img src="~/images/CN.jpg" class="h-auto max-w-[100px] sm:max-w-[125px] md:max-w-[150px]" />
-                        </div>
-                        <article class="flex flex-col justify-between">
-                            <!-- BOOK TITLE -->
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2">The Chronicles of Narnia</h2>
-                                <h3 class="text-base text-gray-400 line-clamp-1">C. S. Lewis</h3>
-                            </div>
-
-                            <!-- LOAN DATES -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Return date</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400">25/11/2023</h3>
-                            </div>
-
-                            <!-- LIBRARY -->
-                            <div>
-                                <h3 class="font-medium text-gray-900 dark:text-white line-clamp-2">Library</h3>
-                                <h3 class="text-gray-500 dark:text-gray-400 line-clamp-1">BPMP</h3>
-                            </div>
-                        </article>
-                    </div>
+                    }
                 </div>
 
             </div>
