@@ -30,8 +30,10 @@ namespace Hybriotheca.Web.Data
                 BookTitle = loan.BookEdition.EditionTitle,
                 LibraryName = loan.Library.Name,
                 LibraryLocation = loan.Library.Location,
+                CreateDate = loan.CreateDate.ToShortDateString(),
                 PickupDate = loan.StartDate.ToShortDateString(),
                 TermLimit = loan.TermLimitDate.ToShortDateString(),
+                ReturnDateOrNull = loan.ReturnDate,
             });
         }
 

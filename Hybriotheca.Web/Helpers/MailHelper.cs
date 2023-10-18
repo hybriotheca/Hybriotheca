@@ -93,6 +93,7 @@ namespace Hybriotheca.Web.Helpers
                 $"<p>Your loan status is now {model.LoanStatus}." +
                 $"<h4>Book: {model.BookTitle}</h4>" +
                 $"<h4>Library: {model.LibraryName}, {model.LibraryLocation}</h4>" +
+                $"<h4>Loan registered: {model.CreateDate}</h4>" +
                 $"<h4>Pickup date: {model.PickupDate}</h4>" +
                 $"<h4>Term limit: {model.TermLimit}</h4>";
 
@@ -114,6 +115,7 @@ namespace Hybriotheca.Web.Helpers
                 $"<h4>Book: {model.BookTitle}</h4>" +
                 $"<h4>Library: {model.LibraryName}, {model.LibraryLocation}</h4>" +
                 $"<h4>Pickup date: {model.PickupDate}</h4>" +
+                $"<h4>Return date: {model.ReturnDate}</h4>" +
                 $"<h4>Term limit: {model.TermLimit}</h4>";
 
             try

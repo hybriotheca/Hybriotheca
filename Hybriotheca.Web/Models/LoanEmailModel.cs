@@ -12,8 +12,16 @@
 
         public string LibraryLocation { get; set; }
 
+        public string CreateDate { get; set; }
+
         public string PickupDate { get; set; }
 
         public string TermLimit { get; set; }
+
+        public DateTime? ReturnDateOrNull { get; set; }
+
+        public string ReturnDate =>
+            ReturnDateOrNull == null ? "n/a"
+            : ReturnDateOrNull.Value.ToShortDateString();
     }
 }
