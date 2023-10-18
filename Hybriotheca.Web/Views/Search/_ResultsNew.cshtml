@@ -17,7 +17,7 @@
 
         @foreach (var edition in Model.SearchResults)
         {
-            <div class="w-full max-w-sm p-6 bg-white border border-gray-200 hover:border-sky-500 dark:bg-gray-800 dark:border-gray-700 dark:hover:border-sky-500">
+            <div class="w-full max-w-sm p-6 bg-white border border-gray-200 hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
                 <a asp-controller="Book" asp-action="Details" asp-route-id="@edition.ID" class="flex justify-center">
                     <img class="max-h-[200px]" src=@edition.CoverImageFullPath alt=@edition.EditionTitle />
                 </a>
@@ -130,7 +130,7 @@
 }
 else
 {
-    <h5 class="text-center">No results where found...</h5>
+    <h5 class="my-8 text-xl font-medium text-center">No results where found...</h5>
 }
 
 

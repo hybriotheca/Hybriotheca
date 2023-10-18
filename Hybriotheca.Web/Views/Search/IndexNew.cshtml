@@ -5,12 +5,12 @@
     <main role="main" class="flex gap-4 max-w-screen-xl justify-between mx-auto dark:text-white">
 
         <!-- SIDEBAR -->
-        <div class="flex flex-col gap-2 justify-start w-1/4 min-w-min">
+        <div class="flex flex-col gap-2 justify-start w-80 min-w-min">
 
             <form id="main-form" hx-post hx-target="#searchResults" hx-trigger="submitForm" hx-include="#searchTerm">
 
                 <!-- FILTERS -->
-                <div id="filters-accordion" data-accordion="open" data-active-classes="bg-white dark:bg-gray-900 text-gray-900 dark:text-white" data-inactive-classes="border-b hover:text-gray-900 text-gray-500 dark:text-gray-400">
+                <div id="filters-accordion" data-accordion="open" data-active-classes="bg-white dark:bg-gray-950 text-gray-900 dark:text-white" data-inactive-classes="border-b hover:text-gray-900 text-gray-500 dark:text-gray-400">
 
                     <!-- CATEGORIES -->
                     <div>
@@ -310,7 +310,7 @@
                     <!-- PUB YEAR -->
                     <div>
                         <h2 id="accordion-pubyear-heading">
-                            <button type="button" data-accordion-target="#accordion-pubyear-body" aria-expanded="false" aria-controls="accordion-flush-body-3" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                            <button type="button" data-accordion-target="#accordion-pubyear-body" aria-expanded="true" aria-controls="accordion-flush-body-3" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
                                 <span>Publish Year</span>
                                 <svg data-accordion-icon class="transition-all w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -341,7 +341,7 @@
         </div>
 
         <!-- MAIN CONTAINER -->
-        <div>
+        <div class="w-full">
             <!-- CONTAINER HEADER -->
             <div class="flex justify-between items-center mb-4 text-base">
                 
