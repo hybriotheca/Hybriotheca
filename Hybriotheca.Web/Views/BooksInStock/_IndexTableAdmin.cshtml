@@ -1,0 +1,92 @@
+﻿@model IEnumerable<Hybriotheca.Web.Models.Entities.BookStockViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Library</th>
+            <th>Book edition</th>
+            <!--<th> Decrement </th>-->
+            <th colspan="3" style="text-align: center;">Quantity</th>
+            <!--<th> Increment </th>-->
+            <th>Available</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LibraryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookEditionTitle)
+                </td>
+                <td>
+                    <a title="decrement" class="btn btn-warning" onclick="crement('dec', @item.Id)">-</a>
+                </td>
+                <td>
+                    <span id="quantity-@(item.Id)">@Html.DisplayFor(modelItem => item.TotalStock)</span>
+                </td>
+                <td>
+                    <a title="increment" class="btn btn-success" onclick="crement('inc', @item.Id)">+</a>
+                </td>
+                <td>
+                    <span id="available-@(item.Id)">@Html.DisplayFor(modelItem => item.AvailableStock)</span>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    const crement = (action, id) => {
+
+        var bookStockId = id;
+
+        var url = '';
+        let urlInc = '@(Url.Action("Increment", "BooksInStock"))';
+        let urlDec = '@(Url.Action("Decrement", "BooksInStock"))';
+
+        switch (action) {
+            case "inc": url = urlInc; break;
+            case "dec":
+                if ($('#available-' + bookStockId).text() == '0') {
+                    alert("There's no available stock.");
+                    return;
+                }
+                url = urlDec;
+                break;
+            default: return;
+        }
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'JSON',
+            data: { bookStockId: bookStockId },
+            success: function (response) {
+                if (response.succeded) {
+                    
+                    // Update current total stock.
+                    $('#quantity-' + bookStockId).text(response.totalStock);
+                    
+                    // Update current available stock.
+                    $('#available-' + bookStockId).text(response.availableStock);
+
+                }
+                else {
+                    alert(response);
+                }
+            },
+            error: function () {
+                alert("Something went wrong.");
+            }
+        });
+
+    }
+</script>

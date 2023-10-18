@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Hybriotheca.Web.Controllers
 {
@@ -21,19 +22,22 @@ namespace Hybriotheca.Web.Controllers
         private readonly IBookRepository _bookRepository;
         private readonly IBookEditionRepository _bookEditionRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IRatingRepository _ratingRepository;
 
         public BookEditionsController(
             IBlobHelper blobHelper,
             IConverterHelper converterHelper,
             IBookRepository bookRepository,
             IBookEditionRepository bookEditionRepository,
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,
+            IRatingRepository ratingRepository)
         {
             _blobHelper = blobHelper;
             _converterHelper = converterHelper;
             _bookRepository = bookRepository;
             _bookEditionRepository = bookEditionRepository;
             _categoryRepository = categoryRepository;
+            _ratingRepository = ratingRepository;
         }
 
 
@@ -277,6 +281,72 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
+
+        // GET: BookDetails
+        [Route("Book/Details/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> BookDetails(int id)
+        {
+            var bookEdition = await _bookEditionRepository.GetByIdWithRatingsAndBookAsync(id);
+
+            var loggedUserID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (bookEdition == null) return BookEditionNotFound();
+
+
+            (List<BookEdition> OtherEditions, List<BookEdition> BooksYouMightEnjoy, List<BookEdition> OtherBooksBySameAuthor) = await _bookEditionRepository.GetBookDetailsCarouselAsync(bookEdition);
+
+            var Book = new BookDetailsViewModel()
+            {
+                Book = bookEdition,
+                Ratings = await _ratingRepository.GetRatingsByBookIDWithOtherUserRatings(bookEdition.ID),
+                HasStock = _bookEditionRepository.CheckIfHasStock(bookEdition.ID),
+                NewRating = new Rating()
+                {
+                    BookEditionID = bookEdition.ID,
+                    UserID = loggedUserID,
+                },
+                OtherEditions = OtherEditions,
+                BooksYouMightEnjoy = BooksYouMightEnjoy,
+                OtherBooksBySameAuthor = OtherBooksBySameAuthor,
+                
+            };
+
+            if (Book.Ratings is not null && Book.Ratings.Any())
+            {
+
+                Book.hasRating = Book.Ratings.Any(s => s.UserID == loggedUserID);
+
+            }
+            else
+            {
+                Book.hasRating = false;
+            }
+
+            return View(Book);
+        }
+
+        [Route("Book/Reader/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> EBookReader(int id)
+        {
+            var bookEdition = await _bookEditionRepository.GetByIdWithBookAsync(id);
+
+            if (bookEdition == null) return BookEditionNotFound();
+
+            if(string.IsNullOrEmpty(bookEdition.ePubFullPath)) return BookEditionEpubNotFound();
+
+            ViewBag.ePubFile = bookEdition.ePubFullPath;
+
+            ViewBag.Title = bookEdition.EditionTitle;
+
+            ViewBag.Author = bookEdition.Book.Author;
+
+            return View();
+        }
+
+
+
         #region private helper methods
 
         private void AddModelError(string errorMessage)
@@ -287,6 +357,15 @@ namespace Hybriotheca.Web.Controllers
         public ViewResult BookEditionNotFound()
         {
             ViewBag.Title = "Book edition not found";
+            ViewBag.ItemNotFound = "Book edition";
+
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View("NotFound");
+        }
+
+        public ViewResult BookEditionEpubNotFound()
+        {
+            ViewBag.Title = "ePUB file not found";
             ViewBag.ItemNotFound = "Book edition";
 
             Response.StatusCode = StatusCodes.Status404NotFound;

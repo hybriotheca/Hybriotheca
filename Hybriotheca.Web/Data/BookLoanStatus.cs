@@ -6,6 +6,6 @@
         public static string Active => "Active";
         public static string Returned => "Returned";
 
-        public static string[] All => new[] { Reserved, Active, Returned };
+        public static readonly string[] All = { Reserved, Active, Returned };
     }
 }

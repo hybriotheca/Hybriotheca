@@ -2,7 +2,7 @@
     const checkBookStock = () => {
 
         // These 2 lines allow for directly creating a not yet existing BookStock.
-        $('#formEdit').attr('action', "/BooksInStock/Edit/");
+        $('#formEdit').attr('action', '@Url.Action("Edit")');
         $('#ID').attr('name', 'ID');
 
         $('#DoesntExistCreateIt').hide();
@@ -27,14 +27,14 @@
             dataType: 'JSON',
             data: { libraryId: libraryId, bookEditionId: bookEditionId },
             success: function (response) {
-                $('#btnSave').attr('disabled', false);
                 if (response) {
                     getMinBookStock(libraryId, bookEditionId);
                 }
                 else {
                     $('#DoesntExistCreateIt').show();
-                    $('#formEdit').attr('action', "/BooksInStock/Create");
+                    $('#formEdit').attr('action', '@Url.Action("Create")');
                     $('#ID').attr('name', '');
+                    $('#btnSave').attr('disabled', false);
                 }
             },
             error: function () {
@@ -51,19 +51,14 @@
             dataType: 'JSON',
             data: { libraryId: libraryId, bookEditionId: bookEditionId },
             success: function (response) {
-                if (isNaN(response)) {
+                
+                if ($('#TotalStock').val() < response) {
+                    $('#NoBookStockAvailable').text("There's "+response+" books in use, hence the Total Stock has to be at least that number.");
+                    $('#NoBookStockAvailable').show();
                     $('#btnSave').attr('disabled', true);
-                    alert(response);
                 }
                 else {
-                    if ($('#TotalStock').val() < response) {
-                        $('#NoBookStockAvailable').text("There's "+response+" books in use, hence the Total Stock has to be at least that number.");
-                        $('#NoBookStockAvailable').show();
-                        $('#btnSave').attr('disabled', true);
-                    }
-                    else {
-                        $('#btnSave').attr('disabled', false);
-                    }
+                    $('#btnSave').attr('disabled', false);
                 }
             },
             error: function () {

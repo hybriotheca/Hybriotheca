@@ -6,6 +6,20 @@ namespace Hybriotheca.Web.Data
 {
     public static class QuerySelect
     {
+        public static IQueryable<BookStockViewModel> SelectBookStockViewModel(this IQueryable<BookStock> query)
+        {
+            return query.Select(bookStock => new BookStockViewModel
+            {
+                Id = bookStock.ID,
+                LibraryID = bookStock.LibraryID,
+                LibraryName = bookStock.Library.Name,
+                BookEditionID = bookStock.BookEditionID,
+                BookEditionTitle = bookStock.BookEdition.EditionTitle,
+                TotalStock = bookStock.TotalStock,
+                AvailableStock = bookStock.AvailableStock,
+            });
+        }
+
         public static IQueryable<LoanViewModel> SelectLoanViewModel(this IQueryable<Loan> query)
         {
             return query.Select(loan => new LoanViewModel

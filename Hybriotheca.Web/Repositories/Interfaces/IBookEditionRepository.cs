@@ -1,4 +1,5 @@
 ﻿using Hybriotheca.Web.Data.Entities;
+using Hybriotheca.Web.Models.Home;
 using Hybriotheca.Web.Models.Search;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -31,4 +32,14 @@ public interface IBookEditionRepository : IGenericRepository<BookEdition>
     List<SelectListItem> GetComboBookFormats();
 
     List<SelectListItem> GetComboLanguages();
+
+    Task<BookEdition> GetByIdWithRatingsAndBookAsync(int id);
+
+    Task<(List<BookEdition> OtherEditions, List<BookEdition> BooksYouMightEnjoy, List<BookEdition> OtherBooksBySameAuthor)> GetBookDetailsCarouselAsync(BookEdition book);
+
+    bool CheckIfHasStock(int bookID);
+
+    Task<BookEdition> GetByIdWithBookAsync(int id);
+
+    Task<HomeCarouselViewModel> GetHomeCarouselItems(int takeNr);
 }

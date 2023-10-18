@@ -1,5 +1,4 @@
-﻿@model Hybriotheca.Web.Data.Entities.BookEdition;
-
+﻿
 @{
     Layout = null;
 }
@@ -54,7 +53,7 @@
 
             <!-- BOOK TITLE -->
             <div class="select-text text-sm text-center font-medium text-gray-200">
-                Book Title <span class="font-normal text-gray-400">‒ Author</span>
+                @ViewBag.Title <span class="font-normal text-gray-400">‒ @ViewBag.Author</span>
             </div>
 
             <!-- MENU BUTTON -->
@@ -135,7 +134,7 @@
 
     <script>
         // EBOOK CREATE & DISPLAY
-        var book = ePub('https://ligawebblob.blob.core.windows.net/epub/15283592-7cb9-4dc5-ac39-f3f3e805ad40.epub');
+        var book = ePub('@ViewBag.ePubFile');
         var rendition = book.renderTo("ebook-container", {
             width: "100%",
             height: "100%",

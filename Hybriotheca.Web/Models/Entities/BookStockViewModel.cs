@@ -18,7 +18,5 @@
         public int TotalStock { get; set; }
 
         public int AvailableStock { get; set; }
-
-        public bool IsDeletable { get; set; }
     }
 }

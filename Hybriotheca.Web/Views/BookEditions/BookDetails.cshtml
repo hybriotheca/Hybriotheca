@@ -1,0 +1,637 @@
+﻿@model Hybriotheca.Web.Models.Entities.BookDetailsViewModel
+
+
+@{
+    string NameAbbr(string fullName)
+    {
+        var firstLetters = fullName.Split(' ')
+                    .Where(word => !string.IsNullOrEmpty(word))
+                    .ToArray();
+
+        if (firstLetters.Length > 0)
+        {
+            string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[firstLetters.Length - 1][0]);
+            return nameAbbr;
+        }
+        return string.Empty;
+    }
+}
+
+<div class="p-4 grow">
+    <main role="main" class="max-w-screen-xl mx-auto dark:text-white">
+
+        <!-- MAIN CONTAINER -->
+        <div class="flex gap-2 w-full">
+
+            <!-- LEFT SIDE CONTAINER -->
+            <div class="w-1/4 min-w-min">
+                <!-- STICKY CONTAINER -->
+                <div class="sticky top-24">
+                    <!-- BOOK COVER -->
+                    <div class="mx-4">
+                        <img class="rounded-r-xl shadow" src="@Model.Book.CoverImageFullPath" alt="Cover" />
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="flex flex-col my-4">
+                        
+                        @if (Model.HasStock)
+                        {
+                            <!-- BORROW -->
+                            <a href="#" class="transition-all duration-200 ease-in-out inline-flex justify-center items-center mx-4 my-2 py-2 px-5 font-medium text-white rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                                Borrow this book
+                            </a>
+                        }
+                        else
+                        {
+                            <!-- BORROW -->
+                            <p class="inline-flex justify-center items-center mx-4 my-2 py-2 px-5 font-medium dark:text-white rounded-full cursor-not-allowed bg-gray-200 dark:bg-gray-800">
+                                Out of Stock
+                            </p>
+
+                        }
+
+                        @if (Model.Book.IsAvailableOnline)
+                        {
+                            <!-- READ -->
+                            <a asp-controller="Book" asp-action="Reader" asp-route-id="@Model.Book.ID" class="transition-all duration-200 ease-in-out relative inline-flex justify-center items-center mx-4 my-2 p-0.5 overflow-hidden text-center font-medium rounded-full group bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 group-hover:from-cyan-500 group-hover:to-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-900">
+                                <span class="grow relative px-5 py-1.5 bg-gray-50 dark:bg-gray-900 rounded-full text-gray-900 dark:text-white">
+                                    Read online
+                                </span>
+                            </a>
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE CONTAINER -->
+            <div class="grow w-3/4">
+                <!-- BOOK TITLE -->
+                <h2 class="font-serif text-4xl mb-2 font-bold dark:text-white">
+                    @Model.Book.EditionTitle
+                </h2>
+
+                <div class="text-xl text-gray-500 dark:text-gray-400">
+                    <!-- RATING -->
+                    <div class="flex items-center ">
+                        @for (int i = 0; i < (int)Model.Book.AverageRating; i++)
+                        {
+                            <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                        }
+                        @for (int i = 0; i < 5 - (int)Model.Book.AverageRating; i++)
+                        {
+                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                        }
+                        <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">@Model.Book.AverageRating.ToString("F2")</span>
+                    </div>
+                    <!-- AUTHOR -->
+                    <span class="text-xl text-gray-500 dark:text-gray-400">
+                        @Model.Book.Book.Author
+                    </span>
+
+                </div>
+
+                <!-- SYNOPSIS -->
+                <p class="my-5">
+                    @Model.Book.Synopsis
+                </p>
+
+                <!-- DETAILS TABS -->
+                <div class="border-b border-gray-200 dark:border-gray-700">
+                    <!-- TABS BUTTONS -->
+                    <ul class="flex flex-wrap -mb-px font-medium text-center" id="bookDetailsTab" data-tabs-toggle="#tabContents" role="tablist">
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 border-b-2 rounded-t-lg"
+                                    id="details-tab" data-tabs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="bg-gray-700">
+                                Details
+                            </button>
+                        </li>
+                        <li class="mr-2" role="presentation">
+                            <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                                    id="reviews-tab" data-tabs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">
+                                Reviews
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- TABS CONTENTS -->
+                <div id="tabContents">
+                    <!-- BOOK DETAILS -->
+                    <div class="hidden p-4 bg-gray-50 dark:bg-gray-800" id="details" role="tabpanel" aria-labelledby="details-tab">
+                        <table class="mx-3 border-separate border-spacing-y-2">
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    ISBN
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @(string.IsNullOrWhiteSpace(Model.Book.ISBN) ? "-" : Model.Book.ISBN)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Format
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @Model.Book.BookFormat
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Pages
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @Model.Book.NrPages
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Genre
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @Model.Book.Category.Name
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Language
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @Model.Book.Language
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Translator
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @(string.IsNullOrWhiteSpace(Model.Book.TranslationAuthor) ? "-" : Model.Book.TranslationAuthor)
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Original Title
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @Model.Book.Book.OriginalTitle
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Publish date
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @Model.Book.PublishDate.ToString("MMMM d, yyyy")
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Publisher
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @Model.Book.Publisher
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="pr-5 font-medium">
+                                    Awards
+                                </td>
+                                <td class="text-gray-500 dark:text-gray-400">
+                                    @(string.IsNullOrWhiteSpace(Model.Book.Awards) ? "-" : Model.Book.Awards)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- REVIEWS -->
+                    <div class="hidden p-4 bg-gray-50 dark:bg-gray-800" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                        <!-- AVARAGE RATING -->
+                        <div class="mb-8">
+                            <!-- Stars -->
+                            <div class="flex items-center mb-2">
+                                @for (int i = 0; i < (int)Model.Book.AverageRating; i++)
+                                {
+                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                }
+                                @for (int i = 0; i < 5 - (int)Model.Book.AverageRating; i++)
+                                {
+                                    <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                    </svg>
+                                }
+                                <p class="ml-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    @Model.Book.AverageRating.ToString("F2") out of 5
+                                </p>
+                            </div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                @(Model.Book.Ratings?.Count().ToString() ?? "0") global ratings
+                            </p>
+                            <!-- Bars -->
+                            <!-- Bar 5 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">5 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: @(Model.FiveStarPercent.ToString())%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    @(Model.FiveStarPercent.ToString())%
+                                </span>
+                            </div>
+                            <!-- Bar 4 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">4 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: @(Model.FourStarPercent.ToString())%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    @(Model.FourStarPercent.ToString())%
+                                </span>
+                            </div>
+                            <!-- Bar 3 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">3 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: @(Model.ThreeStarPercent.ToString())%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    @(Model.ThreeStarPercent.ToString())%
+                                </span>
+                            </div>
+                            <!-- Bar 2 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">2 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: @(Model.TwoStarPercent.ToString())%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    @(Model.TwoStarPercent.ToString())%
+                                </span>
+                            </div>
+                            <!-- Bar 1 -->
+                            <div class="flex items-center mt-4">
+                                <a href="#" class="text-sm font-medium text-gray-900 dark:text-white hover:underline">1 star</a>
+                                <div class="w-2/4 h-3 mx-4 bg-gray-200 rounded-full dark:bg-gray-700">
+                                    <div class="h-3 bg-yellow-300 rounded-full" style="width: @(Model.OneStarPercent.ToString())%"></div>
+                                </div>
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    @(Model.OneStarPercent.ToString())%
+                                </span>
+                            </div>
+                        </div>
+
+                        @if ((User.Identity?.IsAuthenticated ?? false) && !Model.hasRating)
+                        {
+                            <!-- SUBMIT REVIEW -->
+                            <div id="RatingMessage">
+                                <h2 class="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+                                    Write a review
+                                </h2>
+                                @await Html.PartialAsync("_RatingsForm", Model.NewRating)
+                            </div>
+
+                            <hr class="my-8 border-gray-200 dark:border-gray-700" />
+                        }
+
+                        <!-- USERS REVIEWS -->
+                        <div>
+                            @foreach (var rating in Model.Ratings)
+                            {
+                                <article>
+                                    <!-- REVIEW HEADER -->
+                                    <div class="flex items-center mb-4 space-x-4">
+                                        @if (rating.User.PhotoId != Guid.Empty)
+                                        {
+                                            <a href="#">
+                                                <img class="w-10 h-10 rounded-full" src="@rating.User.PhotoFullPath" alt="@rating.User.FullName">
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <div class="flex justify-center items-center overflow-hidden max-w-xs max-h-xs w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500">
+
+                                                <span class="font-bold text-white select-none">
+                                                    @NameAbbr(rating.User.FullName)
+                                                </span>
+                                            </div>
+                                        }
+                                        <div class="space-y-1 font-medium dark:text-white">
+                                            <a href="#" class="hover:underline">
+                                                @rating.User.FullName
+                                            </a>
+                                            @if (rating.User.Ratings is not null && rating.User.Ratings.Any())
+                                            {
+                                                <p class="block text-sm text-gray-500 dark:text-gray-400">
+                                                    @rating.User.Ratings.Count().ToString() Reviews
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p class="block text-sm text-gray-500 dark:text-gray-400">
+                                                    0 Reviews
+                                                </p>
+                                            }
+                                        </div>
+                                    </div>
+                                    <!-- REVIEW RATING -->
+                                    <div class="flex items-center mb-5">
+                                        @for (int i = 0; i < rating.BookRating; i++)
+                                        {
+                                            <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        }
+                                        @for (int i = 0; i < 5 - rating.BookRating; i++)
+                                        {
+                                            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                            </svg>
+                                        }
+                                        <h3 class="@(string.IsNullOrEmpty(rating.RatingTitle) ? "hidden " : "") ml-2 text-sm font-semibold text-gray-900 dark:text-white">@(string.IsNullOrEmpty(rating.RatingTitle) ? "" : rating.RatingTitle)</h3>
+                                    </div>
+                                    <!-- REVIEW TEXT -->
+                                    <div class="line-clamp-4">
+                                        <p class="@(string.IsNullOrEmpty(rating.RatingBody) ? "hidden " : "") mb-2 text-gray-500 dark:text-gray-400">@(string.IsNullOrEmpty(rating.RatingBody) ? "" : rating.RatingBody)</p>
+                                    </div>
+                                    <!-- READ MORE BUTTON -->
+                                    <a href="#" class="@(string.IsNullOrEmpty(rating.RatingBody) ? "hidden " : "") block mb-5 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">Read more</a>
+                                    <!-- REVIEW FOOTER-->
+                                    <aside>
+                                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                            19 people liked this review
+                                        </p>
+                                        <div class="flex items-center mt-3 space-x-3 divide-x divide-gray-200 dark:divide-gray-600">
+                                            <a href="#" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                                Like
+                                            </a>
+                                            <a href="#" class="pl-4 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">
+                                                Report abuse
+                                            </a>
+                                        </div>
+                                    </aside>
+                                </article>
+
+                                <!-- DIVIDER -->
+                                <hr class="my-8 border-gray-200 dark:border-gray-700" />
+                            }
+                            
+                        </div>
+                    </div>
+                </div>
+
+
+                @if (Model.OtherEditions is not null && Model.OtherEditions.Any())
+                {
+                    <!-- OTHER EDITIONS SLIDER -->
+                    <div class="mb-20 mt-6">
+                        <h2 class="mb-4 text-3xl font-thin text-gray-900 dark:text-white">
+                            Other editions
+                        </h2>
+                        <section id="slider-other-editions" class="splide">
+                            <div class="splide__track">
+                                <ul class="splide__list">
+
+                                    @foreach (var item in Model.OtherEditions)
+                                    {
+                                        <li class="splide__slide w-full max-w-sm m-2 p-4 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                            <a asp-controller="Book" asp-action="Details" asp-route-id="@item.ID" class="flex justify-center">
+                                                <img class="max-h-[200px]" src="@item.CoverImageFullPath" alt="cover" />
+                                            </a>
+                                            <div class="mt-4">
+                                                <a asp-controller="Book" asp-action="Details" asp-route-id="@item.ID">
+                                                    <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                        @item.BookFormat
+                                                    </h5>
+                                                    <h5 class="mb-1 line-clamp-1 text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                        @item.Publisher
+                                                    </h5>
+                                                    <h5 class="mb-1 text-sm tracking-tight text-gray-400">
+                                                        @item.Language
+                                                    </h5>
+                                                    <h5 class="text-sm tracking-tight text-gray-400">
+                                                        @item.PublishDate.ToString("MMMM d, yyyy")
+                                                    </h5>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </section>
+                    </div>
+                }
+               
+            </div>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="flex items-center my-3">
+            <div class="grow h-px bg-gray-200 dark:bg-gray-700"></div>
+            <img src="~/images/logo.svg" class="h-10 mx-5" alt="Hybriotheca Logo" />
+            <div class="grow h-px bg-gray-200 dark:bg-gray-700"></div>
+        </div>
+
+        <!-- RECOMMENDATIONS -->
+        <div class="mt-6">
+
+            <!-- SIMILAR BOOKS -->
+            <div class="mb-20">
+                <h2 class="mb-6 text-4xl font-thin text-gray-900 dark:text-white">
+                    Books you might enjoy
+                </h2>
+                <section id="slider-recommendations" class="splide">
+                    <div class="splide__track">
+                        <ul class="splide__list">
+                            
+                            @foreach (var item in Model.BooksYouMightEnjoy)
+                            {
+                                <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                    <a asp-controller="Book" asp-action="Details" asp-route-id="@item.ID" class="flex justify-center">
+                                        <img class="max-h-[200px]" src="@item.CoverImageFullPath" alt="cover" />
+                                    </a>
+                                    <div class="mt-4">
+                                        <a asp-controller="Book" asp-action="Details" asp-route-id="@item.ID">
+                                            <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                @item.BookFormat
+                                            </h5>
+                                            <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                @item.EditionTitle
+                                            </h5>
+                                            <h5 class="text-sm tracking-tight text-gray-400">
+                                                @item.Book.Author
+                                            </h5>
+                                        </a>
+                                        <div class="flex items-center mt-2.5">
+                                            @for (int i = 0; i < (int)item.AverageRating; i++)
+                                            {
+                                                <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                </svg>
+                                            }
+                                            @for (int i = 0; i < 5 - (int)item.AverageRating; i++)
+                                            {
+                                                <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                    <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                </svg>
+                                            }
+                                            <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">@item.AverageRating.ToString("F2")</span>
+                                        </div>
+                                    </div>
+                                </li>
+
+                            }
+
+                        </ul>
+                    </div>
+                </section>
+            </div>
+
+            @if (Model.OtherBooksBySameAuthor is not null && Model.OtherBooksBySameAuthor.Any())
+            {
+                <!-- BOOKS BY THE SAME AUTHOR -->
+                <div class="mb-20">
+                    <h2 class="mb-6 text-4xl font-thin text-gray-900 dark:text-white">
+                        Other books by <a href="@Url.Action("Index", "Search", new { searchTerm = Model.Book.Book.Author })" class="italic font-medium text-sky-600 dark:text-sky-400 hover:underline">@Model.Book.Book.Author</a>
+                    </h2>
+                    <section id="slider-same-author" class="splide">
+                        <div class="splide__track">
+                            <ul class="splide__list">
+
+                                @foreach (var item in Model.OtherBooksBySameAuthor)
+                                {
+                                    <li class="splide__slide p-6 bg-white border border-gray-200 rounded hover:border-sky-500 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-sky-500">
+                                        <a asp-controller="Book" asp-action="Details" asp-route-id="@item.ID" class="flex justify-center">
+                                            <img class="max-h-[200px]" src="@item.CoverImageFullPath" alt="cover" />
+                                        </a>
+                                        <div class="mt-4">
+                                            <a asp-controller="Book" asp-action="Details" asp-route-id="@item.ID">
+                                                <h5 class="mb-1 text-xs uppercase tracking-tight text-sky-500 dark:text-sky-400">
+                                                    @item.BookFormat
+                                                </h5>
+                                                <h5 class="mb-1 h-14 line-clamp-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+                                                    @item.EditionTitle
+                                                </h5>
+                                                <h5 class="text-sm tracking-tight text-gray-400">
+                                                    @item.Book.Author
+                                                </h5>
+                                            </a>
+                                            <div class="flex items-center mt-2.5">
+                                                @for (int i = 0; i < (int)item.AverageRating; i++)
+                                                {
+                                                    <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                    </svg>
+                                                }
+                                                @for (int i = 0; i < 5 - (int)item.AverageRating; i++)
+                                                {
+                                                    <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                    </svg>
+                                                }
+                                                <span class="bg-sky-100 text-sky-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-sky-200 dark:text-sky-800 ml-3">@item.AverageRating.ToString("F2")</span>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                }
+
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+            }
+            
+        </div>
+    </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal-guidelines" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-2xl max-h-full">
+        <partial name="_CommunityGuidelines" />
+    </div>
+</div>
+
+
+
+@section Stylesheets{
+    <link rel="stylesheet" type="text/css" href="~/lib/splide/dist/css/splide.min.css" />
+}
+
+@section Scripts{
+    <script src="~/lib/splide/dist/js/splide.min.js"></script>
+
+    <script type="text/javascript">
+        const targetEl = document.getElementById('modal-delete');
+        const options = {
+            backdrop: 'dynamic',
+            backdropClasses: 'bg-gray-900 bg-opacity-50 fixed inset-0 z-50',
+            closable: true
+        }
+        var modal = new Modal(targetEl, options);
+
+        function showAlert() {
+            alert("Please choose a star before submitting your review!");
+        }
+    </script>
+
+
+    <script>
+        Splide.defaults = {
+            drag: 'free',
+            snap: true,
+            perPage: 5,
+            pagination: false,
+            gap: '1rem',
+            padding: 70,
+            paginationKeyboard: true,
+            breakpoints: {
+                1200: {
+                    perPage: 4,
+                },
+                1000: {
+                    perPage: 3,
+                },
+                640: {
+                    perPage: 2,
+                },
+                500: {
+                    perPage: 1,
+                }
+            }
+        }
+
+        @if (Model.OtherEditions is not null && Model.OtherEditions.Any())
+        {
+            <text>
+            new Splide('#slider-other-editions').mount();
+            </text>
+        }
+        
+        new Splide('#slider-recommendations').mount();
+
+        @if (Model.OtherBooksBySameAuthor is not null && Model.OtherBooksBySameAuthor.Any())
+        {
+            <text>
+                new Splide('#slider-same-author').mount();
+            </text>
+        }
+        
+    </script>
+}
