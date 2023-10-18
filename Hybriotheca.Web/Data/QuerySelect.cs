@@ -1,4 +1,5 @@
 ﻿using Hybriotheca.Web.Data.Entities;
+using Hybriotheca.Web.Models;
 using Hybriotheca.Web.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,20 @@ namespace Hybriotheca.Web.Data
                 BookEditionTitle = bookStock.BookEdition.EditionTitle,
                 TotalStock = bookStock.TotalStock,
                 AvailableStock = bookStock.AvailableStock,
+            });
+        }
+
+        public static IQueryable<LoanEmailModel> SelectLoanEmailModel(this IQueryable<Loan> query)
+        {
+            return query.Select(loan => new LoanEmailModel
+            {
+                UserFirstName = loan.User.FirstName,
+                LoanStatus = loan.Status,
+                BookTitle = loan.BookEdition.EditionTitle,
+                LibraryName = loan.Library.Name,
+                LibraryLocation = loan.Library.Location,
+                PickupDate = loan.StartDate.ToShortDateString(),
+                TermLimit = loan.TermLimitDate.ToShortDateString(),
             });
         }
 

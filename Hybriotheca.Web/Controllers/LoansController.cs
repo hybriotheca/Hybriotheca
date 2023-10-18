@@ -13,6 +13,7 @@ namespace Hybriotheca.Web.Controllers
     [Authorize]
     public class LoansController : Controller
     {
+        private readonly IMailHelper _mailHelper;
         private readonly IUserHelper _userHelper;
 
         private readonly IBookEditionRepository _bookEditionRepository;
@@ -22,6 +23,7 @@ namespace Hybriotheca.Web.Controllers
         private readonly ISubscriptionRepository _subscriptionRepository;
 
         public LoansController(
+            IMailHelper mailHelper,
             IUserHelper userHelper,
             IBookEditionRepository bookEditionRepository,
             IBookStockRepository bookStockRepository,
@@ -29,6 +31,7 @@ namespace Hybriotheca.Web.Controllers
             ILoanRepository loanRepository,
             ISubscriptionRepository subscriptionRepository)
         {
+            _mailHelper = mailHelper;
             _userHelper = userHelper;
             _bookEditionRepository = bookEditionRepository;
             _bookStockRepository = bookStockRepository;
@@ -42,7 +45,7 @@ namespace Hybriotheca.Web.Controllers
         [Authorize(Roles = "Admin,Librarian")]
         public async Task<IActionResult> Index()
         {
-            var loans = await _loanRepository.SelectLastCreatedAsListViewModelsAsync(25);
+            var loans = await _loanRepository.SelectLastCreatedAsync(25);
 
             if (User.IsInRole("Admin"))
             {
@@ -164,7 +167,12 @@ namespace Hybriotheca.Web.Controllers
                     bookStock.AvailableStock--;
                     await _loanRepository.CreateAsync(loan);
 
+                    var sendEmail = await _mailHelper.SendLoanCreatedEmail(loan, user.Email);
+                    if (!sendEmail) TempData["Message"] = "Loan was created but email was not sent.";
+
                     // Success.
+                    TempData["Message"] =
+                        $"An email was sent to <i>{user.Email}</i> regarding the Loan.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException ex)
@@ -484,6 +492,13 @@ namespace Hybriotheca.Web.Controllers
             try
             {
                 await _loanRepository.UpdateAsync(loan);
+
+                var sendEmail = await _mailHelper.SendLoanCheckedOutEmail(loan, user.Email);
+                if (!sendEmail) TempData["Message"] = "Loan was checked out but email was not sent.";
+
+                // Success.
+                TempData["Message"] =
+                        $"An email was sent to <i>{user.Email}</i> regarding the Loan handover.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
@@ -543,6 +558,20 @@ namespace Hybriotheca.Web.Controllers
                 bookStock.AvailableStock++;
                 await _loanRepository.UpdateAsync(loan);
 
+                var user = await _userHelper.GetUserByIdAsync(loan.UserID);
+                if (user != null)
+                {
+                    var sendEmail = await _mailHelper.SendLoanReturnedEmail(loan, user.Email);
+                    if (sendEmail)
+                    {
+                        // Success.
+                        TempData["Message"] =
+                                $"An email was sent to <i>{user.Email}</i> regarding the Loan return.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+
+                TempData["Message"] = "Book was returned but email was not sent.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
@@ -629,6 +658,9 @@ namespace Hybriotheca.Web.Controllers
                     // BookStock is updated on SaveChangesAsync() inside CreateAsync().
                     bookStock.AvailableStock--;
                     await _loanRepository.CreateAsync(newLoan);
+
+                    var sendEmail = await _mailHelper.SendLoanCreatedEmail(newLoan, GetCurrentUserName());
+                    if (!sendEmail) TempData["Message"] = "Loan was created but email was not sent.";
 
                     return Ok("Loan reservation was created.");
                 }

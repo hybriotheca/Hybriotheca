@@ -1,5 +1,6 @@
 ﻿using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
+using Hybriotheca.Web.Repositories.Interfaces;
 using MailKit.Net.Smtp;
 using MimeKit;
 
@@ -8,10 +9,12 @@ namespace Hybriotheca.Web.Helpers
     public class MailHelper : IMailHelper
     {
         private readonly IConfiguration _configuration;
+        private readonly ILoanRepository _loanRepository;
 
-        public MailHelper(IConfiguration configuration)
+        public MailHelper(IConfiguration configuration, ILoanRepository loanRepository)
         {
             _configuration = configuration;
+            _loanRepository = loanRepository;
         }
 
         public bool SendConfirmationEmail(AppUser user, string tokenUrl)
@@ -56,6 +59,66 @@ namespace Hybriotheca.Web.Helpers
                 client.Disconnect(true);
 
                 return true;
+            }
+            catch { return false; }
+        }
+
+        public async Task<bool> SendLoanCheckedOutEmail(Loan loan, string userEmail)
+        {
+            var model = await _loanRepository.SelectEmailModelAsync(loan.ID);
+            if (model == null) return false;
+
+            string emailBody = "<h2>Book has been checked out</h2>" +
+                $"<p>Hi, {model.UserFirstName}.</p>" +
+                $"<p>Your loan status is now {model.LoanStatus}." +
+                $"<h4>Book: {model.BookTitle}</h4>" +
+                $"<h4>Library: {model.LibraryName}, {model.LibraryLocation}</h4>" +
+                $"<h4>Pickup date: {model.PickupDate}</h4>" +
+                $"<h4>Term limit: {model.TermLimit}</h4>";
+
+            try
+            {
+                return SendEmail(userEmail, "Book checked out", emailBody);
+            }
+            catch { return false; }
+        }
+
+        public async Task<bool> SendLoanCreatedEmail(Loan loan, string userEmail)
+        {
+            var model = await _loanRepository.SelectEmailModelAsync(loan.ID);
+            if (model == null) return false;
+
+            string emailBody = "<h2>Loan has been registered</h2>" +
+                $"<p>Hi, {model.UserFirstName}.</p>" +
+                $"<p>Your loan status is now {model.LoanStatus}." +
+                $"<h4>Book: {model.BookTitle}</h4>" +
+                $"<h4>Library: {model.LibraryName}, {model.LibraryLocation}</h4>" +
+                $"<h4>Pickup date: {model.PickupDate}</h4>" +
+                $"<h4>Term limit: {model.TermLimit}</h4>";
+
+            try
+            {
+                return SendEmail(userEmail, "Loan registered", emailBody);
+            }
+            catch { return false; }
+        }
+
+        public async Task<bool> SendLoanReturnedEmail(Loan loan, string userEmail)
+        {
+            var model = await _loanRepository.SelectEmailModelAsync(loan.ID);
+            if (model == null) return false;
+
+            string emailBody = "<h2>Book has been returned</h2>" +
+                $"<p>Hi, {model.UserFirstName}.</p>" +
+                $"<p>Your loan status is now {model.LoanStatus}." +
+                $"<h4>Book: {model.BookTitle}</h4>" +
+                $"<h4>Library: {model.LibraryName}, {model.LibraryLocation}</h4>" +
+                $"<h4>Pickup date: {model.PickupDate}</h4>" +
+                $"<h4>Term limit: {model.TermLimit}</h4>";
+
+            try
+            {
+                return SendEmail(userEmail, "Book returned", emailBody);
             }
             catch { return false; }
         }

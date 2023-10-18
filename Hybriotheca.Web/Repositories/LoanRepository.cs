@@ -1,5 +1,6 @@
 ﻿using Hybriotheca.Web.Data;
 using Hybriotheca.Web.Data.Entities;
+using Hybriotheca.Web.Models;
 using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -48,7 +49,15 @@ public class LoanRepository : GenericRepository<Loan>, ILoanRepository
         });
     }
 
-    public async Task<IEnumerable<LoanViewModel>> SelectLastCreatedAsListViewModelsAsync(int rows)
+    public async Task<LoanEmailModel?> SelectEmailModelAsync(int id)
+    {
+        return await _dataContext.Loans
+            .Where(loan => loan.ID == id)
+            .SelectLoanEmailModel()
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<LoanViewModel>> SelectLastCreatedAsync(int rows)
     {
         return await _dataContext.Loans
             .SelectLoanViewModel()
