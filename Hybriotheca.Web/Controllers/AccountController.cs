@@ -374,12 +374,47 @@ namespace Hybriotheca.Web.Controllers
             return RedirectToAction(nameof(HomeController.UserSettings), "Home", User.Identity.Name);
         }
 
-
-        private IActionResult RedirectToHomePage()
+        [Authorize]
+        public async Task<IActionResult> UpgradeSubscription()
         {
-            return Redirect("/Home");
+            try
+            {
+                var user = await _userHelper.GetUserByEmailAsync(GetCurrentUserName());
+                if (user == null) return View("Error");
+
+                var subscriptionId = await _subscriptionRepository.GetPremiumSubscriptionIdAsync();
+
+                var subscription = await _subscriptionRepository.GetByIdAsync(subscriptionId);
+                if (subscription == null) return View("Error");
+
+                if (user.SubscriptionID == subscriptionId)
+                {
+                    TempData["Message"] = "You are already a premium member.";
+                }
+                else
+                {
+                    user.SubscriptionID = subscriptionId;
+
+                    await _userHelper.UpdateUserAsync(user);
+
+                    TempData["Message"] =
+                        $"Your subscription has been upgraded!" +
+                        $" You have now access to {subscription.MaxLoans} loans" +
+                        $" and a term limit of {subscription.MaxLoanDays} days.";
+                }
+
+                return RedirectToAction(nameof(HomeController.UserSettings), "Home");
+            }
+            catch
+            {
+                ViewBag.ErrorTitle = "Could not upgrade";
+                ViewBag.ErrorMessage = "Could not upgrade user's subscription.";
+
+                return View("Error");
+            }
         }
 
+        #region private helper methods
 
         private string GetCurrentUserName()
         {
@@ -391,5 +426,11 @@ namespace Hybriotheca.Web.Controllers
             return User.Identity?.IsAuthenticated ?? false;
         }
 
+        private IActionResult RedirectToHomePage()
+        {
+            return Redirect("/Home");
+        }
+
+        #endregion private helper methods
     }
 }

@@ -33,6 +33,14 @@ public class SubscriptionRepository : GenericRepository<Subscription>, ISubscrip
             .FirstOrDefaultAsync();
     }
 
+    public async Task<int> GetPremiumSubscriptionIdAsync()
+    {
+        return await _dataContext.Subscriptions
+            .Where(s => s.Name == "Premium")
+            .Select(s => s.ID)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<bool> IsConstrainedAsync(int id)
     {
         return await _dataContext.Subscriptions
