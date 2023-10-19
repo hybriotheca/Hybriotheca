@@ -92,8 +92,10 @@ namespace Hybriotheca.Web.Data
                     await _context.Libraries.AddAsync(new Library
                     {
                         Name = library,
-                        Location = _configuration[$"SeedDb:Libraries:{library}:Location"],
-                        Contact = _configuration[$"SeedDb:Libraries:{library}:Contact"],
+                        City = _configuration[$"SeedDb:Libraries:{library}:City"],
+                        Country = _configuration[$"SeedDb:Libraries:{library}:Country"],
+                        PhoneNumber = _configuration[$"SeedDb:Libraries:{library}:PhoneNumber"],
+                        Email = _configuration[$"SeedDb:Libraries:{library}:Email"],
                     });
                 }
             }

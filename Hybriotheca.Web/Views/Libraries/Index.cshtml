@@ -13,7 +13,7 @@
             <nav class="flex mb-5" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
                     <li class="inline-flex items-center">
-                        <a href="/AdminPanel" class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                        <a asp-controller="Home" asp-action="AdminPanel" class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
                             <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
                                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
@@ -85,7 +85,7 @@
                                 @Html.DisplayNameFor(model => model.Location)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
-                                @Html.DisplayNameFor(model => model.Contact)
+                                @Html.DisplayNameFor(model => model.PhoneNumber)
                             </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400">
                                 Actions
@@ -115,7 +115,7 @@
                                 </td>
                                 <!-- CONTACT -->
                                 <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    @Html.DisplayFor(modelItem => library.Contact)
+                                    @Html.DisplayFor(modelItem => library.PhoneNumber)
                                 </td>
                                 <!-- ACTIONS -->
                                 <td class="p-4 space-x-2 whitespace-nowrap">

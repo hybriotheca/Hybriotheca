@@ -112,7 +112,6 @@ namespace Hybriotheca.Web.Controllers
                     " Possible entities:" +
                     $" {nameof(BookStock)}," +
                     $" {nameof(Loan)}," +
-                    $" {nameof(Reservation)}," +
                     $" User.";
             }
             else
@@ -158,6 +157,8 @@ namespace Hybriotheca.Web.Controllers
         }
 
 
+        #region private helper methods
+
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
@@ -171,5 +172,7 @@ namespace Hybriotheca.Web.Controllers
             Response.StatusCode = StatusCodes.Status404NotFound;
             return View("NotFound");
         }
+
+        #endregion private helper methods
     }
 }

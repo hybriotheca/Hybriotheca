@@ -1,19 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Hybriotheca.Web.Data.Entities;
+﻿namespace Hybriotheca.Web.Data.Entities;
 
 public class Library : IEntity
 {
     public int ID { get; set; }
 
-    [Required]
     public string Name { get; set; }
 
-    [Required]
-    public string Location { get; set; }
+    public string City { get; set; }
 
-    [Required]
-    public string Contact { get; set; }
+    public string Country { get; set; }
+
+    public string Location => $"{City}, {Country}";
+
+    public string PhoneNumber { get; set; }
+
+    public string Email { get; set; }
 
 
     public IEnumerable<BookStock>? BooksInStock { get; set; }
