@@ -48,11 +48,12 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <script src="~/lib/selectize.js-0.15.2/dist/js/selectize.min.js"></script>
-
     <script>
-        $(function () {
-            $("#BookID").selectize();
+        var baseBookEl = document.getElementById("BookID");
+        var bookTitleEl = document.getElementById("Title");
+
+        baseBookEl.addEventListener("change", function () {
+            bookTitleEl.value = baseBookEl.selectedOptions[0].textContent;
         });
     </script>
 }

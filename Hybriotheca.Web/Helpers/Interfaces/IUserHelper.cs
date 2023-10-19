@@ -1,4 +1,5 @@
 ﻿using Hybriotheca.Web.Data.Entities;
+using Hybriotheca.Web.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -33,5 +34,6 @@ namespace Hybriotheca.Web.Helpers.Interfaces
         Task SetUserRoleAsync(AppUser user, string newRole);
         Task<IdentityResult> UpdateUserAsync(AppUser user);
         Task<bool> UserExistsAsync(string id);
+        Task<UpdateUserViewModel?> SelectUserViewModel(string email);
     }
 }

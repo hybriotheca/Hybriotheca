@@ -17,6 +17,8 @@ namespace Hybriotheca.Web.Models.Account
         [Display(Name = "Prefered Library")]
         public int MainLibraryID { get; set; }
 
+        public string SubscriptionName { get; set; }
+
 
         [Display(Name = "Upload photo")]
         public IFormFile? PhotoFile { get; set; }
@@ -26,5 +28,6 @@ namespace Hybriotheca.Web.Models.Account
         public string? PhotoFullPath { get; set; }
 
         public bool DeletePhoto { get; set; }
+
     }
 }
