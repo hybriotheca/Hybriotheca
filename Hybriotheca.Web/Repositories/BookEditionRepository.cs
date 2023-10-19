@@ -84,11 +84,18 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
         int currentPage = viewModel.Page;
 
         string searchUrl = "/Search?";
-        var editionsQuery = _dataContext.BookEditions.Include(a => a.Book).AsSplitQuery().Include(s => s.Ratings).AsSplitQuery().AsQueryable();
+        var editionsQuery = _dataContext.BookEditions
+            .AsNoTracking()
+            .Include(a => a.Book)
+            .Include(s => s.Ratings)
+            .AsSplitQuery();
 
         if (viewModel.Categories is not null && viewModel.Categories.Any())
         {
-            editionsQuery = editionsQuery.Include(s => s.Category).AsSplitQuery().Where(x => viewModel.Categories.Contains(x.Category.Name));
+            editionsQuery = editionsQuery
+                .Include(s => s.Category)
+                .AsSplitQuery()
+                .Where(x => EF.Functions.Contains(viewModel.Categories, x.Category.Name));
 
             for (int i = 0; i < viewModel.Categories.Count; i++)
             {
@@ -206,11 +213,11 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
 
         if (!string.IsNullOrWhiteSpace(viewModel.SearchTerm))
         {
-            editionsQuery = editionsQuery.Where(
-            s => s.EditionTitle.Contains(viewModel.SearchTerm) ||
-            s.Book.Author.Contains(viewModel.SearchTerm) ||
-            s.ISBN.Contains(viewModel.SearchTerm) ||
-            s.Publisher.Contains(viewModel.SearchTerm));
+            editionsQuery = editionsQuery.Where(s =>
+                EF.Functions.Contains(s.EditionTitle, viewModel.SearchTerm) ||
+                EF.Functions.Contains(s.Book.Author, viewModel.SearchTerm) ||
+                (s.ISBN != null && EF.Functions.Contains(s.ISBN, viewModel.SearchTerm)) ||
+                EF.Functions.Contains(s.Publisher, viewModel.SearchTerm));
 
             if (!_hasExistingParams)
             {
