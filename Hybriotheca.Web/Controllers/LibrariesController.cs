@@ -43,6 +43,7 @@ namespace Hybriotheca.Web.Controllers
                     await _libraryRepository.CreateAsync(library);
 
                     // Success.
+                    TempData["Message"] = "Library was created.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch { }
@@ -77,6 +78,7 @@ namespace Hybriotheca.Web.Controllers
                     await _libraryRepository.UpdateAsync(library);
 
                     // Success.
+                    TempData["Message"] = "Library was updated.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -136,6 +138,7 @@ namespace Hybriotheca.Web.Controllers
                 await _libraryRepository.DeleteAsync(library);
 
                 // Success.
+                TempData["Message"] = "Library was deleted.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)

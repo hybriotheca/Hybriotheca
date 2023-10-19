@@ -108,6 +108,7 @@ namespace Hybriotheca.Web.Controllers
                     await _bookEditionRepository.CreateAsync(bookEdition);
 
                     // Success.
+                    TempData["Message"] = "Book Edition was created.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch { }
@@ -203,6 +204,7 @@ namespace Hybriotheca.Web.Controllers
                     await _bookEditionRepository.UpdateAsync(bookEdition);
 
                     // Success.
+                    TempData["Message"] = "Book Edition was updated.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -263,8 +265,9 @@ namespace Hybriotheca.Web.Controllers
             try
             {
                 await _bookEditionRepository.DeleteAsync(bookEdition);
-                
+
                 // Success.
+                TempData["Message"] = "Book Edition was deleted.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)

@@ -128,6 +128,7 @@ namespace Hybriotheca.Web.Controllers
                     await _bookStockRepository.CreateAsync(bookStock);
 
                     // Success.
+                    TempData["Message"] = "Book Stock was created.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException ex)
@@ -215,6 +216,7 @@ namespace Hybriotheca.Web.Controllers
                     await _bookStockRepository.UpdateAsync(bookStock);
 
                     // Success.
+                    TempData["Message"] = "Book Stock was updated.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -296,6 +298,7 @@ namespace Hybriotheca.Web.Controllers
                 await _bookStockRepository.DeleteAsync(bookStock);
 
                 // Success.
+                TempData["Message"] = "Book Stock was deleted.";
                 return RedirectToAction(nameof(Index));
             }
             catch { }
