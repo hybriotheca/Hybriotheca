@@ -355,9 +355,9 @@
                     
                     <!-- PAGESIZE -->
 
-                    <div class="flex justify-end gap-4">
-                        <label for="pageSize" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Page size:</label>
-                        <select form="main-form" id="pageSize" name="pageSize" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <div class="flex justify-end items-center gap-4">
+                        <label for="pageSize" class="w-40 block text-sm font-medium text-gray-900 dark:text-white">Page size:</label>
+                        <select form="main-form" id="pageSize" name="pageSize" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                             <option selected="@CheckPageSizeSelected(6)" value="6">6</option>
                             <option selected="@CheckPageSizeSelected(12)" value="12">12</option>
                             <option selected="@CheckPageSizeSelected(24)" value="24">24</option>
@@ -366,9 +366,9 @@
 
                     <!-- SORT BY -->
 
-                    <div class="flex justify-end gap-4">
-                        <label for="SortBy" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sort by:</label>
-                        <select form="main-form" id="SortBy" name="SortBy" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <div class="flex justify-end items-center gap-4">
+                        <label for="SortBy" class="w-24 block text-sm font-medium text-gray-900 dark:text-white">Sort by:</label>
+                        <select form="main-form" id="SortBy" name="SortBy" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
                             <option selected="@CheckRelevanceSelected("relevance")" value="relevance">Relevance</option>
                             <option selected="@CheckTitleA_ZSelected("title_A_Z")" value="title_A_Z">Title A-Z</option>
                             <option selected="@CheckTitleZ_ASelected("title_Z_A")" value="title_Z_A">Title Z-A</option>
