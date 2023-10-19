@@ -5,8 +5,10 @@ using Hybriotheca.Web.Models.Entities;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Hybriotheca.Web.Controllers
 {
@@ -587,11 +589,63 @@ namespace Hybriotheca.Web.Controllers
             return View("Error");
         }
 
+        [Route("Book/Borrow/{id}")]
+        [Authorize(Roles = "Admin, Librarian, Customer")]
+        public async Task<IActionResult> Checkout(int id)
+        {
+            var bookEdition = await _bookEditionRepository.GetByIdForCheckoutAsync(id);
 
-        [Authorize(Roles = "Customer")]
+            if (bookEdition == null) return BookEditionNotFound();
+
+            ViewBag.Cover = bookEdition.CoverImageFullPath;
+            ViewBag.BookTitle = bookEdition.EditionTitle;
+            ViewBag.Author = bookEdition.Book.Author;
+
+
+            var loggedUserID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (loggedUserID == null)
+            {
+                return UserNotFound();
+            }
+
+            ViewBag.Libraries = bookEdition.BooksInStock?.Where(w => w.AvailableStock >= 1).Select(s => new SelectListItem()
+            {
+                Text = s.Library.Name,
+                Value = s.LibraryID.ToString()
+            }).Prepend(new SelectListItem
+            {
+                Text = "Select a pickup library",
+                Value = "0"
+            });
+
+            //if (ViewBag.Libraries is null || !ViewBag.Libraries.Any())
+            //{
+            //    //No stock found
+            //}
+
+            var currentUser = await _userHelper.GetUserByIdAsync(loggedUserID);
+
+            var preferedLibraryID = currentUser?.MainLibraryID ?? 0;
+
+            var model = new CreateLoanViewModel()
+            {
+                LibraryId = preferedLibraryID,
+                BookEditionId = bookEdition.ID,
+                StartDate = DateTime.UtcNow
+            };
+
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Customer,Admin,Librarian")]
         [HttpPost]
         public async Task<IActionResult> CreateLoanReservation(CreateLoanViewModel model)
         {
+
+            var routeValues = new { id = model.BookEditionId };
+
             ModelState.Remove(nameof(model.UserId));
             ModelState.Remove(nameof(model.WillCheckOutLater));
 
@@ -607,15 +661,17 @@ namespace Hybriotheca.Web.Controllers
                 // Check Start date is not before today.
                 if (model.StartDate.Date < dateTimeUtcNowDate)
                 {
-                    AddModelError("Start date cannot be previous to today.");
-                    //return await ViewCreateAsync(model);
+                    TempData["Message"] = "Start date cannot be previous to today."; //message
+
+                    return RedirectToAction("Borrow", "Book", routeValues);
                 }
 
                 // Check reservation time limit.
                 if (DateTime.Compare(model.StartDate, dateTimeUtcNowDate.AddDays(7)) > 0)
                 {
-                    AddModelError("The limit for reservations is 7 days.");
-                    //return await ViewCreateAsync(model);
+                    TempData["Message"] = "The limit for reservations is 7 days."; //message
+
+                    return RedirectToAction("Borrow", "Book", routeValues);
                 }
 
                 // Check user has reached limit of loans.
@@ -637,8 +693,9 @@ namespace Hybriotheca.Web.Controllers
                 var userLoans = await _loanRepository.CountUnreturnedWhereUserAsync(user.Id);
                 if (userLoans >= userSubscription.MaxLoans)
                 {
-                    AddModelError("This user has reached the limit of loans.");
-                    //return await ViewCreateAsync(model);
+                    TempData["Message"] = "This user has reached the limit of loans."; //message
+
+                    return RedirectToAction("Borrow", "Book", routeValues);
                 }
 
                 var newLoan = new Loan
@@ -661,9 +718,16 @@ namespace Hybriotheca.Web.Controllers
                     await _loanRepository.CreateAsync(newLoan);
 
                     var sendEmail = await _mailHelper.SendLoanCreatedEmail(newLoan, GetCurrentUserName());
-                    if (!sendEmail) TempData["Message"] = "Loan was created but email was not sent.";
+                    if (!sendEmail) 
+                    {
+                        TempData["Message"] = "Loan was created but email was not sent."; // Message book details
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Loan created successfully";
+                    }
 
-                    return Ok("Loan reservation was created.");
+                    return RedirectToAction("Details", "Book", routeValues); //Pagina book details do livro
                 }
                 catch (DbUpdateException ex)
                 {
@@ -676,8 +740,9 @@ namespace Hybriotheca.Web.Controllers
                         constraintName = $"CK_{nameof(BookStock.AvailableStock)}_GreaterOrEqualZero";
                         if (innerEx.Message.Contains(constraintName))
                         {
-                            AddModelError("This book is currently not available at this Library.");
-                            //return await ViewEditAsync(loan);
+                            TempData["Message"] = "This book is currently not available at this Library."; //Message
+
+                            return RedirectToAction("Borrow", "Book", routeValues);
                         }
 
                         // Check BookEdition reference.
@@ -713,8 +778,9 @@ namespace Hybriotheca.Web.Controllers
                 catch { }
             }
 
-            // Temporary.
-            return Json("Could not create Loan.");
+            TempData["ModelError"] = "Loan could not be created.";
+
+            return RedirectToAction("Details", "Book", routeValues); //Ir para book details e mostrar mensagem
         }
 
         

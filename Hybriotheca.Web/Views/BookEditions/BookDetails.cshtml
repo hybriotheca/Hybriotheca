@@ -15,6 +15,34 @@
         }
         return string.Empty;
     }
+
+    int ratingCount = 0;
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+        <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="sr-only">Info</span>
+        <div>
+            @TempData["Message"]
+        </div>
+    </div>
+}
+
+@if (TempData["ModelError"] != null)
+{
+    <div id="NoBookStockAvailable" style="display: none;" class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+        <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="sr-only">Info</span>
+        <div>
+            @TempData["ModelError"]
+        </div>
+    </div>
 }
 
 <div class="p-4 grow">
@@ -37,10 +65,26 @@
                         
                         @if (Model.HasStock)
                         {
-                            <!-- BORROW -->
-                            <a href="#" class="transition-all duration-200 ease-in-out inline-flex justify-center items-center mx-4 my-2 py-2 px-5 font-medium text-white rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
-                                Borrow this book
-                            </a>
+                            if (Model.AlreadyBorrowed)
+                            {
+                                <a href="#" class="transition-all cursor-not-allowed duration-200 ease-in-out inline-flex justify-center items-center mx-4 my-2 py-2 px-5 font-medium text-white rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                                    Borrowed
+                                </a>
+
+                            }
+                            else if (Model.LoanLimitReached)
+                            {
+                                <a href="#" class="transition-all cursor-not-allowed duration-200 ease-in-out inline-flex justify-center items-center mx-4 my-2 py-2 px-5 font-medium text-white rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                                    Borrow limit reached
+                                </a>
+                            }
+                            else
+                            {
+                                <!-- BORROW -->
+                                <a asp-controller="Book" asp-action="Borrow" asp-route-id="@Model.Book.ID" class="transition-all duration-200 ease-in-out inline-flex justify-center items-center mx-4 my-2 py-2 px-5 font-medium text-white rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 hover:hue-rotate-90 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                                    Borrow this book
+                                </a>
+                            }
                         }
                         else
                         {
@@ -312,12 +356,14 @@
                         <div>
                             @foreach (var rating in Model.Ratings)
                             {
+                                ratingCount++;
+
                                 <article>
                                     <!-- REVIEW HEADER -->
                                     <div class="flex items-center mb-4 space-x-4">
                                         @if (rating.User.PhotoId != Guid.Empty)
                                         {
-                                            <a href="#">
+                                            <a asp-controller="Home" asp-action="UserProfile" asp-route-id="@rating.UserID">
                                                 <img class="w-10 h-10 rounded-full" src="@rating.User.PhotoFullPath" alt="@rating.User.FullName">
                                             </a>
                                         }
@@ -325,13 +371,17 @@
                                         {
                                             <div class="flex justify-center items-center overflow-hidden max-w-xs max-h-xs w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500">
 
-                                                <span class="font-bold text-white select-none">
-                                                    @NameAbbr(rating.User.FullName)
-                                                </span>
+
+                                                <a asp-controller="Home" asp-action="UserProfile" asp-route-id="@rating.UserID">
+                                                    <span class="font-bold text-white select-none">
+                                                        @NameAbbr(rating.User.FullName)
+                                                    </span>
+                                                </a>
+                                                
                                             </div>
                                         }
                                         <div class="space-y-1 font-medium dark:text-white">
-                                            <a href="#" class="hover:underline">
+                                            <a asp-controller="Home" asp-action="UserProfile" asp-route-id="@rating.UserID" class="hover:underline">
                                                 @rating.User.FullName
                                             </a>
                                             @if (rating.User.Ratings is not null && rating.User.Ratings.Any())
@@ -365,11 +415,11 @@
                                         <h3 class="@(string.IsNullOrEmpty(rating.RatingTitle) ? "hidden " : "") ml-2 text-sm font-semibold text-gray-900 dark:text-white">@(string.IsNullOrEmpty(rating.RatingTitle) ? "" : rating.RatingTitle)</h3>
                                     </div>
                                     <!-- REVIEW TEXT -->
-                                    <div class="line-clamp-4">
+                                    <div id="rating-@(ratingCount)" class="line-clamp-4">
                                         <p class="@(string.IsNullOrEmpty(rating.RatingBody) ? "hidden " : "") mb-2 text-gray-500 dark:text-gray-400">@(string.IsNullOrEmpty(rating.RatingBody) ? "" : rating.RatingBody)</p>
                                     </div>
                                     <!-- READ MORE BUTTON -->
-                                    <a href="#" class="@(string.IsNullOrEmpty(rating.RatingBody) ? "hidden " : "") block mb-5 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">Read more</a>
+                                    <button id="read-more-@ratingCount" onclick="readMore('@ratingCount')" class="@(string.IsNullOrEmpty(rating.RatingBody) ? "hidden " : "") block mb-5 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">Read more</button>
                                     <!-- REVIEW FOOTER-->
                                     <aside>
                                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -614,6 +664,19 @@
                 500: {
                     perPage: 1,
                 }
+            }
+        }
+
+        function readMore(ratingId) {
+            var reviewBody = document.getElementById(`rating-${ratingId}`);
+            var readMoreBtn = document.getElementById(`read-more-${ratingId}`)
+
+            reviewBody.classList.toggle("line-clamp-4");
+
+            if (readMoreBtn.innerHTML == "Read more") {
+                readMoreBtn.innerHTML = "Read less";
+            } else {
+                readMoreBtn.innerHTML = "Read more";
             }
         }
 

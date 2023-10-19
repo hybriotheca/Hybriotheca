@@ -1,6 +1,7 @@
 ﻿using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
 using Hybriotheca.Web.Models.Entities;
+using Hybriotheca.Web.Repositories;
 using Hybriotheca.Web.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,9 @@ namespace Hybriotheca.Web.Controllers
         private readonly IBookEditionRepository _bookEditionRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IRatingRepository _ratingRepository;
+        private readonly IUserHelper _userHelper;
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly ILoanRepository _loanRepository;
 
         public BookEditionsController(
             IBlobHelper blobHelper,
@@ -30,7 +34,10 @@ namespace Hybriotheca.Web.Controllers
             IBookRepository bookRepository,
             IBookEditionRepository bookEditionRepository,
             ICategoryRepository categoryRepository,
-            IRatingRepository ratingRepository)
+            IRatingRepository ratingRepository,
+            IUserHelper userHelper,
+            ISubscriptionRepository subscriptionRepository,
+            ILoanRepository loanRepository)
         {
             _blobHelper = blobHelper;
             _converterHelper = converterHelper;
@@ -38,6 +45,9 @@ namespace Hybriotheca.Web.Controllers
             _bookEditionRepository = bookEditionRepository;
             _categoryRepository = categoryRepository;
             _ratingRepository = ratingRepository;
+            _userHelper = userHelper;
+            _subscriptionRepository = subscriptionRepository;
+            _loanRepository = loanRepository;
         }
 
 
@@ -229,6 +239,8 @@ namespace Hybriotheca.Web.Controllers
                     " Possible entities:" +
                     $" {nameof(BookStock)}," +
                     $" {nameof(Loan)}," +
+                    $" {nameof(Rating)}," +
+                    $" {nameof(Reservation)}." +
                     $" {nameof(Rating)}.";
             }
             else
@@ -287,10 +299,28 @@ namespace Hybriotheca.Web.Controllers
         public async Task<IActionResult> BookDetails(int id)
         {
             var bookEdition = await _bookEditionRepository.GetByIdWithRatingsAndBookAsync(id);
-
             var loggedUserID = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            bool loanLimitReached;
+            bool alreadyBorrowed;
+            List<Rating> ratings;
 
             if (bookEdition == null) return BookEditionNotFound();
+
+
+            ratings = await _ratingRepository.GetRatingsByBookIDWithOtherUserRatings(bookEdition.ID);
+            var user = await _userHelper.GetUserByIdAsync(loggedUserID);
+
+            if (user != null)
+            {
+                loanLimitReached = await CheckIfLoanLimitReached(user);
+                alreadyBorrowed = _bookEditionRepository.CheckIfBorrowed(bookEdition.ID, user.Id);
+                ratings = ratings.OrderByDescending(s => s.UserID == loggedUserID).ToList();
+            }
+            else
+            {
+                loanLimitReached = false;
+                alreadyBorrowed = false;
+            }
 
 
             (List<BookEdition> OtherEditions, List<BookEdition> BooksYouMightEnjoy, List<BookEdition> OtherBooksBySameAuthor) = await _bookEditionRepository.GetBookDetailsCarouselAsync(bookEdition);
@@ -298,8 +328,10 @@ namespace Hybriotheca.Web.Controllers
             var Book = new BookDetailsViewModel()
             {
                 Book = bookEdition,
-                Ratings = await _ratingRepository.GetRatingsByBookIDWithOtherUserRatings(bookEdition.ID),
+                Ratings = ratings,
                 HasStock = _bookEditionRepository.CheckIfHasStock(bookEdition.ID),
+                AlreadyBorrowed = alreadyBorrowed,
+                LoanLimitReached = loanLimitReached,
                 NewRating = new Rating()
                 {
                     BookEditionID = bookEdition.ID,
@@ -325,6 +357,7 @@ namespace Hybriotheca.Web.Controllers
             return View(Book);
         }
 
+
         [Route("Book/Reader/{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> EBookReader(int id)
@@ -344,12 +377,27 @@ namespace Hybriotheca.Web.Controllers
             return View();
         }
 
-
         #region private helper methods
 
         private void AddModelError(string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);
+        }
+
+        private async Task<bool> CheckIfLoanLimitReached(AppUser user)
+        {
+            var userSubscription = await _subscriptionRepository.GetByIdAsync(user.SubscriptionID);
+            var userLoans = await _loanRepository.CountUnreturnedWhereUserAsync(user.Id);
+
+            if (userLoans >= userSubscription.MaxLoans)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
         public ViewResult BookEditionNotFound()

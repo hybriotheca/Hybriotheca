@@ -42,4 +42,8 @@ public interface IBookEditionRepository : IGenericRepository<BookEdition>
     Task<BookEdition> GetByIdWithBookAsync(int id);
 
     Task<HomeCarouselViewModel> GetHomeCarouselItems(int takeNr);
+
+    Task<BookEdition> GetByIdForCheckoutAsync(int id);
+
+    bool CheckIfBorrowed(int bookID, string UserID);
 }

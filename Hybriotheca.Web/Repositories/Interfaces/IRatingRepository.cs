@@ -8,5 +8,5 @@ public interface IRatingRepository : IGenericRepository<Rating>
     Task<Rating> GetByIDWithAll(int id);
     Task<bool> AnyWhereBookEditionAsync(int bookEditionId);
     Task<List<Rating>> GetRatingsByBookIDWithOtherUserRatings(int id);
-
+    Task<Rating?> GetNewRatingByIDAsync(Rating rating);
 }

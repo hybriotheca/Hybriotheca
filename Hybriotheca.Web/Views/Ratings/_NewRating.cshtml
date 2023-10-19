@@ -1,0 +1,109 @@
+﻿@model Hybriotheca.Web.Data.Entities.Rating
+
+
+@{
+    string NameAbbr(string fullName)
+    {
+        var firstLetters = fullName.Split(' ')
+                    .Where(word => !string.IsNullOrEmpty(word))
+                    .ToArray();
+
+        if (firstLetters.Length > 0)
+        {
+            string nameAbbr = string.Concat(firstLetters[0][0], firstLetters[firstLetters.Length - 1][0]);
+            return nameAbbr;
+        }
+        return string.Empty;
+    }
+
+    var ratingCount = "New";
+}
+
+<div class="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+    <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+    </svg>
+    <span class="sr-only">Info</span>
+    <div>
+        You Rating has been created!
+    </div>
+</div>
+
+
+<article>
+    <!-- REVIEW HEADER -->
+    <div class="flex items-center mb-4 space-x-4">
+        @if (Model.User.PhotoId != Guid.Empty)
+        {
+            <a asp-controller="Home" asp-action="UserProfile" asp-route-id="@Model.UserID">
+                <img class="w-10 h-10 rounded-full" src="@Model.User.PhotoFullPath" alt="@Model.User.FullName">
+            </a>
+        }
+        else
+        {
+            <div class="flex justify-center items-center overflow-hidden max-w-xs max-h-xs w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500">
+
+
+                <a asp-controller="Home" asp-action="UserProfile" asp-route-id="@Model.UserID">
+                    <span class="font-bold text-white select-none">
+                        @NameAbbr(Model.User.FullName)
+                    </span>
+                </a>
+
+            </div>
+        }
+        <div class="space-y-1 font-medium dark:text-white">
+            <a asp-controller="Home" asp-action="UserProfile" asp-route-id="@Model.UserID" class="hover:underline">
+                @Model.User.FullName
+            </a>
+            @if (Model.User.Ratings is not null && Model.User.Ratings.Any())
+            {
+                <p class="block text-sm text-gray-500 dark:text-gray-400">
+                    @Model.User.Ratings.Count().ToString() Reviews
+                </p>
+            }
+            else
+            {
+                <p class="block text-sm text-gray-500 dark:text-gray-400">
+                    0 Reviews
+                </p>
+            }
+        </div>
+    </div>
+    <!-- REVIEW RATING -->
+    <div class="flex items-center mb-5">
+        @for (int i = 0; i < Model.BookRating; i++)
+        {
+            <svg class="w-4 h-4 text-yellow-300 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+            </svg>
+        }
+        @for (int i = 0; i < 5 - Model.BookRating; i++)
+        {
+            <svg class="w-4 h-4 text-gray-300 dark:text-gray-500 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+            </svg>
+        }
+        <h3 class="@(string.IsNullOrEmpty(Model.RatingTitle) ? "hidden " : "") ml-2 text-sm font-semibold text-gray-900 dark:text-white">@(string.IsNullOrEmpty(Model.RatingTitle) ? "" : Model.RatingTitle)</h3>
+    </div>
+    <!-- REVIEW TEXT -->
+    <div id="rating-@(ratingCount)" class="line-clamp-4">
+        <p class="@(string.IsNullOrEmpty(Model.RatingBody) ? "hidden " : "") mb-2 text-gray-500 dark:text-gray-400">@(string.IsNullOrEmpty(Model.RatingBody) ? "" : Model.RatingBody)</p>
+    </div>
+    <!-- READ MORE BUTTON -->
+    <button id="read-more-@ratingCount" onclick="readMore('@ratingCount')" class="@(string.IsNullOrEmpty(Model.RatingBody) ? "hidden " : "") block mb-5 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">Read more</button>
+    <!-- REVIEW FOOTER-->
+    <aside>
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            19 people liked this review
+        </p>
+        <div class="flex items-center mt-3 space-x-3 divide-x divide-gray-200 dark:divide-gray-600">
+            <a href="#" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-xs px-2 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                Like
+            </a>
+            <a href="#" class="pl-4 text-sm font-medium text-sky-600 hover:underline dark:text-sky-500">
+                Report abuse
+            </a>
+        </div>
+    </aside>
+</article>

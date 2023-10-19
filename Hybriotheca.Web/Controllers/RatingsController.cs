@@ -49,12 +49,31 @@ namespace Hybriotheca.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                await _ratingRepository.CreateAsync(rating);
+                try
+                {
+                    await _ratingRepository.CreateAsync(rating);
+                }
+                catch (Exception)
+                {
 
-                return Content("<div class=\"p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400\" role=\"alert\">\r\n  <span class=\"font-medium\">You Rating has been created!</span> You can acess all your ratings in your profile.\r\n</div>", "text/html"); //Add Message here
+                    //Error
+                    return Content("<div id=\"NoBookStockAvailable\" class=\"flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800\" role=\"alert\">\r\n<svg class=\"flex-shrink-0 inline w-4 h-4 mr-3\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 20 20\">\r\n<path d=\"M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z\" />\r\n</svg>\r\n<span class=\"sr-only\">Info</span>\r\n<div>\r\n        Unexpected error! Please try again.\r\n</div>\r\n</div>", "text/html");
+                }
+
+                //Get created rating by ID with other user ratings
+
+                var newRating = await _ratingRepository.GetNewRatingByIDAsync(rating);
+
+                if (newRating != null)
+                {
+                    return PartialView("_NewRating", newRating);
+                }
+
+                //Success
+                return Content("<div class=\"p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400\" role=\"alert\">\r\n  <span class=\"font-medium\">You Rating has been created!</span> You can acess all your ratings in your profile.\r\n</div>", "text/html"); 
             }
-
-            return Content("<div class=\"p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400\" role=\"alert\">\r\n  <span class=\"font-medium\">Unexpected Error!</span> Change a few things up and try submitting again.\r\n</div>", "text/html"); //Add Error Message here
+            //Error
+            return Content("<div id=\"NoBookStockAvailable\" class=\"flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800\" role=\"alert\">\r\n<svg class=\"flex-shrink-0 inline w-4 h-4 mr-3\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 20 20\">\r\n<path d=\"M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z\" />\r\n</svg>\r\n<span class=\"sr-only\">Info</span>\r\n<div>\r\n        Unexpected error! Please try again.\r\n</div>\r\n</div>", "text/html");
         }
 
         // GET: Ratings/Details/5

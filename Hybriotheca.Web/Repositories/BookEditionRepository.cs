@@ -408,7 +408,7 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
     {
         return new List<SelectListItem>
         {
-            new SelectListItem { Text = "Select a Book Format", Value = "" },
+            new SelectListItem { Text = "Select a language", Value = "" },
             new SelectListItem { Text = "English", Value = "English" },
             new SelectListItem { Text = "Chinese", Value = "Chinese" },
             new SelectListItem { Text = "Spanish", Value = "Spanish" },
@@ -425,7 +425,7 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
     {
         return new List<SelectListItem>
         {
-            new SelectListItem { Text = "Select a Language", Value = "" },
+            new SelectListItem { Text = "Select a book format", Value = "" },
             new SelectListItem { Text = "Paperback", Value = "Paperback" },
             new SelectListItem { Text = "Hardcover", Value = "Hardcover" },
             new SelectListItem { Text = "Board Book", Value = "Board Book" },
@@ -485,6 +485,19 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
             FeaturedBooks = tempList.OrderBy(s => Random.Shared.Next()).Take(takeNr).ToList(),
             Fantasy = await _dataContext.BookEditions.Include(s => s.Book).Include(q => q.Ratings).Include(w => w.Category).AsSplitQuery().Where(x => x.Category.Name == "Fantasy").AsNoTracking().Take(takeNr).ToListAsync(),
         };
+    }
+
+    public async Task<BookEdition> GetByIdForCheckoutAsync(int id)
+    {
+        return await _dataContext.BookEditions.Include(s => s.Book).Include(q => q.BooksInStock).ThenInclude(x => x.Library).AsSplitQuery().AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ID == id);
+    }
+
+    public bool CheckIfBorrowed(int bookID, string UserID)
+    {
+        var value = _dataContext.BookEditions.Include(s => s.Loans).AsSplitQuery().Where(x => x.ID == bookID).Any(q => q.Loans.Any(a => a.UserID == UserID));
+
+        return value;
     }
 
 }

@@ -24,6 +24,13 @@ public class RatingRepository : GenericRepository<Rating>, IRatingRepository
         return await _dataContext.Ratings.Include(s => s.BookEdition).AsSplitQuery().Include(e => e.User).ThenInclude(q => q.Ratings).Where(z => z.BookEditionID == id).ToListAsync();
     }
 
+    public async Task<Rating?> GetNewRatingByIDAsync(Rating rating)
+    {
+        var teste = await _dataContext.Ratings.Include(e => e.User).ThenInclude(q => q.Ratings).Where(z => z.UserID == rating.UserID).ToListAsync();
+
+        return teste.LastOrDefault();
+    }
+
     public async Task<Rating> GetByIDWithAll(int id)
     {
         return await _dataContext.Ratings.Include(s => s.BookEdition).AsSplitQuery().Include(e => e.User).AsSplitQuery().AsNoTracking().FirstOrDefaultAsync(z => z.ID == id);
