@@ -21,7 +21,7 @@ namespace Hybriotheca.Web.Controllers
         // GET: Books
         public IActionResult Index()
         {
-            return View(_bookRepository.GetAll());
+            return View(_bookRepository.GetAll().OrderBy(b => b.OriginalTitle));
         }
 
 
@@ -43,6 +43,7 @@ namespace Hybriotheca.Web.Controllers
                     await _bookRepository.CreateAsync(book);
 
                     // Success.
+                    TempData["Message"] = "Base Book was created.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch { }
@@ -77,6 +78,7 @@ namespace Hybriotheca.Web.Controllers
                     await _bookRepository.UpdateAsync(book);
 
                     // Success.
+                    TempData["Message"] = "Base Book was updated.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -120,6 +122,7 @@ namespace Hybriotheca.Web.Controllers
                 await _bookRepository.DeleteAsync(book);
 
                 // Success.
+                TempData["Message"] = "Base Book was deleted.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)

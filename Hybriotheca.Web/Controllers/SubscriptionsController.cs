@@ -43,6 +43,7 @@ namespace Hybriotheca.Web.Controllers
                     await _subscriptionRepository.CreateAsync(subscription);
 
                     // Success.
+                    TempData["Message"] = "Subscription was created.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException ex)
@@ -90,6 +91,7 @@ namespace Hybriotheca.Web.Controllers
                     await _subscriptionRepository.UpdateAsync(subscription);
 
                     // Success.
+                    TempData["Message"] = "Subscription was updated.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -146,6 +148,7 @@ namespace Hybriotheca.Web.Controllers
                 await _subscriptionRepository.DeleteAsync(subscription);
 
                 // Success.
+                TempData["Message"] = "Subscription was deleted.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)

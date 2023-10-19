@@ -273,6 +273,7 @@ namespace Hybriotheca.Web.Controllers
                         }
 
                         // Success 2/2 (email not changed).
+                        TempData["Message"] = "User account was updated.";
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -378,6 +379,8 @@ namespace Hybriotheca.Web.Controllers
                 }
             }
 
+            // Success.
+            TempData["Message"] = "User account was deleted.";
             return RedirectToAction(nameof(Index));
         }
 

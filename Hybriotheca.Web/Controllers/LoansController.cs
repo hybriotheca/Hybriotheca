@@ -332,6 +332,7 @@ namespace Hybriotheca.Web.Controllers
                     await _loanRepository.UpdateAsync(loan);
 
                     // Success.
+                    TempData["Message"] = "Loan was updated.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -430,6 +431,7 @@ namespace Hybriotheca.Web.Controllers
                 // Delete Loan and update BookStock.
                 await _loanRepository.DeleteAsync(loan);
 
+                TempData["Message"] = "Loan was deleted.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
@@ -502,6 +504,7 @@ namespace Hybriotheca.Web.Controllers
                 // Success.
                 TempData["Message"] =
                         $"An email was sent to <i>{user.Email}</i> regarding the Loan handover.";
+
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)

@@ -21,7 +21,7 @@ namespace Hybriotheca.Web.Controllers
         // GET: Categories
         public IActionResult Index()
         {
-            return View(_categoryRepository.GetAll());
+            return View(_categoryRepository.GetAll().OrderBy(c => c.Name));
         }
 
 
@@ -41,6 +41,7 @@ namespace Hybriotheca.Web.Controllers
                 await _categoryRepository.CreateAsync(category);
 
                 // Success.
+                TempData["Message"] = "Category was created.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -73,6 +74,7 @@ namespace Hybriotheca.Web.Controllers
                     await _categoryRepository.UpdateAsync(category);
 
                     // Success.
+                    TempData["Message"] = "Category was updated.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -117,6 +119,7 @@ namespace Hybriotheca.Web.Controllers
                 await _categoryRepository.DeleteAsync(category);
 
                 // Success.
+                TempData["Message"] = "Category was deleted.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)
