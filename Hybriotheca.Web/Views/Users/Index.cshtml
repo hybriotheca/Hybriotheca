@@ -74,7 +74,21 @@
                 </h1>
             }
         </div>
-        <p>@Html.Raw(TempData["Message"])</p>
+
+        <!-- MESSAGE TO USER -->
+        @if (TempData["Message"] != null)
+        {
+            <div class="flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800" role="alert">
+                <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                </svg>
+                <span class="sr-only">Info</span>
+                <div>
+                    @Html.Raw(TempData["Message"])
+                </div>
+            </div>
+        }
+
         <div class="items-center justify-between block sm:flex md:divide-x md:divide-gray-100 dark:divide-gray-700">
             <div class="flex items-center mb-4 sm:mb-0">
                 <!-- SEARCH BOX -->
@@ -115,7 +129,7 @@
                         <tr>
                             <th scope="col" class="p-4">
                                 <div class="flex items-center">
-                                    <input id="checkbox-all" aria-describedby="checkbox-1" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                    <input id="checkbox-all" aria-describedby="checkbox-all" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="checkbox-all" class="sr-only">checkbox</label>
                                 </div>
                             </th>
@@ -138,8 +152,10 @@
                     </thead>
                     <!-- TABLE BODY -->
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                        
-                        @{ int counter = 0; }
+
+                        @{
+                            int counter = 0;
+                        }
 
                         @foreach (var user in Model)
                         {
@@ -147,11 +163,10 @@
                                 <!-- CHECKBOX -->
                                 <td class="w-4 p-4">
                                     <div class="flex items-center">
-                                        @{ counter++; }
-                                        <input id="checkbox-@counter" aria-describedby="checkbox-1" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                        <input id="checkbox-@counter" aria-describedby="checkbox-@counter" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
                                         <label for="checkbox-@counter" class="sr-only">checkbox</label>
                                     </div>
-                                </td>                                
+                                </td>
 
                                 <!-- USER -->
                                 <td class="flex items-center p-4 mr-12 space-x-6 whitespace-nowrap">
@@ -273,6 +288,8 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            counter++;
                         }
                     </tbody>
                 </table>
@@ -286,7 +303,17 @@
 
 @section Scripts{
     <script type="text/javascript">
+        // Check all boxes
+        var checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+        var checkboxAll = document.getElementById("checkbox-all");
 
+        checkboxAll.addEventListener("change", function () {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = checkboxAll.checked;
+            });
+        });
+
+        // Create Modal
         const modalContainer = document.getElementById('popup-modal');
         const options = {
             backdrop: 'dynamic',

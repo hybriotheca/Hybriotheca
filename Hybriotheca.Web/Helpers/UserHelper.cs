@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Hybriotheca.Web.Data.Entities;
 using Hybriotheca.Web.Helpers.Interfaces;
+using Hybriotheca.Web.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -194,6 +195,23 @@ namespace Hybriotheca.Web.Helpers
         public async Task<bool> UserExistsAsync(string id)
         {
             return await _userManager.Users.AsNoTracking().AnyAsync(user => user.Id == id);
+        }
+
+        public async Task<UpdateUserViewModel?> SelectUserViewModel(string email)
+        {
+            return await _userManager.Users
+                .Where(user => user.Email == email)
+                .Select(user => new UpdateUserViewModel
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    HasPhoto = user.PhotoId != Guid.Empty,
+                    PhotoFullPath = user.PhotoFullPath,
+                    MainLibraryID = user.MainLibraryID ?? 0,
+                    SubscriptionName = user.Subscription.Name
+                })
+                .SingleOrDefaultAsync();
         }
     }
 }

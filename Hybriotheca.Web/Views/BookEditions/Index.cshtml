@@ -80,7 +80,7 @@
                         <tr>
                             <th scope="col" class="p-4">
                                 <div class="flex items-center">
-                                    <input id="checkbox-all" aria-describedby="checkbox-1" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                    <input id="checkbox-all" aria-describedby="checkbox-all" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="checkbox-all" class="sr-only">checkbox</label>
                                 </div>
                             </th>
@@ -109,15 +109,15 @@
                     </thead>
                     <!-- TABLE BODY -->
                     <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-
+                        @{ int counter = 0; }
                         @foreach (var book in Model)
                         {
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <!-- CHECKBOX -->
                                 <td class="w-4 p-4">
                                     <div class="flex items-center">
-                                        <input id="checkbox-194556" aria-describedby="checkbox-1" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="checkbox-194556" class="sr-only">checkbox</label>
+                                        <input id="checkbox-@counter" aria-describedby="checkbox-@counter" type="checkbox" class="checkbox-table w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="checkbox-@counter" class="sr-only">checkbox</label>
                                     </div>
                                 </td>
                                 <!-- ISBN -->
@@ -208,6 +208,8 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            counter++;
                         }
                     </tbody>
                 </table>
@@ -222,9 +224,17 @@
 
 @section Scripts{
     <script type="text/javascript">
+        // Check all boxes
+        var checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+        var checkboxAll = document.getElementById("checkbox-all");
 
-        //new DataTable('#example');
+        checkboxAll.addEventListener("change", function () {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = checkboxAll.checked;
+            });
+        });
 
+        // Create Modal
         const targetEl = document.getElementById('modal-delete');
         const options = {
             backdrop: 'dynamic',
