@@ -10,6 +10,10 @@ public class BookDetailsViewModel
 
     public bool HasStock { get; set; }
 
+    public bool LoanLimitReached { get; set; }
+
+    public bool AlreadyBorrowed { get; set; }
+
     public List<Rating> Ratings { get; set; }
 
     public Rating NewRating { get; set; }

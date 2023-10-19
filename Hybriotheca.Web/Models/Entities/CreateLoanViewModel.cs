@@ -5,6 +5,7 @@ namespace Hybriotheca.Web.Models.Entities
     public class CreateLoanViewModel
     {
         [Display(Name = "Library")]
+        [Range(1, int.MaxValue, ErrorMessage = "Library field is required")]
         public int LibraryId { get; set; }
 
         [Display(Name = "Book Edition")]

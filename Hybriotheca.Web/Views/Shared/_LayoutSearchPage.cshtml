@@ -82,7 +82,7 @@
                             </svg>
                             <span class="sr-only">Search icon</span>
                         </div>
-                        <input type="search" name="searchTerm" id="searchTerm" hx-post hx-target="#searchResults" hx-trigger="keyup changed delay:500ms, search" hx-include="#main-form" class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for a book..."/>
+                        <input type="search" name="searchTerm" id="searchTerm" hx-post hx-target="#searchResults" hx-trigger="keyup changed delay:500ms, search" hx-include="#main-form" class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for title, author, ISBN, publisher..." />
                     </div>
                 </div>
 
@@ -135,7 +135,7 @@
                                 </span>
                                 <span class="block text-sm text-gray-500 truncate dark:text-gray-400">@this.User.Identity.Name</span>
                             </div>
-                            @if (this.User.IsInRole("Admin"))
+                            @if (this.User.IsInRole("Admin") || User.IsInRole("Librarian"))
                             {
                                 <div class="py-2">
                                     <ul class="" aria-labelledby="user-menu-button">
@@ -160,7 +160,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a asp-controller="Home" asp-action="UserLoans" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                    <a asp-controller="Home" asp-action="UserLoans" asp-route-id="@loggedUser.Id" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                                         <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
                                             <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z" />
                                         </svg>
@@ -168,7 +168,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a asp-controller="Home" asp-action="UserSettings" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                    <a asp-controller="Home" asp-action="UserSettings" asp-route-id="@loggedUser.Id" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                                         <svg class="mr-4 w-4 h-4 text-gray-400 group-hover:text-sky-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.75 4H19M7.75 4a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 4h2.25m13.5 6H19m-2.25 0a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 10h11.25m-4.5 6H19M7.75 16a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 16h2.25" />
                                         </svg>
@@ -313,7 +313,7 @@
 
 
     @* <!-- MAIN CONTENT --> *@
-    <div class="mt-[72px] max-sm:mt-[132px]">
+    <div class="basis-full mt-[72px] max-sm:mt-[132px]">
         @RenderBody()
     </div>
 

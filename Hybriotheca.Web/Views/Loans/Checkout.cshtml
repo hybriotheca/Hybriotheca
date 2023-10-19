@@ -1,0 +1,101 @@
+﻿@model Hybriotheca.Web.Models.Entities.CreateLoanViewModel
+
+@{
+    var data = DateTime.UtcNow;
+}
+
+<div class="p-4 grow">
+    <main role="main" class="max-w-screen-xl justify-between mx-auto dark:text-white">
+
+        <style>
+            input#start-date {
+                display: inline-block;
+                position: relative;
+            }
+
+            input[type="date"]::-webkit-calendar-picker-indicator {
+                background: transparent;
+                bottom: 0;
+                color: transparent;
+                cursor: pointer;
+                height: auto;
+                left: 0;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: auto;
+            }
+        </style>
+
+        @if (TempData["Message"] != null)
+        {
+            <div id="DoesntExistCreateIt" class="flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800" role="alert">
+                <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                </svg>
+                <span class="sr-only">Info</span>
+                <div>
+                    @TempData["Message"]
+                </div>
+            </div>
+        }
+
+        <div class="container mx-auto px-4">
+            <h1 class="text-2xl font-semibold mb-4">Book Loan</h1>
+            <form method="post" asp-controller="Loans" asp-action="CreateLoanReservation">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <!-- LEFT CONTAINER -->
+                    <div class="md:w-3/4">
+                        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-md p-6 mb-4">
+                            <!-- DATEPICKER -->
+                            <div class="mb-8">
+                                <label asp-for="StartDate" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a date to pick up the book</label>
+                                <div class="relative max-w-sm">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none z-10">
+                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                        </svg>
+                                    </div>
+                                    <input asp-for="StartDate" min="@data.ToString("yyyy-MM-dd")" max="@data.AddDays(7).ToString("yyyy-MM-dd")" type="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                                </div>
+                            </div>
+                            <!-- LIBRARIES SELECT -->
+                            <div>
+                                <label asp-for="LibraryId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select a library</label>
+                                <select asp-for="LibraryId" asp-items="ViewBag.Libraries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></select>
+                                <span asp-validation-for="LibraryId" class="p-4 mb-4 text-sm font-medium text-red-800 dark:text-red-400"></span>
+                            </div>
+                            <input type="hidden" asp-for="BookEditionId" />
+                        </div>
+                    </div>
+
+                    <!-- RIGHT CONTAINER -->
+                    <div class="md:w-1/4">
+                        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-md p-6">
+                            <div class="flex flex-col items-center w-full break-all">
+                                <!-- COVER -->
+                                <img src="@ViewBag.Cover" class="h-auto max-w-[150px] mb-2" />
+                                <!-- BOOK TITLE -->
+                                <h2 class="text-center font-medium text-base">@ViewBag.BookTitle</h2>
+                                <!-- AUTHOR -->
+                                <h3 class="text-center text-sm text-gray-400">@ViewBag.Author</h3>
+
+                                <!-- BUTTON -->
+                                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Borrow book</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </main>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
