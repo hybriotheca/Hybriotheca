@@ -54,7 +54,7 @@ namespace Hybriotheca.Web.Controllers
         // GET: BookEditions
         public IActionResult Index()
         {
-            return View(_bookEditionRepository.GetAll());
+            return View(_bookEditionRepository.GetAll().OrderBy(b => b.EditionTitle).ThenBy(b => b.ISBN));
         }
 
 

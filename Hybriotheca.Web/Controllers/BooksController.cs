@@ -21,7 +21,7 @@ namespace Hybriotheca.Web.Controllers
         // GET: Books
         public IActionResult Index()
         {
-            return View(_bookRepository.GetAll());
+            return View(_bookRepository.GetAll().OrderBy(b => b.OriginalTitle));
         }
 
 

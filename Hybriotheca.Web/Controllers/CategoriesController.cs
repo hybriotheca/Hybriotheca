@@ -21,7 +21,7 @@ namespace Hybriotheca.Web.Controllers
         // GET: Categories
         public IActionResult Index()
         {
-            return View(_categoryRepository.GetAll());
+            return View(_categoryRepository.GetAll().OrderBy(c => c.Name));
         }
 
 
