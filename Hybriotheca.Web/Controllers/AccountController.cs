@@ -126,7 +126,7 @@ namespace Hybriotheca.Web.Controllers
                                 $"An email has been sent to <i>{model.Email}</i> " +
                                 $"with a link to reset password.";
 
-                            return RedirectToHomePage();
+                            return View("EmailSentConfirmation");
                         }
                     }
                 }

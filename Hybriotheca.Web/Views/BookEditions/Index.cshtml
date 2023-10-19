@@ -127,7 +127,7 @@
                                 <!-- BOOK -->
                                 <td class="p-4">
                                     <a asp-action="Edit" asp-route-id="@book.ID">
-                                        <div class="flex mr-12 space-x-6 whitespace-nowrap">
+                                        <div class="flex items-center mr-12 space-x-6 whitespace-nowrap">
                                             <!-- COVER IMAGE -->
                                             <img src="@Html.DisplayFor(modelItem => book.CoverImageFullPath)" alt="Cover" class="@(string.IsNullOrEmpty(book.CoverImageFullPath) ? "hidden " : "")w-20 h-auto" />
 
