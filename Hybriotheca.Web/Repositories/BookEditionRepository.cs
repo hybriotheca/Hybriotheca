@@ -25,7 +25,7 @@ public class BookEditionRepository : GenericRepository<BookEdition>, IBookEditio
         return await _dataContext.BookEditions
             .Select(bookEdition => new SelectListItem
             {
-                Text = bookEdition.EditionTitle,
+                Text = $"{bookEdition.EditionTitle} ({bookEdition.Publisher}, {bookEdition.PublishDate.Year})",
                 Value = bookEdition.ID.ToString(),
             }).ToListAsync();
     }
